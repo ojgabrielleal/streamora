@@ -85,3 +85,4 @@ Ao concluir uma implementação:
 - Informe quais arquivos foram alterados.
 - Informe os testes executados.
 - Informe qualquer pendência encontrada.
+- Crie um commit
