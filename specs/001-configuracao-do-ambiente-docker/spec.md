@@ -1,5 +1,8 @@
 # Spec 001 - Configuração do ambiente docker
 
+**Status:** concluida
+**Branch:** main
+
 ## Objetivo
 Configurar o ambiente docker para executar a aplicação
 

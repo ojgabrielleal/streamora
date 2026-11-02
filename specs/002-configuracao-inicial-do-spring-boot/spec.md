@@ -1,4 +1,7 @@
-# Spec 002 - Configuração inciial do Spring Boot
+# Spec 002 - Configuração inicial do Spring Boot
+
+**Status:** concluida
+**Branch:** main
 
 ## Objetivo
 Realizar configuração inicial no application.properties

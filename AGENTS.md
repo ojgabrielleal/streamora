@@ -85,4 +85,5 @@ Ao concluir uma implementação:
 - Informe quais arquivos foram alterados.
 - Informe os testes executados.
 - Informe qualquer pendência encontrada.
+- Altere o status e informe a branch que a tarefa foi realizada nos campos da spec
 - Crie um commit
