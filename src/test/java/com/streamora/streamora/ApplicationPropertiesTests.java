@@ -33,9 +33,9 @@ class ApplicationPropertiesTests {
 	}
 
 	@Test
-	void enablesFlywayWithTheConventionalMigrationLocation() {
+	void enablesFlywayWithTheConfiguredMigrationLocation() {
 		assertThat(PROPERTIES)
 				.containsEntry("spring.flyway.enabled", "true")
-				.containsEntry("spring.flyway.locations", "classpath:db/migration");
+				.containsEntry("spring.flyway.locations", "classpath:db/migrations");
 	}
 }
