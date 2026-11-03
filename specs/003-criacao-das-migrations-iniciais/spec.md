@@ -7,7 +7,7 @@
 Criar as primeiras migrations no projeto
 
 ## Requisitos
-- Criar migrations na pasta resources/db/migrations
+- Criar migrations na pasta `src/main/resources/db/migration`
 
 ## Regras
 - As migrations devem ser feitas em arquivos `.sql`

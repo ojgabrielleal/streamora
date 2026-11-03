@@ -6,7 +6,7 @@
 - [x] Criar a migration da tabela `playlists`.
 - [x] Criar a migration da tabela `files`.
 - [x] Criar a migration da tabela `playlist_files`.
-- [x] Configurar o Flyway para carregar `classpath:db/migrations`.
+- [x] Manter as migrations na localização padrão `classpath:db/migration`.
 
 ## Testes e validação
 

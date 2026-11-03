@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 class MigrationFilesTests {
 
-	private static final String MIGRATIONS_PATH = "db/migrations/";
+	private static final String MIGRATIONS_PATH = "db/migration/";
 	private static final Pattern CREATE_TABLE = Pattern.compile(
 			"(?i)\\bCREATE\\s+TABLE\\s+([a-z_]+)");
 	private static final Map<String, String> MIGRATIONS = Map.of(
