@@ -60,6 +60,14 @@ streamora/
 - Siga as convenções da linguagem e do framework.
 - Não faça refatorações desnecessárias fora do escopo de trabalho solicitado.
 
+## Migrations
+- Crie as migrations em arquivos `.sql` dentro de `src/main/resources/db/migration`.
+- Siga o padrão de nomes do Flyway: `V{versão}__{descrição}.sql`.
+- Cada migration deve alterar somente uma tabela.
+- Separe obrigatoriamente em migrations diferentes as alterações em tabelas diferentes.
+- Toda coluna `uuid` deve possuir restrição de unicidade.
+- Atualize `docs/database-schema.md` sempre que uma migration modificar a estrutura do banco.
+
 ## Testes e validação
 Antes de finalizar:
 - Execute os testes existentes.
