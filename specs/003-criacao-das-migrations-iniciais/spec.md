@@ -21,41 +21,8 @@ Criar as primeiras migrations no projeto
 - [x] Todas as tabelas descritas nesta spec devem possuir sua respectiva migration
 - [x] Todas as colunas `uuid` devem ser únicas
 
-## Estrutura de migrations
-- Tabela: users
-    - id
-    - uuid
-    - fullname
-        - Type: String
-    - nickname
-        - Type: String
-    - username
-        - Type: String
-    - password | Observações: Esse campo irá armazenar uma senha em hash
+## Estrutura do banco de dados
 
-- Tabela: playlists
-    - id
-    - uuid
-    - name
-        - Type: String
-
-- Tabela: files
-    - id
-    - uuid
-    - type
-        - Type: ENUM
-        - Values:
-            - music
-            - station_id
-            - sweeper
-            - jingle
-            - commercial
-            - bumper
-    - name
-        - Type: String
-    - path
-        - Type: String
-
-- Tabela: playlist_files
-    - playlist_id | FK -> playlists.id
-    - file_id | FK -> files.id
+A estrutura consolidada das tabelas, colunas e relacionamentos está documentada
+no [diagrama do banco de dados](../../docs/database-schema.md). O diagrama deve
+ser atualizado sempre que uma migration alterar a estrutura do banco.
