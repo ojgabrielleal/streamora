@@ -3,6 +3,8 @@ package com.streamora.streamora.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.streamora.streamora.entity.type.PlaylistFileType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

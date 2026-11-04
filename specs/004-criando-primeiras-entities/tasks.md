@@ -5,7 +5,7 @@
 - [x] Criar a entity `User` baseada na tabela `users`.
 - [x] Criar a entity `Playlist` baseada na tabela `playlists`.
 - [x] Criar a entity `PlaylistFile` baseada na tabela `files`.
-- [x] Criar o enum dos tipos de arquivo.
+- [x] Criar o enum dos tipos de arquivo no pacote `entity.type`.
 - [x] Mapear `playlist_files` como relacionamento entre `Playlist` e `PlaylistFile`.
 
 ## Testes e validação

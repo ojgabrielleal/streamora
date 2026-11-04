@@ -1,4 +1,4 @@
-package com.streamora.streamora.entity;
+package com.streamora.streamora.entity.type;
 
 public enum PlaylistFileType {
 	music,

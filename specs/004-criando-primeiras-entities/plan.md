@@ -13,7 +13,7 @@ Criar as primeiras entities JPA do projeto com base nas migrations existentes pa
 - Os nomes de tabelas e colunas serão declarados explicitamente para manter correspondência com as migrations.
 - Os identificadores `id` serão gerados pelo banco com `IDENTITY`.
 - Os campos obrigatórios e únicos serão representados conforme as restrições das migrations.
-- O tipo do arquivo será representado por um enum Java persistido como texto.
+- O tipo do arquivo será representado por um enum Java persistido como texto no pacote `entity.type`.
 - Lombok já está disponível no projeto e poderá ser usado para reduzir código repetitivo, sem adicionar dependências.
 - Nenhuma migration ou versão de dependência será alterada.
 
