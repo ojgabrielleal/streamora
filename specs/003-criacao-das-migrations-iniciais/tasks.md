@@ -10,7 +10,9 @@
 
 ## Testes e validação
 
-- [x] Criar testes estruturais para as migrations e a configuração do Flyway.
+- [x] Criar um teste global para os campos `id` e `uuid` nas migrations das tabelas principais.
+- [x] Excluir tabelas associativas da verificação global de migrations.
+- [x] Validar a configuração do Flyway.
 - [x] Executar os testes Maven.
 - [x] Compilar e empacotar a aplicação.
 - [x] Executar as migrations no MySQL 8.4 e validar o schema criado.

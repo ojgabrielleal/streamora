@@ -1,7 +1,7 @@
 # Spec 003 - Criação das migrations iniciais
 
 **Status:** concluida
-**Branch:** feature/003-criacao-das-migrations-iniciais
+**Branch:** main
 
 ## Objetivo
 Criar as primeiras migrations no projeto
@@ -14,6 +14,7 @@ Criar as primeiras migrations no projeto
 - [x] Cada migration deve alterar apenas uma tabela
 - [x] Todas as tabelas descritas nesta spec devem possuir sua respectiva migration
 - [x] Todas as colunas `uuid` devem ser únicas
+- [x] As migrations das tabelas principais devem possuir os campos `id` e `uuid`
 
 ## Estrutura do banco de dados
 

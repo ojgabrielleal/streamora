@@ -75,6 +75,12 @@ Antes de finalizar:
 - Verifique os critérios de aceite.
 - Informe erros ou limitações encontradas.
 
+## Testes de migrations
+- Mantenha os testes de migrations globais, verificando somente as convenções comuns às tabelas principais.
+- Verifique apenas a presença dos campos `id` e `uuid` nas migrations de criação de tabelas principais.
+- Não inclua tabelas associativas nessa verificação.
+- Não crie testes para detalhes específicos de cada migration.
+
 ## Specs
 As especificações ficam em:
 

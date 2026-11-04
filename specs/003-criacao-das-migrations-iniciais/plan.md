@@ -27,7 +27,7 @@ Criar as migrations iniciais do banco de dados para as tabelas `users`, `playlis
 4. Criar a migration da tabela `files` com chave primária, UUID único, tipo enumerado, nome e caminho.
 5. Criar a migration da tabela associativa `playlist_files` com chave primária composta e chaves estrangeiras para `playlists` e `files`.
 6. Manter o Flyway usando sua localização padrão `classpath:db/migration`.
-7. Criar testes automatizados que verifiquem a existência, a nomenclatura e a separação das migrations, além da localização configurada para o Flyway.
+7. Criar um teste global que verifique a presença dos campos `id` e `uuid` nas migrations das tabelas principais, sem incluir tabelas associativas, além de validar a configuração do Flyway.
 8. Executar as migrations contra MySQL 8.4 e validar a estrutura resultante das quatro tabelas.
 9. Atualizar a spec e as tarefas com o status final e registrar a implementação em um commit.
 
@@ -37,7 +37,7 @@ Criar as migrations iniciais do banco de dados para as tabelas `users`, `playlis
 - Compilar e empacotar a aplicação com `./mvnw package`.
 - Validar a execução limpa das migrations em uma instância MySQL 8.4.
 - Consultar o schema criado para confirmar colunas, tipos, chaves primárias, unicidade, enumeração e chaves estrangeiras.
-- Confirmar que cada arquivo SQL cria ou altera somente a sua respectiva tabela.
+- Confirmar que as migrations das tabelas principais possuem os campos `id` e `uuid`.
 - Confirmar que o Flyway encontra as migrations em `classpath:db/migration`.
 - Conferir todos os critérios de aceite da `spec.md` e registrar qualquer limitação encontrada.
 
