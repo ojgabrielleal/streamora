@@ -35,8 +35,9 @@ public class Playlist {
 
 	@ManyToMany
 	@JoinTable(
-			name = "playlist_files",
-			joinColumns = @JoinColumn(name = "playlist_id"),
-			inverseJoinColumns = @JoinColumn(name = "file_id"))
+		name = "playlist_files",
+		joinColumns = @JoinColumn(name = "playlist_id"),
+		inverseJoinColumns = @JoinColumn(name = "file_id")
+	)
 	private Set<PlaylistFile> files = new HashSet<>();
 }
