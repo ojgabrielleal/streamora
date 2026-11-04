@@ -41,7 +41,9 @@ streamora/
 2. Crie um plano de implementação.
 3. Aguarde aprovação do plano.
 4. Crie as tarefas e testes necessárias.
-5. Valide a implementação antes de finalizar.
+5. Valide a implementação
+7. Pergunte se a implementação precisa de correções
+6. Após as correções, peça autorização para finalizar a spec
 
 ## Regras
 - Siga os padrões existentes no projeto.

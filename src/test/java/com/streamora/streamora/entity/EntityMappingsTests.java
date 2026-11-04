@@ -1,14 +1,10 @@
-package com.streamora.streamora;
+package com.streamora.streamora.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-
-import com.streamora.streamora.entity.Playlist;
-import com.streamora.streamora.entity.PlaylistFile;
-import com.streamora.streamora.entity.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -18,7 +14,8 @@ class EntityMappingsTests {
 	private static final Map<Class<?>, String> MAIN_ENTITIES = Map.of(
 			User.class, "users",
 			Playlist.class, "playlists",
-			PlaylistFile.class, "files");
+			PlaylistFile.class, "files"
+	);
 
 	@Test
 	void mapsMainEntitiesWithIdAndUuid() throws NoSuchFieldException {

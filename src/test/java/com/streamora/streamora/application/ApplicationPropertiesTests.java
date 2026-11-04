@@ -1,4 +1,4 @@
-package com.streamora.streamora;
+package com.streamora.streamora.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
