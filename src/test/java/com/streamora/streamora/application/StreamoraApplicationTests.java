@@ -2,8 +2,12 @@ package com.streamora.streamora.application;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.streamora.streamora.StreamoraApplication;
+import com.streamora.streamora.repository.PlaylistFileRepository;
+import com.streamora.streamora.repository.PlaylistRepository;
+import com.streamora.streamora.repository.UserRepository;
 
 @SpringBootTest(
 		classes = StreamoraApplication.class,
@@ -13,6 +17,15 @@ import com.streamora.streamora.StreamoraApplication;
 					+ "org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration"
 		})
 class StreamoraApplicationTests {
+
+	@MockitoBean
+	private UserRepository userRepository;
+
+	@MockitoBean
+	private PlaylistRepository playlistRepository;
+
+	@MockitoBean
+	private PlaylistFileRepository playlistFileRepository;
 
 	@Test
 	void contextLoads() {
