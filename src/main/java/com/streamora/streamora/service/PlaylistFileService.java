@@ -1,12 +1,16 @@
 package com.streamora.streamora.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.streamora.streamora.dto.PlaylistFileRequestDTO;
+import com.streamora.streamora.dto.PlaylistFileResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.PlaylistFile;
+import com.streamora.streamora.mapper.PlaylistFileMapper;
 import com.streamora.streamora.repository.PlaylistFileRepository;
 import com.streamora.streamora.repository.PlaylistRepository;
 
@@ -26,33 +30,39 @@ public class PlaylistFileService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<PlaylistFile> index() {
-		return playlistFileRepository.findAll();
+	public List<PlaylistFileResponseDTO> index() {
+		return playlistFileRepository.findAll().stream()
+				.map(playlistFile -> PlaylistFileMapper.toResponse(playlistFile))
+				.toList();
 	}
 
 	@Transactional(readOnly = true)
-	public PlaylistFile show(String uuid) {
-		return findFileByUuid(uuid);
+	public PlaylistFileResponseDTO show(String uuid) {
+		return PlaylistFileMapper.toResponse(findFileByUuid(uuid));
 	}
 
-	public PlaylistFile store(PlaylistFile playlistFile) {
-		return playlistFileRepository.save(playlistFile);
+	public PlaylistFileResponseDTO store(PlaylistFileRequestDTO request) {
+		PlaylistFile playlistFile = PlaylistFileMapper.toEntity(request);
+		playlistFile.setUuid(UUID.randomUUID().toString());
+
+		return PlaylistFileMapper.toResponse(playlistFileRepository.save(playlistFile));
 	}
 
-	public PlaylistFile update(String uuid, PlaylistFile playlistFile) {
+	public PlaylistFileResponseDTO update(String uuid, PlaylistFileRequestDTO request) {
 		PlaylistFile storedFile = findFileByUuid(uuid);
-		storedFile.setType(playlistFile.getType());
-		storedFile.setName(playlistFile.getName());
-		storedFile.setPath(playlistFile.getPath());
+		PlaylistFile changes = PlaylistFileMapper.toEntity(request);
+		storedFile.setType(changes.getType());
+		storedFile.setName(changes.getName());
+		storedFile.setPath(changes.getPath());
 
-		return playlistFileRepository.save(storedFile);
+		return PlaylistFileMapper.toResponse(playlistFileRepository.save(storedFile));
 	}
 
 	public void delete(String uuid) {
 		playlistFileRepository.delete(findFileByUuid(uuid));
 	}
 
-	public PlaylistFile addToPlaylist(String fileUuid, String playlistUuid) {
+	public PlaylistFileResponseDTO addToPlaylist(String fileUuid, String playlistUuid) {
 		PlaylistFile playlistFile = findFileByUuid(fileUuid);
 		Playlist playlist = findPlaylistByUuid(playlistUuid);
 
@@ -60,10 +70,10 @@ public class PlaylistFileService {
 		playlistFile.getPlaylists().add(playlist);
 		playlistRepository.save(playlist);
 
-		return playlistFile;
+		return PlaylistFileMapper.toResponse(playlistFile);
 	}
 
-	public PlaylistFile removeFromPlaylist(String fileUuid, String playlistUuid) {
+	public PlaylistFileResponseDTO removeFromPlaylist(String fileUuid, String playlistUuid) {
 		PlaylistFile playlistFile = findFileByUuid(fileUuid);
 		Playlist playlist = findPlaylistByUuid(playlistUuid);
 
@@ -71,7 +81,7 @@ public class PlaylistFileService {
 		playlistFile.getPlaylists().remove(playlist);
 		playlistRepository.save(playlist);
 
-		return playlistFile;
+		return PlaylistFileMapper.toResponse(playlistFile);
 	}
 
 	private PlaylistFile findFileByUuid(String uuid) {

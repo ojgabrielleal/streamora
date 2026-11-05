@@ -14,7 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.streamora.streamora.dto.PlaylistRequestDTO;
+import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
+import com.streamora.streamora.entity.PlaylistFile;
 import com.streamora.streamora.repository.PlaylistRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,10 +35,12 @@ class PlaylistServiceTests {
 
 	@Test
 	void indexesPlaylists() {
-		List<Playlist> playlists = List.of(new Playlist());
+		List<Playlist> playlists = List.of(playlist("playlist-uuid", "Playlist"));
 		when(playlistRepository.findAll()).thenReturn(playlists);
 
-		assertThat(playlistService.index()).isSameAs(playlists);
+		assertThat(playlistService.index())
+				.extracting(PlaylistResponseDTO::uuid)
+				.containsExactly("playlist-uuid");
 	}
 
 	@Test
@@ -43,32 +48,39 @@ class PlaylistServiceTests {
 		Playlist playlist = playlist("playlist-uuid", "Playlist");
 		when(playlistRepository.findByUuid("playlist-uuid")).thenReturn(Optional.of(playlist));
 
-		assertThat(playlistService.show("playlist-uuid")).isSameAs(playlist);
+		assertThat(playlistService.show("playlist-uuid").uuid()).isEqualTo("playlist-uuid");
 	}
 
 	@Test
 	void storesPlaylist() {
-		Playlist playlist = playlist("playlist-uuid", "Playlist");
-		when(playlistRepository.save(playlist)).thenReturn(playlist);
+		when(playlistRepository.save(org.mockito.ArgumentMatchers.any(Playlist.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
 
-		assertThat(playlistService.store(playlist)).isSameAs(playlist);
+		PlaylistResponseDTO response = playlistService.store(new PlaylistRequestDTO("Playlist"));
+
+		assertThat(response.uuid()).isNotBlank();
+		assertThat(response.name()).isEqualTo("Playlist");
 	}
 
 	@Test
 	void updatesNameAndPreservesIdentityAndFiles() {
 		Playlist storedPlaylist = playlist("stored-uuid", "Old name");
 		storedPlaylist.setId(1L);
-		storedPlaylist.getFiles().add(new com.streamora.streamora.entity.PlaylistFile());
-		Playlist changes = playlist("other-uuid", "New name");
+		PlaylistFile file = new PlaylistFile();
+		file.setUuid("file-uuid");
+		storedPlaylist.getFiles().add(file);
 		when(playlistRepository.findByUuid("stored-uuid")).thenReturn(Optional.of(storedPlaylist));
 		when(playlistRepository.save(storedPlaylist)).thenReturn(storedPlaylist);
 
-		Playlist updatedPlaylist = playlistService.update("stored-uuid", changes);
+		PlaylistResponseDTO updatedPlaylist = playlistService.update(
+				"stored-uuid",
+				new PlaylistRequestDTO("New name")
+		);
 
-		assertThat(updatedPlaylist.getId()).isEqualTo(1L);
-		assertThat(updatedPlaylist.getUuid()).isEqualTo("stored-uuid");
-		assertThat(updatedPlaylist.getName()).isEqualTo("New name");
-		assertThat(updatedPlaylist.getFiles()).hasSize(1);
+		assertThat(updatedPlaylist.uuid()).isEqualTo("stored-uuid");
+		assertThat(updatedPlaylist.name()).isEqualTo("New name");
+		assertThat(updatedPlaylist.fileUuids()).containsExactly("file-uuid");
+		assertThat(storedPlaylist.getId()).isEqualTo(1L);
 	}
 
 	@Test

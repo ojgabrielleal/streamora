@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.streamora.streamora.dto.UserRequestDTO;
+import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.repository.UserRepository;
 
@@ -32,10 +34,12 @@ class UserServiceTests {
 
 	@Test
 	void indexesUsers() {
-		List<User> users = List.of(new User());
+		List<User> users = List.of(user("user-uuid"));
 		when(userRepository.findAll()).thenReturn(users);
 
-		assertThat(userService.index()).isSameAs(users);
+		assertThat(userService.index())
+				.extracting(UserResponseDTO::uuid)
+				.containsExactly("user-uuid");
 	}
 
 	@Test
@@ -43,37 +47,42 @@ class UserServiceTests {
 		User user = user("user-uuid");
 		when(userRepository.findByUuid("user-uuid")).thenReturn(Optional.of(user));
 
-		assertThat(userService.show("user-uuid")).isSameAs(user);
+		assertThat(userService.show("user-uuid").uuid()).isEqualTo("user-uuid");
 	}
 
 	@Test
 	void storesUser() {
-		User user = user("user-uuid");
-		when(userRepository.save(user)).thenReturn(user);
+		UserRequestDTO request = request("Name");
+		when(userRepository.save(org.mockito.ArgumentMatchers.any(User.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
 
-		assertThat(userService.store(user)).isSameAs(user);
+		UserResponseDTO response = userService.store(request);
+
+		assertThat(response.uuid()).isNotBlank();
+		assertThat(response.fullname()).isEqualTo("Name");
 	}
 
 	@Test
 	void updatesEditableFieldsAndPreservesIdentity() {
 		User storedUser = user("stored-uuid");
 		storedUser.setId(1L);
-		User changes = user("other-uuid");
-		changes.setFullname("New name");
-		changes.setNickname("new nickname");
-		changes.setUsername("new username");
-		changes.setPassword("new password");
+		UserRequestDTO changes = new UserRequestDTO(
+				"New name",
+				"new nickname",
+				"new username",
+				"new password"
+		);
 		when(userRepository.findByUuid("stored-uuid")).thenReturn(Optional.of(storedUser));
 		when(userRepository.save(storedUser)).thenReturn(storedUser);
 
-		User updatedUser = userService.update("stored-uuid", changes);
+		UserResponseDTO updatedUser = userService.update("stored-uuid", changes);
 
-		assertThat(updatedUser.getId()).isEqualTo(1L);
-		assertThat(updatedUser.getUuid()).isEqualTo("stored-uuid");
-		assertThat(updatedUser.getFullname()).isEqualTo("New name");
-		assertThat(updatedUser.getNickname()).isEqualTo("new nickname");
-		assertThat(updatedUser.getUsername()).isEqualTo("new username");
-		assertThat(updatedUser.getPassword()).isEqualTo("new password");
+		assertThat(updatedUser.uuid()).isEqualTo("stored-uuid");
+		assertThat(updatedUser.fullname()).isEqualTo("New name");
+		assertThat(updatedUser.nickname()).isEqualTo("new nickname");
+		assertThat(updatedUser.username()).isEqualTo("new username");
+		assertThat(storedUser.getId()).isEqualTo(1L);
+		assertThat(storedUser.getPassword()).isEqualTo("new password");
 	}
 
 	@Test
@@ -103,5 +112,9 @@ class UserServiceTests {
 		user.setUsername("username");
 		user.setPassword("password");
 		return user;
+	}
+
+	private UserRequestDTO request(String fullname) {
+		return new UserRequestDTO(fullname, "nickname", "username", "password");
 	}
 }

@@ -29,6 +29,17 @@ streamora/
 │   │   │   │   ├── Playlist.java
 │   │   │   │   ├── PlaylistFile.java
 │   │   │   │   └── User.java
+│   │   │   ├── dto/
+│   │   │   │   ├── PlaylistFileRequestDTO.java
+│   │   │   │   ├── PlaylistFileResponseDTO.java
+│   │   │   │   ├── PlaylistRequestDTO.java
+│   │   │   │   ├── PlaylistResponseDTO.java
+│   │   │   │   ├── UserRequestDTO.java
+│   │   │   │   └── UserResponseDTO.java
+│   │   │   ├── mapper/
+│   │   │   │   ├── PlaylistFileMapper.java
+│   │   │   │   ├── PlaylistMapper.java
+│   │   │   │   └── UserMapper.java
 │   │   │   ├── repository/
 │   │   │   │   ├── PlaylistFileRepository.java
 │   │   │   │   ├── PlaylistRepository.java
@@ -50,6 +61,10 @@ streamora/
 │           │   └── EntityMappingsTests.java
 │           ├── migration/
 │           │   └── MigrationFilesTests.java
+│           ├── mapper/
+│           │   ├── PlaylistFileMapperTests.java
+│           │   ├── PlaylistMapperTests.java
+│           │   └── UserMapperTests.java
 │           ├── repository/
 │           │   └── RepositoryStructureTests.java
 │           └── service/
@@ -70,6 +85,9 @@ devem continuar fora do controle de versão.
 
 - `entity`: representa o modelo persistido e seus relacionamentos JPA.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.
+- `dto`: define os contratos imutáveis de entrada e saída da aplicação.
+- `mapper`: converte entities em DTOs de resposta e DTOs de entrada em novas
+  instâncias das entities existentes.
 - `repository`: define as interfaces de acesso aos dados das entities.
 - `service`: concentra operações de negócio e coordena o acesso às repositories.
 - `resources/db/migration`: mantém o histórico executável do banco com Flyway.
@@ -89,6 +107,8 @@ Os testes espelham a responsabilidade que validam no código principal:
 
 - `application`: inicialização e configuração da aplicação.
 - `entity`: convenções e mapeamentos comuns das entities.
+- `mapper`: conversão entre DTOs e entities, incluindo campos e
+  relacionamentos expostos.
 - `migration`: convenções globais dos arquivos de migration.
 - `repository`: contratos estruturais das repositories.
 - `service`: comportamento unitário das operações de negócio, com repositories

@@ -1,11 +1,15 @@
 package com.streamora.streamora.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.streamora.streamora.dto.PlaylistRequestDTO;
+import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
+import com.streamora.streamora.mapper.PlaylistMapper;
 import com.streamora.streamora.repository.PlaylistRepository;
 
 @Service
@@ -19,24 +23,30 @@ public class PlaylistService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Playlist> index() {
-		return playlistRepository.findAll();
+	public List<PlaylistResponseDTO> index() {
+		return playlistRepository.findAll().stream()
+				.map(playlist -> PlaylistMapper.toResponse(playlist))
+				.toList();
 	}
 
 	@Transactional(readOnly = true)
-	public Playlist show(String uuid) {
-		return findByUuid(uuid);
+	public PlaylistResponseDTO show(String uuid) {
+		return PlaylistMapper.toResponse(findByUuid(uuid));
 	}
 
-	public Playlist store(Playlist playlist) {
-		return playlistRepository.save(playlist);
+	public PlaylistResponseDTO store(PlaylistRequestDTO request) {
+		Playlist playlist = PlaylistMapper.toEntity(request);
+		playlist.setUuid(UUID.randomUUID().toString());
+
+		return PlaylistMapper.toResponse(playlistRepository.save(playlist));
 	}
 
-	public Playlist update(String uuid, Playlist playlist) {
+	public PlaylistResponseDTO update(String uuid, PlaylistRequestDTO request) {
 		Playlist storedPlaylist = findByUuid(uuid);
-		storedPlaylist.setName(playlist.getName());
+		Playlist changes = PlaylistMapper.toEntity(request);
+		storedPlaylist.setName(changes.getName());
 
-		return playlistRepository.save(storedPlaylist);
+		return PlaylistMapper.toResponse(playlistRepository.save(storedPlaylist));
 	}
 
 	public void delete(String uuid) {

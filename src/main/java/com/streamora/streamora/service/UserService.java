@@ -1,11 +1,15 @@
 package com.streamora.streamora.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.streamora.streamora.dto.UserRequestDTO;
+import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
+import com.streamora.streamora.mapper.UserMapper;
 import com.streamora.streamora.repository.UserRepository;
 
 @Service
@@ -19,27 +23,33 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<User> index() {
-		return userRepository.findAll();
+	public List<UserResponseDTO> index() {
+		return userRepository.findAll().stream()
+				.map(user -> UserMapper.toResponse(user))
+				.toList();
 	}
 
 	@Transactional(readOnly = true)
-	public User show(String uuid) {
-		return findByUuid(uuid);
+	public UserResponseDTO show(String uuid) {
+		return UserMapper.toResponse(findByUuid(uuid));
 	}
 
-	public User store(User user) {
-		return userRepository.save(user);
+	public UserResponseDTO store(UserRequestDTO request) {
+		User user = UserMapper.toEntity(request);
+		user.setUuid(UUID.randomUUID().toString());
+
+		return UserMapper.toResponse(userRepository.save(user));
 	}
 
-	public User update(String uuid, User user) {
+	public UserResponseDTO update(String uuid, UserRequestDTO request) {
 		User storedUser = findByUuid(uuid);
-		storedUser.setFullname(user.getFullname());
-		storedUser.setNickname(user.getNickname());
-		storedUser.setUsername(user.getUsername());
-		storedUser.setPassword(user.getPassword());
+		User changes = UserMapper.toEntity(request);
+		storedUser.setFullname(changes.getFullname());
+		storedUser.setNickname(changes.getNickname());
+		storedUser.setUsername(changes.getUsername());
+		storedUser.setPassword(changes.getPassword());
 
-		return userRepository.save(storedUser);
+		return UserMapper.toResponse(userRepository.save(storedUser));
 	}
 
 	public void delete(String uuid) {
