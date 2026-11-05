@@ -29,10 +29,15 @@ streamora/
 │   │   │   │   ├── Playlist.java
 │   │   │   │   ├── PlaylistFile.java
 │   │   │   │   └── User.java
-│   │   │   └── repository/
-│   │   │       ├── PlaylistFileRepository.java
-│   │   │       ├── PlaylistRepository.java
-│   │   │       └── UserRepository.java
+│   │   │   ├── repository/
+│   │   │   │   ├── PlaylistFileRepository.java
+│   │   │   │   ├── PlaylistRepository.java
+│   │   │   │   └── UserRepository.java
+│   │   │   └── service/
+│   │   │       ├── PlaylistFileService.java
+│   │   │       ├── PlaylistService.java
+│   │   │       ├── ResourceNotFoundException.java
+│   │   │       └── UserService.java
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       └── db/migration/
@@ -45,8 +50,12 @@ streamora/
 │           │   └── EntityMappingsTests.java
 │           ├── migration/
 │           │   └── MigrationFilesTests.java
-│           └── repository/
-│               └── RepositoryStructureTests.java
+│           ├── repository/
+│           │   └── RepositoryStructureTests.java
+│           └── service/
+│               ├── PlaylistFileServiceTests.java
+│               ├── PlaylistServiceTests.java
+│               └── UserServiceTests.java
 ├── .env.example
 ├── docker-compose.yml
 ├── Dockerfile
@@ -62,6 +71,7 @@ devem continuar fora do controle de versão.
 - `entity`: representa o modelo persistido e seus relacionamentos JPA.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.
 - `repository`: define as interfaces de acesso aos dados das entities.
+- `service`: concentra operações de negócio e coordena o acesso às repositories.
 - `resources/db/migration`: mantém o histórico executável do banco com Flyway.
 - `infrastructure`: contém configurações de serviços externos, como Liquidsoap
   e Icecast.
@@ -81,6 +91,8 @@ Os testes espelham a responsabilidade que validam no código principal:
 - `entity`: convenções e mapeamentos comuns das entities.
 - `migration`: convenções globais dos arquivos de migration.
 - `repository`: contratos estruturais das repositories.
+- `service`: comportamento unitário das operações de negócio, com repositories
+  isoladas por mocks.
 
 Testes futuros que dependam de banco devem ficar em
 `repository/integration`. Eles devem validar persistência e consultas contra

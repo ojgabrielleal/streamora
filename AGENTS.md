@@ -11,30 +11,11 @@ O streammora é idealizado para gerenciamento de web-rádio. O projeto foi ideal
 
 ## Estrutura do projeto
 
-```text
-streamora/
-├── src/                         # Código e recursos da aplicação Spring Boot
-│   ├── main/
-│   │   ├── java/com/streamora/streamora/
-│   │   └── resources/
-│   └── test/                    # Testes da aplicação
-├── infrastructure/              # Configurações de aplicações e serviços externos
-│   ├── liquidsoap/
-│   │   └── radio.liq
-│   ├── icecast/                 # Configurações do Icecast, quando necessárias
-│   └── pureftpd/                # Configurações do Pure-FTPd, quando necessárias
-├── specs/                        # Especificações, planos, tarefas e revisões
-├── Dockerfile                    # Build da aplicação Spring Boot
-├── docker-compose.yml            # Orquestração dos serviços
-├── .env.example                  # Modelo das variáveis de ambiente
-└── pom.xml                       # Configuração Maven da aplicação
-```
+Consulte `docs/project-structure.md` para conhecer a estrutura atual, as
+responsabilidades dos diretórios e a organização dos testes.
 
-- O código da aplicação principal deve permanecer em `src/`.
-- Pacotes `service` dentro de `src/main/java` representam serviços e regras da aplicação Spring.
-- Aplicações externas e seus arquivos de configuração devem ficar em `infrastructure/{nome-do-serviço}/`.
-- Arquivos de build e orquestração Docker compartilhados pelo projeto devem permanecer na raiz.
-- Dados persistentes e informações sensíveis não devem ser versionados; devem utilizar volumes Docker e variáveis do `.env`.
+Ao criar, mover ou remover componentes estruturais, atualize também esse
+documento.
 
 ## Fluxo de desenvolvimento
 1. Leia a especificação antes de iniciar.
