@@ -10,7 +10,6 @@ O streammora é idealizado para gerenciamento de web-rádio. O projeto foi ideal
 - Outras tecnologias: Liquidsoap, Icecast    
 
 ## Estrutura do projeto
-
 Consulte `docs/project-structure.md` para conhecer a estrutura atual, as
 responsabilidades dos diretórios e a organização dos testes.
 
