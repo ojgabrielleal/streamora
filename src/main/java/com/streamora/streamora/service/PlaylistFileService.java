@@ -48,10 +48,7 @@ public class PlaylistFileService {
 
 	public PlaylistFileResponseDTO update(String uuid, PlaylistFileRequestDTO request) {
 		PlaylistFile storedFile = findFileByUuid(uuid);
-		PlaylistFile changes = PlaylistFileMapper.toEntity(request);
-		storedFile.setType(changes.getType());
-		storedFile.setName(changes.getName());
-		storedFile.setPath(changes.getPath());
+		PlaylistFileMapper.toEntity(request, storedFile);
 
 		return PlaylistFileMapper.toResponse(playlistFileRepository.save(storedFile));
 	}

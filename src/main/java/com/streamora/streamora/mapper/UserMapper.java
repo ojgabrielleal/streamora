@@ -19,7 +19,10 @@ public final class UserMapper {
 	}
 
 	public static User toEntity(UserRequestDTO request) {
-		User user = new User();
+		return toEntity(request, new User());
+	}
+
+	public static User toEntity(UserRequestDTO request, User user) {
 		user.setFullname(request.fullname());
 		user.setNickname(request.nickname());
 		user.setUsername(request.username());

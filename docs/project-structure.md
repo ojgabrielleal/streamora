@@ -86,8 +86,8 @@ devem continuar fora do controle de versão.
 - `entity`: representa o modelo persistido e seus relacionamentos JPA.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.
 - `dto`: define os contratos imutáveis de entrada e saída da aplicação.
-- `mapper`: converte entities em DTOs de resposta e DTOs de entrada em novas
-  instâncias das entities existentes.
+- `mapper`: converte entities em DTOs de resposta e aplica DTOs de entrada em
+  entities novas ou existentes.
 - `repository`: define as interfaces de acesso aos dados das entities.
 - `service`: concentra operações de negócio e coordena o acesso às repositories.
 - `resources/db/migration`: mantém o histórico executável do banco com Flyway.

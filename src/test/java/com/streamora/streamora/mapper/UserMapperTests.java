@@ -44,4 +44,31 @@ class UserMapperTests {
 		assertThat(user.getUsername()).isEqualTo("username");
 		assertThat(user.getPassword()).isEqualTo("secret");
 	}
+
+	@Test
+	void mapsRequestToExistingEntityAndPreservesIdentity() {
+		User user = new User();
+		user.setId(1L);
+		user.setUuid("user-uuid");
+		user.setFullname("Old name");
+		user.setNickname("old nickname");
+		user.setUsername("old username");
+		user.setPassword("old password");
+		UserRequestDTO request = new UserRequestDTO(
+				"New name",
+				"new nickname",
+				"new username",
+				"new password"
+		);
+
+		User mappedUser = UserMapper.toEntity(request, user);
+
+		assertThat(mappedUser).isSameAs(user);
+		assertThat(mappedUser.getId()).isEqualTo(1L);
+		assertThat(mappedUser.getUuid()).isEqualTo("user-uuid");
+		assertThat(mappedUser.getFullname()).isEqualTo("New name");
+		assertThat(mappedUser.getNickname()).isEqualTo("new nickname");
+		assertThat(mappedUser.getUsername()).isEqualTo("new username");
+		assertThat(mappedUser.getPassword()).isEqualTo("new password");
+	}
 }

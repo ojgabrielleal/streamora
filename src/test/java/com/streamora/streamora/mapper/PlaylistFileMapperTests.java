@@ -56,6 +56,33 @@ class PlaylistFileMapperTests {
 		assertThat(playlistFile.getPlaylists()).isEmpty();
 	}
 
+	@Test
+	void mapsRequestToExistingEntityAndPreservesIdentityAndPlaylists() {
+		PlaylistFile playlistFile = new PlaylistFile();
+		playlistFile.setId(1L);
+		playlistFile.setUuid("file-uuid");
+		playlistFile.setType(PlaylistFileType.music);
+		playlistFile.setName("Old name");
+		playlistFile.setPath("old/path.mp3");
+		Playlist playlist = playlist("playlist-uuid");
+		playlistFile.getPlaylists().add(playlist);
+		PlaylistFileRequestDTO request = new PlaylistFileRequestDTO(
+				PlaylistFileType.jingle,
+				"New name",
+				"new/path.mp3"
+		);
+
+		PlaylistFile mappedFile = PlaylistFileMapper.toEntity(request, playlistFile);
+
+		assertThat(mappedFile).isSameAs(playlistFile);
+		assertThat(mappedFile.getId()).isEqualTo(1L);
+		assertThat(mappedFile.getUuid()).isEqualTo("file-uuid");
+		assertThat(mappedFile.getType()).isEqualTo(PlaylistFileType.jingle);
+		assertThat(mappedFile.getName()).isEqualTo("New name");
+		assertThat(mappedFile.getPath()).isEqualTo("new/path.mp3");
+		assertThat(mappedFile.getPlaylists()).containsExactly(playlist);
+	}
+
 	private Playlist playlist(String uuid) {
 		Playlist playlist = new Playlist();
 		playlist.setUuid(uuid);

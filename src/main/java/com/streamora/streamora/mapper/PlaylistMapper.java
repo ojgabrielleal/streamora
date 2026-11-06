@@ -22,7 +22,10 @@ public final class PlaylistMapper {
 	}
 
 	public static Playlist toEntity(PlaylistRequestDTO request) {
-		Playlist playlist = new Playlist();
+		return toEntity(request, new Playlist());
+	}
+
+	public static Playlist toEntity(PlaylistRequestDTO request, Playlist playlist) {
 		playlist.setName(request.name());
 
 		return playlist;

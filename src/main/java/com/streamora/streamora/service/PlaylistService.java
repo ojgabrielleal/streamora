@@ -41,8 +41,7 @@ public class PlaylistService {
 
 	public PlaylistResponseDTO update(String uuid, PlaylistRequestDTO request) {
 		Playlist storedPlaylist = findByUuid(uuid);
-		Playlist changes = PlaylistMapper.toEntity(request);
-		storedPlaylist.setName(changes.getName());
+		PlaylistMapper.toEntity(request, storedPlaylist);
 
 		return PlaylistMapper.toResponse(playlistRepository.save(storedPlaylist));
 	}

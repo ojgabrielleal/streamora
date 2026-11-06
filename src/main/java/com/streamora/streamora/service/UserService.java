@@ -41,11 +41,7 @@ public class UserService {
 
 	public UserResponseDTO update(String uuid, UserRequestDTO request) {
 		User storedUser = findByUuid(uuid);
-		User changes = UserMapper.toEntity(request);
-		storedUser.setFullname(changes.getFullname());
-		storedUser.setNickname(changes.getNickname());
-		storedUser.setUsername(changes.getUsername());
-		storedUser.setPassword(changes.getPassword());
+		UserMapper.toEntity(request, storedUser);
 
 		return UserMapper.toResponse(userRepository.save(storedUser));
 	}

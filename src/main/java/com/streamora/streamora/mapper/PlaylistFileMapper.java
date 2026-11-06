@@ -24,7 +24,10 @@ public final class PlaylistFileMapper {
 	}
 
 	public static PlaylistFile toEntity(PlaylistFileRequestDTO request) {
-		PlaylistFile playlistFile = new PlaylistFile();
+		return toEntity(request, new PlaylistFile());
+	}
+
+	public static PlaylistFile toEntity(PlaylistFileRequestDTO request, PlaylistFile playlistFile) {
 		playlistFile.setType(request.type());
 		playlistFile.setName(request.name());
 		playlistFile.setPath(request.path());
