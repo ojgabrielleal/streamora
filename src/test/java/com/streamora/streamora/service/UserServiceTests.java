@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.streamora.streamora.dto.UserRequestDTO;
 import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
+import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)

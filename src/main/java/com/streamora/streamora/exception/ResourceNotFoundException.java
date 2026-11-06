@@ -1,4 +1,4 @@
-package com.streamora.streamora.service;
+package com.streamora.streamora.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 

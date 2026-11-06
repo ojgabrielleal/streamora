@@ -40,6 +40,8 @@ streamora/
 │   │   │   │   ├── PlaylistFileMapper.java
 │   │   │   │   ├── PlaylistMapper.java
 │   │   │   │   └── UserMapper.java
+│   │   │   ├── exception/
+│   │   │   │   └── ResourceNotFoundException.java
 │   │   │   ├── repository/
 │   │   │   │   ├── PlaylistFileRepository.java
 │   │   │   │   ├── PlaylistRepository.java
@@ -47,7 +49,6 @@ streamora/
 │   │   │   └── service/
 │   │   │       ├── PlaylistFileService.java
 │   │   │       ├── PlaylistService.java
-│   │   │       ├── ResourceNotFoundException.java
 │   │   │       └── UserService.java
 │   │   └── resources/
 │   │       ├── application.properties
@@ -88,6 +89,7 @@ devem continuar fora do controle de versão.
 - `dto`: define os contratos imutáveis de entrada e saída da aplicação.
 - `mapper`: converte entities em DTOs de resposta e aplica DTOs de entrada em
   entities novas ou existentes.
+- `exception`: reúne exceções próprias da aplicação.
 - `repository`: define as interfaces de acesso aos dados das entities.
 - `service`: concentra operações de negócio e coordena o acesso às repositories.
 - `resources/db/migration`: mantém o histórico executável do banco com Flyway.

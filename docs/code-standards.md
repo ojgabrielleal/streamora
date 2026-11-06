@@ -6,6 +6,46 @@ consistência do código existente.
 
 ## Java
 
+### Operações com Stream
+
+Em operações com Stream, mantenha `stream()` na linha da origem e quebre a
+linha antes de cada operação encadeada.
+
+Correto:
+
+```java
+return playlistRepository.findAll().stream()
+	.map(playlist -> PlaylistMapper.toResponse(playlist))
+	.toList();
+```
+
+Evite:
+
+```java
+return playlistRepository.findAll().stream().map(
+		playlist -> PlaylistMapper.toResponse(playlist)
+).toList();
+```
+
+### Operações com Optional
+
+Ao encadear uma operação em um `Optional` retornado por outra chamada, quebre
+a linha antes da operação e use um nível adicional de recuo.
+
+Correto:
+
+```java
+return playlistRepository.findByUuid(uuid)
+	.orElseThrow(() -> new ResourceNotFoundException("Playlist", uuid));
+```
+
+Evite:
+
+```java
+return playlistRepository.findByUuid(uuid)
+		.orElseThrow(() -> new ResourceNotFoundException("Playlist", uuid));
+```
+
 ### Parênteses em múltiplas linhas
 
 Em chamadas ou declarações com parênteses distribuídos em várias linhas, o

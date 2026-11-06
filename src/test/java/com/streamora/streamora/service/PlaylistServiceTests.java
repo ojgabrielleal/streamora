@@ -18,6 +18,7 @@ import com.streamora.streamora.dto.PlaylistRequestDTO;
 import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.PlaylistFile;
+import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.repository.PlaylistRepository;
 
 @ExtendWith(MockitoExtension.class)

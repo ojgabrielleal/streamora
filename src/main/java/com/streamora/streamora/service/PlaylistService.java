@@ -8,24 +8,24 @@ import org.springframework.transaction.annotation.Transactional;
 import com.streamora.streamora.dto.PlaylistRequestDTO;
 import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
+import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.mapper.PlaylistMapper;
 import com.streamora.streamora.repository.PlaylistRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PlaylistService {
 
 	private final PlaylistRepository playlistRepository;
 
-	public PlaylistService(PlaylistRepository playlistRepository) {
-		this.playlistRepository = playlistRepository;
-	}
-
 	@Transactional(readOnly = true)
 	public List<PlaylistResponseDTO> index() {
 		return playlistRepository.findAll().stream()
-				.map(playlist -> PlaylistMapper.toResponse(playlist))
-				.toList();
+			.map(playlist -> PlaylistMapper.toResponse(playlist))
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -52,6 +52,6 @@ public class PlaylistService {
 
 	private Playlist findByUuid(String uuid) {
 		return playlistRepository.findByUuid(uuid)
-				.orElseThrow(() -> new ResourceNotFoundException("Playlist", uuid));
+			.orElseThrow(() -> new ResourceNotFoundException("Playlist", uuid));
 	}
 }

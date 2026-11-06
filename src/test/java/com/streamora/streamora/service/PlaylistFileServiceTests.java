@@ -19,6 +19,7 @@ import com.streamora.streamora.dto.PlaylistFileResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.PlaylistFile;
 import com.streamora.streamora.entity.type.PlaylistFileType;
+import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.repository.PlaylistFileRepository;
 import com.streamora.streamora.repository.PlaylistRepository;
 

@@ -8,24 +8,24 @@ import org.springframework.transaction.annotation.Transactional;
 import com.streamora.streamora.dto.UserRequestDTO;
 import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
+import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.mapper.UserMapper;
 import com.streamora.streamora.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
 
-	public UserService(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
-
 	@Transactional(readOnly = true)
 	public List<UserResponseDTO> index() {
 		return userRepository.findAll().stream()
-				.map(user -> UserMapper.toResponse(user))
-				.toList();
+			.map(user -> UserMapper.toResponse(user))
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -52,6 +52,6 @@ public class UserService {
 
 	private User findByUuid(String uuid) {
 		return userRepository.findByUuid(uuid)
-				.orElseThrow(() -> new ResourceNotFoundException("User", uuid));
+			.orElseThrow(() -> new ResourceNotFoundException("User", uuid));
 	}
 }

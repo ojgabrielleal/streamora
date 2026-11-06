@@ -9,30 +9,26 @@ import com.streamora.streamora.dto.PlaylistFileRequestDTO;
 import com.streamora.streamora.dto.PlaylistFileResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.PlaylistFile;
+import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.mapper.PlaylistFileMapper;
 import com.streamora.streamora.repository.PlaylistFileRepository;
 import com.streamora.streamora.repository.PlaylistRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PlaylistFileService {
 
 	private final PlaylistFileRepository playlistFileRepository;
 	private final PlaylistRepository playlistRepository;
 
-	public PlaylistFileService(
-			PlaylistFileRepository playlistFileRepository,
-			PlaylistRepository playlistRepository
-	) {
-		this.playlistFileRepository = playlistFileRepository;
-		this.playlistRepository = playlistRepository;
-	}
-
 	@Transactional(readOnly = true)
 	public List<PlaylistFileResponseDTO> index() {
 		return playlistFileRepository.findAll().stream()
-				.map(playlistFile -> PlaylistFileMapper.toResponse(playlistFile))
-				.toList();
+			.map(playlistFile -> PlaylistFileMapper.toResponse(playlistFile))
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
@@ -81,11 +77,11 @@ public class PlaylistFileService {
 
 	private PlaylistFile findFileByUuid(String uuid) {
 		return playlistFileRepository.findByUuid(uuid)
-				.orElseThrow(() -> new ResourceNotFoundException("PlaylistFile", uuid));
+			.orElseThrow(() -> new ResourceNotFoundException("PlaylistFile", uuid));
 	}
 
 	private Playlist findPlaylistByUuid(String uuid) {
 		return playlistRepository.findByUuid(uuid)
-				.orElseThrow(() -> new ResourceNotFoundException("Playlist", uuid));
+			.orElseThrow(() -> new ResourceNotFoundException("Playlist", uuid));
 	}
 }
