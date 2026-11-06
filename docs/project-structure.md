@@ -24,6 +24,8 @@ streamora/
 │   ├── main/
 │   │   ├── java/com/streamora/streamora/
 │   │   │   ├── StreamoraApplication.java
+│   │   │   ├── config/
+│   │   │   │   └── SecurityConfig.java
 │   │   │   ├── controller/
 │   │   │   │   ├── PlaylistController.java
 │   │   │   │   ├── PlaylistFileController.java
@@ -66,6 +68,8 @@ streamora/
 │           │   ├── PlaylistControllerTests.java
 │           │   ├── PlaylistFileControllerTests.java
 │           │   └── UserControllerTests.java
+│           ├── config/
+│           │   └── SecurityConfigTests.java
 │           ├── entity/
 │           │   └── EntityMappingsTests.java
 │           ├── factory/
@@ -98,6 +102,8 @@ devem continuar fora do controle de versão.
 ## Responsabilidades
 
 - `entity`: representa o modelo persistido e seus relacionamentos JPA.
+- `config`: centraliza configurações da aplicação, como a cadeia de filtros
+  do Spring Security.
 - `controller`: expõe os endpoints HTTP e delega cada operação diretamente ao
   service correspondente, sem tratar ou manipular dados.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.
@@ -123,6 +129,8 @@ ficar em `service`; endpoints HTTP, quando existirem, devem ficar em
 Os testes espelham a responsabilidade que validam no código principal:
 
 - `application`: inicialização e configuração da aplicação.
+- `config`: comportamento das configurações e integração com o contexto da
+  aplicação.
 - `controller`: contratos HTTP e delegação direta aos services isolados por
   mocks.
 - `entity`: convenções e mapeamentos comuns das entities.
