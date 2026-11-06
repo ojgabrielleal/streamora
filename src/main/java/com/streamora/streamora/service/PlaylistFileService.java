@@ -1,7 +1,6 @@
 package com.streamora.streamora.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +42,6 @@ public class PlaylistFileService {
 
 	public PlaylistFileResponseDTO store(PlaylistFileRequestDTO request) {
 		PlaylistFile playlistFile = PlaylistFileMapper.toEntity(request);
-		playlistFile.setUuid(UUID.randomUUID().toString());
 
 		return PlaylistFileMapper.toResponse(playlistFileRepository.save(playlistFile));
 	}

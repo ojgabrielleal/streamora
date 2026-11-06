@@ -54,11 +54,16 @@ class UserServiceTests {
 	void storesUser() {
 		UserRequestDTO request = request("Name");
 		when(userRepository.save(org.mockito.ArgumentMatchers.any(User.class)))
-				.thenAnswer(invocation -> invocation.getArgument(0));
+				.thenAnswer(invocation -> {
+					User user = invocation.getArgument(0);
+					assertThat(user.getUuid()).isNull();
+					user.setUuid("generated-by-persistence");
+					return user;
+				});
 
 		UserResponseDTO response = userService.store(request);
 
-		assertThat(response.uuid()).isNotBlank();
+		assertThat(response.uuid()).isEqualTo("generated-by-persistence");
 		assertThat(response.fullname()).isEqualTo("Name");
 	}
 

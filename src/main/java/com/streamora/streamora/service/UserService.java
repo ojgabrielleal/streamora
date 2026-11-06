@@ -1,7 +1,6 @@
 package com.streamora.streamora.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +35,6 @@ public class UserService {
 
 	public UserResponseDTO store(UserRequestDTO request) {
 		User user = UserMapper.toEntity(request);
-		user.setUuid(UUID.randomUUID().toString());
 
 		return UserMapper.toResponse(userRepository.save(user));
 	}

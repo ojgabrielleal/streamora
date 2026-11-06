@@ -2,6 +2,7 @@ package com.streamora.streamora.entity;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import com.streamora.streamora.entity.type.PlaylistFileType;
 
@@ -13,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,4 +46,9 @@ public class PlaylistFile {
 
 	@ManyToMany(mappedBy = "files")
 	private Set<Playlist> playlists = new HashSet<>();
+
+	@PrePersist
+	private void generateUuid() {
+		uuid = UUID.randomUUID().toString();
+	}
 }

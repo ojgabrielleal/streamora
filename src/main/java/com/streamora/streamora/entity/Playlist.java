@@ -2,6 +2,7 @@ package com.streamora.streamora.entity;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,4 +42,9 @@ public class Playlist {
 		inverseJoinColumns = @JoinColumn(name = "file_id")
 	)
 	private Set<PlaylistFile> files = new HashSet<>();
+
+	@PrePersist
+	private void generateUuid() {
+		uuid = UUID.randomUUID().toString();
+	}
 }

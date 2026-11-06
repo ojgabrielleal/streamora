@@ -59,11 +59,16 @@ class PlaylistFileServiceTests {
 	@Test
 	void storesFile() {
 		when(playlistFileRepository.save(org.mockito.ArgumentMatchers.any(PlaylistFile.class)))
-				.thenAnswer(invocation -> invocation.getArgument(0));
+				.thenAnswer(invocation -> {
+					PlaylistFile file = invocation.getArgument(0);
+					assertThat(file.getUuid()).isNull();
+					file.setUuid("generated-by-persistence");
+					return file;
+				});
 
 		PlaylistFileResponseDTO response = playlistFileService.store(request("File"));
 
-		assertThat(response.uuid()).isNotBlank();
+		assertThat(response.uuid()).isEqualTo("generated-by-persistence");
 		assertThat(response.name()).isEqualTo("File");
 	}
 

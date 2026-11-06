@@ -54,11 +54,16 @@ class PlaylistServiceTests {
 	@Test
 	void storesPlaylist() {
 		when(playlistRepository.save(org.mockito.ArgumentMatchers.any(Playlist.class)))
-				.thenAnswer(invocation -> invocation.getArgument(0));
+				.thenAnswer(invocation -> {
+					Playlist playlist = invocation.getArgument(0);
+					assertThat(playlist.getUuid()).isNull();
+					playlist.setUuid("generated-by-persistence");
+					return playlist;
+				});
 
 		PlaylistResponseDTO response = playlistService.store(new PlaylistRequestDTO("Playlist"));
 
-		assertThat(response.uuid()).isNotBlank();
+		assertThat(response.uuid()).isEqualTo("generated-by-persistence");
 		assertThat(response.name()).isEqualTo("Playlist");
 	}
 
