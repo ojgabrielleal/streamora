@@ -40,6 +40,8 @@ documento.
 - Evite duplicação, use o que já existe.
 - Utilize nomes claros para classes, métodos, variáveis e arquivos.
 - Siga as convenções da linguagem e do framework.
+- Use Lombok quando ele reduzir código repetitivo sem esconder regras de
+  negócio, seguindo os padrões já existentes no projeto.
 - Não faça refatorações desnecessárias fora do escopo de trabalho solicitado.
 
 ## Testes e validação

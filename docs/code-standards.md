@@ -70,6 +70,30 @@ private static final Map<Class<?>, Class<?>> REPOSITORIES = Map.of(
 		PlaylistFileRepository.class, PlaylistFile.class);
 ```
 
+### Parâmetros em métodos de controllers
+
+Quando um método de controller tiver exatamente dois parâmetros, mantenha toda a
+assinatura na mesma linha.
+
+Correto:
+
+```java
+public PlaylistFileResponseDTO addToPlaylist(@PathVariable String fileUuid, @PathVariable String playlistUuid) {
+	return playlistFileService.addToPlaylist(fileUuid, playlistUuid);
+}
+```
+
+Evite:
+
+```java
+public PlaylistFileResponseDTO addToPlaylist(
+	@PathVariable String fileUuid,
+	@PathVariable String playlistUuid
+) {
+	return playlistFileService.addToPlaylist(fileUuid, playlistUuid);
+}
+```
+
 ### DTOs com records
 
 Os DTOs devem ser declarados como records, e o nome da classe e do arquivo deve

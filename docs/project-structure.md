@@ -24,6 +24,10 @@ streamora/
 │   ├── main/
 │   │   ├── java/com/streamora/streamora/
 │   │   │   ├── StreamoraApplication.java
+│   │   │   ├── controller/
+│   │   │   │   ├── PlaylistController.java
+│   │   │   │   ├── PlaylistFileController.java
+│   │   │   │   └── UserController.java
 │   │   │   ├── entity/
 │   │   │   │   ├── type/
 │   │   │   │   ├── Playlist.java
@@ -58,6 +62,10 @@ streamora/
 │           ├── application/
 │           │   ├── ApplicationPropertiesTests.java
 │           │   └── StreamoraApplicationTests.java
+│           ├── controller/
+│           │   ├── PlaylistControllerTests.java
+│           │   ├── PlaylistFileControllerTests.java
+│           │   └── UserControllerTests.java
 │           ├── entity/
 │           │   └── EntityMappingsTests.java
 │           ├── migration/
@@ -85,6 +93,8 @@ devem continuar fora do controle de versão.
 ## Responsabilidades
 
 - `entity`: representa o modelo persistido e seus relacionamentos JPA.
+- `controller`: expõe os endpoints HTTP e delega cada operação diretamente ao
+  service correspondente, sem tratar ou manipular dados.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.
 - `dto`: define os contratos imutáveis de entrada e saída da aplicação.
 - `mapper`: converte entities em DTOs de resposta e aplica DTOs de entrada em
@@ -108,6 +118,8 @@ ficar em `service`; endpoints HTTP, quando existirem, devem ficar em
 Os testes espelham a responsabilidade que validam no código principal:
 
 - `application`: inicialização e configuração da aplicação.
+- `controller`: contratos HTTP e delegação direta aos services isolados por
+  mocks.
 - `entity`: convenções e mapeamentos comuns das entities.
 - `mapper`: conversão entre DTOs e entities, incluindo campos e
   relacionamentos expostos.
