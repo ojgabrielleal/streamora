@@ -1,7 +1,6 @@
 # Spec 004 - Criação das primeiras entities
 
 **Status:** concluida
-**Branch:** feature/004-criando-primeiras-entities
 
 ## Objetivo
 Criar as primeiras entities do projeto

@@ -1,7 +1,6 @@
 # Spec 007 - Criação DTOs e Mappers
 
 **Status:** Concluída
-**Branch:** feature/007-criando-dtos-e-mappers
 
 ## Objetivo
 Criar DTOs e mappers e aplicá-los aos services já existentes.

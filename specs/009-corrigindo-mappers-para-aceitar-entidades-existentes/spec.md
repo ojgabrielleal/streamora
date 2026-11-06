@@ -1,7 +1,6 @@
 # Spec 009 - Mappers aceitando entidades existentes
 
 **Status:** Finalizado
-**Branch:** feature/009-corrigindo-mappers-para-aceitar-entidades-existentes
 
 ## Objetivo
 Corrigir os mappers na propriedade `toEntity` para aceitar uma instancia existente ou criar uma nova atráves da lógica de sobrecarga 

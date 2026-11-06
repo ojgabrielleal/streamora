@@ -1,7 +1,6 @@
 # Spec 005 - Criação das primeiras repositories
 
 **Status:** Concluída
-**Branch:** feature/005-criando-primeiras-repositories
 
 ## Objetivo
 Criar as primeiras repositories do projeto

@@ -1,7 +1,6 @@
 # Spec 006 - Criação dos primeiros services
 
 **Status:** Concluída
-**Branch:** feature/006-criando-os-primeiros-services
 
 ## Objetivo
 Criar dos primeiros services do projeto

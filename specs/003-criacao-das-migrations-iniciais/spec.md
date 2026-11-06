@@ -1,7 +1,6 @@
 # Spec 003 - Criação das migrations iniciais
 
 **Status:** concluida
-**Branch:** main
 
 ## Objetivo
 Criar as primeiras migrations no projeto

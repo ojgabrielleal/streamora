@@ -1,7 +1,6 @@
 # Spec 008 - Geração de UUID automaticamente nas entities
 
 **Status:** Concluída
-**Branch:** feature/008-adicionando-geracao-de-uuid-automaticamente-nas-entities
 
 ## Objetivo
 Criar métodos privados nas entities para que a cada registro adicionado um UUID seja gerado automáticamente para aquele registro.
