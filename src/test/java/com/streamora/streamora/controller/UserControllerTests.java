@@ -6,9 +6,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,39 +23,77 @@ class UserControllerTests {
 	@Mock
 	private UserService userService;
 
+	@InjectMocks
 	private UserController userController;
-
-	@BeforeEach
-	void setUp() {
-		userController = new UserController(userService);
-	}
 
 	@Test
 	void usesUserPrefix() {
 		assertThat(UserController.class.getAnnotation(RequestMapping.class).value())
-				.containsExactly("/user");
+			.containsExactly("/user");
 	}
 
 	@Test
-	void delegatesCrudOperationsToService() {
-		UserRequestDTO request = new UserRequestDTO("Name", "nickname", "username", "password");
-		UserResponseDTO response = new UserResponseDTO("user-uuid", "Name", "nickname", "username");
-		List<UserResponseDTO> responses = List.of(response);
-		when(userService.index()).thenReturn(responses);
-		when(userService.show("user-uuid")).thenReturn(response);
-		when(userService.store(request)).thenReturn(response);
-		when(userService.update("user-uuid", request)).thenReturn(response);
+	void delegatesIndexToService() {
+		List<UserResponseDTO> userResponses = List.of(userResponse());
 
-		assertThat(userController.index()).isSameAs(responses);
-		assertThat(userController.show("user-uuid")).isSameAs(response);
-		assertThat(userController.store(request)).isSameAs(response);
-		assertThat(userController.update("user-uuid", request)).isSameAs(response);
-		userController.delete("user-uuid");
+		when(userService.index())
+			.thenReturn(userResponses);
+
+		assertThat(userController.index()).isSameAs(userResponses);
 
 		verify(userService).index();
+	}
+
+	@Test
+	void delegatesShowToService() {
+		UserResponseDTO userResponse = userResponse();
+
+		when(userService.show("user-uuid"))
+			.thenReturn(userResponse);
+
+		assertThat(userController.show("user-uuid")).isSameAs(userResponse);
+
 		verify(userService).show("user-uuid");
-		verify(userService).store(request);
-		verify(userService).update("user-uuid", request);
+	}
+
+	@Test
+	void delegatesStoreToService() {
+		UserRequestDTO userRequest = userRequest();
+		UserResponseDTO userResponse = userResponse();
+
+		when(userService.store(userRequest))
+			.thenReturn(userResponse);
+
+		assertThat(userController.store(userRequest)).isSameAs(userResponse);
+
+		verify(userService).store(userRequest);
+	}
+
+	@Test
+	void delegatesUpdateToService() {
+		UserRequestDTO userRequest = userRequest();
+		UserResponseDTO userResponse = userResponse();
+
+		when(userService.update("user-uuid", userRequest))
+			.thenReturn(userResponse);
+
+		assertThat(userController.update("user-uuid", userRequest)).isSameAs(userResponse);
+
+		verify(userService).update("user-uuid", userRequest);
+	}
+
+	@Test
+	void delegatesDeleteToService() {
+		userController.delete("user-uuid");
+
 		verify(userService).delete("user-uuid");
+	}
+
+	private UserRequestDTO userRequest() {
+		return new UserRequestDTO("Name", "nickname", "username", "password");
+	}
+
+	private UserResponseDTO userResponse() {
+		return new UserResponseDTO("user-uuid", "Name", "nickname", "username");
 	}
 }

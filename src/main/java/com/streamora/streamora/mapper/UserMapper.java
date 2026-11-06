@@ -18,15 +18,15 @@ public final class UserMapper {
 		);
 	}
 
-	public static User toEntity(UserRequestDTO request) {
-		return toEntity(request, new User());
+	public static User toEntity(UserRequestDTO userRequest) {
+		return toEntity(userRequest, new User());
 	}
 
-	public static User toEntity(UserRequestDTO request, User user) {
-		user.setFullname(request.fullname());
-		user.setNickname(request.nickname());
-		user.setUsername(request.username());
-		user.setPassword(request.password());
+	public static User toEntity(UserRequestDTO userRequest, User user) {
+		user.setFullname(userRequest.fullname());
+		user.setNickname(userRequest.nickname());
+		user.setUsername(userRequest.username());
+		user.setPassword(userRequest.password());
 
 		return user;
 	}

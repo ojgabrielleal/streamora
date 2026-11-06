@@ -36,15 +36,15 @@ public class PlaylistFileService {
 		return PlaylistFileMapper.toResponse(findFileByUuid(uuid));
 	}
 
-	public PlaylistFileResponseDTO store(PlaylistFileRequestDTO request) {
-		PlaylistFile playlistFile = PlaylistFileMapper.toEntity(request);
+	public PlaylistFileResponseDTO store(PlaylistFileRequestDTO playlistFileRequest) {
+		PlaylistFile playlistFileToPersist = PlaylistFileMapper.toEntity(playlistFileRequest);
 
-		return PlaylistFileMapper.toResponse(playlistFileRepository.save(playlistFile));
+		return PlaylistFileMapper.toResponse(playlistFileRepository.save(playlistFileToPersist));
 	}
 
-	public PlaylistFileResponseDTO update(String uuid, PlaylistFileRequestDTO request) {
+	public PlaylistFileResponseDTO update(String uuid, PlaylistFileRequestDTO playlistFileRequest) {
 		PlaylistFile storedFile = findFileByUuid(uuid);
-		PlaylistFileMapper.toEntity(request, storedFile);
+		PlaylistFileMapper.toEntity(playlistFileRequest, storedFile);
 
 		return PlaylistFileMapper.toResponse(playlistFileRepository.save(storedFile));
 	}

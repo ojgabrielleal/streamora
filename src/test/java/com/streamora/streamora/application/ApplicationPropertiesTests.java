@@ -16,7 +16,7 @@ class ApplicationPropertiesTests {
 	@BeforeAll
 	static void loadApplicationProperties() throws IOException {
 		try (InputStream input = ApplicationPropertiesTests.class.getClassLoader()
-				.getResourceAsStream("application.properties")) {
+			.getResourceAsStream("application.properties")) {
 			assertThat(input).isNotNull();
 			PROPERTIES.load(input);
 		}
@@ -25,17 +25,19 @@ class ApplicationPropertiesTests {
 	@Test
 	void configuresMySqlDatasourceWithEnvironmentVariables() {
 		assertThat(PROPERTIES)
-				.containsEntry("spring.datasource.url",
-						"jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}")
-				.containsEntry("spring.datasource.username", "${MYSQL_USER}")
-				.containsEntry("spring.datasource.password", "${MYSQL_PASSWORD}")
-				.containsEntry("spring.datasource.driver-class-name", "com.mysql.cj.jdbc.Driver");
+			.containsEntry(
+				"spring.datasource.url",
+				"jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}"
+			)
+			.containsEntry("spring.datasource.username", "${MYSQL_USER}")
+			.containsEntry("spring.datasource.password", "${MYSQL_PASSWORD}")
+			.containsEntry("spring.datasource.driver-class-name", "com.mysql.cj.jdbc.Driver");
 	}
 
 	@Test
 	void enablesFlywayWithItsDefaultMigrationLocation() {
 		assertThat(PROPERTIES)
-				.containsEntry("spring.flyway.enabled", "true")
-				.doesNotContainKey("spring.flyway.locations");
+			.containsEntry("spring.flyway.enabled", "true")
+			.doesNotContainKey("spring.flyway.locations");
 	}
 }

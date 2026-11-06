@@ -6,10 +6,25 @@ consistência do código existente.
 
 ## Java
 
+### Nomes de variáveis e parâmetros
+
+Use nomes substantivos que identifiquem o domínio e, quando relevante, o papel
+do valor no fluxo. Evite nomes genéricos como `changes`, `result`, `request`,
+`response`, `file`, `data` ou `item` quando houver um nome mais específico.
+Para DTOs, indique também a finalidade, como criação ou atualização.
+
+Prefira `userCreateRequest`, `playlistUpdateRequest`, `createdUser` e
+`playlistFileEntity`. Evite `createUser` para uma variável, pois esse nome
+descreve uma ação e sugere um método. Nomes curtos continuam aceitáveis quando
+forem termos próprios e inequívocos do domínio, como `uuid`.
+
 ### Operações com Stream
 
 Em operações com Stream, mantenha `stream()` na linha da origem e quebre a
-linha antes de cada operação encadeada.
+linha antes de cada operação encadeada. Cada operação deve usar exatamente um
+nível adicional de recuo em relação ao `return`. O conteúdo de uma lambda ou
+os argumentos de uma chamada quebrada devem usar mais um nível de recuo, sem
+adicionar tabulações extras.
 
 Correto:
 
@@ -25,6 +40,15 @@ Evite:
 return playlistRepository.findAll().stream().map(
 		playlist -> PlaylistMapper.toResponse(playlist)
 ).toList();
+```
+
+Quando a origem do encadeamento estiver em um método auxiliar, aplique o mesmo
+padrão:
+
+```java
+return indexes(quantity)
+	.mapToObj(index -> new PlaylistRequestDTO("Playlist " + index))
+	.toList();
 ```
 
 ### Operações com Optional
@@ -141,4 +165,87 @@ public static UserResponseDTO toResponse(User user) {
 		user.getUsername()
 	);
 }
+```
+
+### Organização dos testes
+
+Organize o corpo de cada teste em blocos de Arrange, Act e Assert separados por
+uma linha em branco, sem a necessidade de comentários para nomear as etapas.
+Quando o Arrange tiver responsabilidades diferentes, separe também os
+dados-base, a preparação específica do cenário e a configuração de mocks. Não
+use linhas em branco entre instruções que pertençam ao mesmo bloco e não deixe
+espaços ou tabulações em linhas vazias.
+
+Nos testes de controllers, mantenha os DTOs individuais juntos e separe por
+uma linha em branco a coleção derivada deles. Separe também uma chamada sem
+retorno, como `delete`, das asserções de retorno executadas antes dela. As
+verificações com `verify` permanecem em um bloco próprio ao final.
+
+Crie testes independentes por método público da classe sob teste, seja ela um
+controller, service, mapper, factory ou outro componente. Não agrupe métodos
+CRUD, associações ou operações diferentes no mesmo teste. Cada cenário deve
+configurar, executar e verificar somente um método principal. Sobrecargas podem
+ter cenários separados quando possuírem contratos ou comportamentos distintos.
+
+Um teste pode conter várias asserções e chamar métodos auxiliares de factories
+ou dos objetos retornados, desde que todas as verificações pertençam ao
+comportamento do único método principal sob teste.
+
+Correto:
+
+```java
+@Test
+void updatesNameAndPreservesIdentityAndFiles() {
+	Playlist storedPlaylist = PlaylistFactory.toEntity();
+	PlaylistFile file = PlaylistFileFactory.toEntity();
+
+	PlaylistRequestDTO changes = PlaylistFactory.toCreate(2).getLast();
+	Long originalId = storedPlaylist.getId();
+	storedPlaylist.getFiles().add(file);
+
+	when(playlistRepository.findByUuid(storedPlaylist.getUuid())).thenReturn(Optional.of(storedPlaylist));
+	when(playlistRepository.save(storedPlaylist)).thenReturn(storedPlaylist);
+
+	PlaylistResponseDTO updatedPlaylist = playlistService.update(storedPlaylist.getUuid(), changes);
+
+	assertThat(updatedPlaylist.uuid()).isEqualTo(storedPlaylist.getUuid());
+	assertThat(updatedPlaylist.name()).isEqualTo(changes.name());
+}
+```
+
+### Configuração de mocks com Mockito
+
+Em testes unitários com `MockitoExtension`, declare as dependências da classe
+sob teste com `@Mock` e a própria classe sob teste com `@InjectMocks`. Prefira
+essa injeção pelo Mockito em vez de instanciar manualmente a classe em um
+método `@BeforeEach`. Não use `@RequiredArgsConstructor` na classe de teste para
+essa finalidade.
+
+```java
+@Mock
+private PlaylistRepository playlistRepository;
+
+@InjectMocks
+private PlaylistService playlistService;
+```
+
+Nas configurações de mocks, mantenha `when(...)` em uma linha e inicie
+`thenReturn(...)`, `thenAnswer(...)` ou outra operação equivalente na linha
+seguinte, com um nível adicional de recuo. Quando houver mais de uma
+configuração, separe cada conjunto `when`/`then` por uma linha em branco.
+
+Correto:
+
+```java
+when(playlistRepository.findByUuid(playlist.getUuid()))
+	.thenReturn(Optional.of(playlist));
+
+when(playlistRepository.save(playlist))
+	.thenReturn(playlist);
+```
+
+Evite:
+
+```java
+when(playlistRepository.findByUuid(playlist.getUuid())).thenReturn(Optional.of(playlist));
 ```

@@ -7,9 +7,9 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,68 +25,109 @@ class PlaylistFileControllerTests {
 	@Mock
 	private PlaylistFileService playlistFileService;
 
+	@InjectMocks
 	private PlaylistFileController playlistFileController;
-
-	@BeforeEach
-	void setUp() {
-		playlistFileController = new PlaylistFileController(playlistFileService);
-	}
 
 	@Test
 	void usesPlaylistFilePrefix() {
 		assertThat(PlaylistFileController.class.getAnnotation(RequestMapping.class).value())
-				.containsExactly("/playlist-file");
+			.containsExactly("/playlist-file");
 	}
 
 	@Test
-	void delegatesCrudOperationsToService() {
-		PlaylistFileRequestDTO request = request();
-		PlaylistFileResponseDTO response = response();
-		List<PlaylistFileResponseDTO> responses = List.of(response);
-		when(playlistFileService.index()).thenReturn(responses);
-		when(playlistFileService.show("file-uuid")).thenReturn(response);
-		when(playlistFileService.store(request)).thenReturn(response);
-		when(playlistFileService.update("file-uuid", request)).thenReturn(response);
+	void delegatesIndexToService() {
+		List<PlaylistFileResponseDTO> playlistFileResponses = List.of(playlistFileResponse());
 
-		assertThat(playlistFileController.index()).isSameAs(responses);
-		assertThat(playlistFileController.show("file-uuid")).isSameAs(response);
-		assertThat(playlistFileController.store(request)).isSameAs(response);
-		assertThat(playlistFileController.update("file-uuid", request)).isSameAs(response);
-		playlistFileController.delete("file-uuid");
+		when(playlistFileService.index())
+			.thenReturn(playlistFileResponses);
+
+		assertThat(playlistFileController.index()).isSameAs(playlistFileResponses);
 
 		verify(playlistFileService).index();
+	}
+
+	@Test
+	void delegatesShowToService() {
+		PlaylistFileResponseDTO playlistFileResponse = playlistFileResponse();
+
+		when(playlistFileService.show("file-uuid"))
+			.thenReturn(playlistFileResponse);
+
+		assertThat(playlistFileController.show("file-uuid")).isSameAs(playlistFileResponse);
+
 		verify(playlistFileService).show("file-uuid");
-		verify(playlistFileService).store(request);
-		verify(playlistFileService).update("file-uuid", request);
+	}
+
+	@Test
+	void delegatesStoreToService() {
+		PlaylistFileRequestDTO playlistFileRequest = playlistFileRequest();
+		PlaylistFileResponseDTO playlistFileResponse = playlistFileResponse();
+
+		when(playlistFileService.store(playlistFileRequest))
+			.thenReturn(playlistFileResponse);
+
+		assertThat(playlistFileController.store(playlistFileRequest)).isSameAs(playlistFileResponse);
+
+		verify(playlistFileService).store(playlistFileRequest);
+	}
+
+	@Test
+	void delegatesUpdateToService() {
+		PlaylistFileRequestDTO playlistFileRequest = playlistFileRequest();
+		PlaylistFileResponseDTO playlistFileResponse = playlistFileResponse();
+
+		when(playlistFileService.update("file-uuid", playlistFileRequest))
+			.thenReturn(playlistFileResponse);
+
+		assertThat(playlistFileController.update("file-uuid", playlistFileRequest)).isSameAs(playlistFileResponse);
+
+		verify(playlistFileService).update("file-uuid", playlistFileRequest);
+	}
+
+	@Test
+	void delegatesDeleteToService() {
+		playlistFileController.delete("file-uuid");
+
 		verify(playlistFileService).delete("file-uuid");
 	}
 
 	@Test
-	void delegatesPlaylistAssociationsToService() {
-		PlaylistFileResponseDTO response = response();
-		when(playlistFileService.addToPlaylist("file-uuid", "playlist-uuid")).thenReturn(response);
-		when(playlistFileService.removeFromPlaylist("file-uuid", "playlist-uuid")).thenReturn(response);
+	void delegatesAddToPlaylistToService() {
+		PlaylistFileResponseDTO playlistFileResponse = playlistFileResponse();
+
+		when(playlistFileService.addToPlaylist("file-uuid", "playlist-uuid"))
+			.thenReturn(playlistFileResponse);
 
 		assertThat(playlistFileController.addToPlaylist("file-uuid", "playlist-uuid"))
-				.isSameAs(response);
-		assertThat(playlistFileController.removeFromPlaylist("file-uuid", "playlist-uuid"))
-				.isSameAs(response);
+			.isSameAs(playlistFileResponse);
 
 		verify(playlistFileService).addToPlaylist("file-uuid", "playlist-uuid");
+	}
+
+	@Test
+	void delegatesRemoveFromPlaylistToService() {
+		PlaylistFileResponseDTO playlistFileResponse = playlistFileResponse();
+
+		when(playlistFileService.removeFromPlaylist("file-uuid", "playlist-uuid"))
+			.thenReturn(playlistFileResponse);
+
+		assertThat(playlistFileController.removeFromPlaylist("file-uuid", "playlist-uuid"))
+			.isSameAs(playlistFileResponse);
+
 		verify(playlistFileService).removeFromPlaylist("file-uuid", "playlist-uuid");
 	}
 
-	private PlaylistFileRequestDTO request() {
+	private PlaylistFileRequestDTO playlistFileRequest() {
 		return new PlaylistFileRequestDTO(PlaylistFileType.music, "File", "/audio/file.mp3");
 	}
 
-	private PlaylistFileResponseDTO response() {
+	private PlaylistFileResponseDTO playlistFileResponse() {
 		return new PlaylistFileResponseDTO(
-				"file-uuid",
-				PlaylistFileType.music,
-				"File",
-				"/audio/file.mp3",
-				Set.of("playlist-uuid")
+			"file-uuid",
+			PlaylistFileType.music,
+			"File",
+			"/audio/file.mp3",
+			Set.of("playlist-uuid")
 		);
 	}
 }

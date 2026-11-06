@@ -68,6 +68,11 @@ streamora/
 │           │   └── UserControllerTests.java
 │           ├── entity/
 │           │   └── EntityMappingsTests.java
+│           ├── factory/
+│           │   ├── FactoriesTests.java
+│           │   ├── PlaylistFactory.java
+│           │   ├── PlaylistFileFactory.java
+│           │   └── UserFactory.java
 │           ├── migration/
 │           │   └── MigrationFilesTests.java
 │           ├── mapper/
@@ -121,6 +126,8 @@ Os testes espelham a responsabilidade que validam no código principal:
 - `controller`: contratos HTTP e delegação direta aos services isolados por
   mocks.
 - `entity`: convenções e mapeamentos comuns das entities.
+- `factory`: centraliza a criação de DTOs e entities fictícios reutilizados
+  pelos testes.
 - `mapper`: conversão entre DTOs e entities, incluindo campos e
   relacionamentos expostos.
 - `migration`: convenções globais dos arquivos de migration.

@@ -7,68 +7,56 @@ import org.junit.jupiter.api.Test;
 import com.streamora.streamora.dto.UserRequestDTO;
 import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
+import com.streamora.streamora.factory.UserFactory;
 
 class UserMapperTests {
 
 	@Test
 	void mapsEntityToResponseWithoutInternalIdOrPassword() {
-		User user = new User();
-		user.setId(1L);
-		user.setUuid("user-uuid");
-		user.setFullname("User Name");
-		user.setNickname("nickname");
-		user.setUsername("username");
-		user.setPassword("secret");
+		User user = UserFactory.toEntity();
 
 		UserResponseDTO response = UserMapper.toResponse(user);
 
-		assertThat(response.uuid()).isEqualTo("user-uuid");
-		assertThat(response.fullname()).isEqualTo("User Name");
-		assertThat(response.nickname()).isEqualTo("nickname");
-		assertThat(response.username()).isEqualTo("username");
+		assertThat(response.uuid()).isEqualTo(user.getUuid());
+		assertThat(response.fullname()).isEqualTo(user.getFullname());
+		assertThat(response.nickname()).isEqualTo(user.getNickname());
+		assertThat(response.username()).isEqualTo(user.getUsername());
 		assertThat(UserResponseDTO.class.getRecordComponents())
-				.extracting(component -> component.getName())
-				.doesNotContain("id", "password");
+			.extracting(component -> component.getName())
+			.doesNotContain("id", "password");
 	}
 
 	@Test
 	void mapsRequestToNewEntity() {
-		UserRequestDTO request = new UserRequestDTO("User Name", "nickname", "username", "secret");
+		UserRequestDTO request = UserFactory.toCreate();
 
 		User user = UserMapper.toEntity(request);
 
 		assertThat(user.getId()).isNull();
 		assertThat(user.getUuid()).isNull();
-		assertThat(user.getFullname()).isEqualTo("User Name");
-		assertThat(user.getNickname()).isEqualTo("nickname");
-		assertThat(user.getUsername()).isEqualTo("username");
-		assertThat(user.getPassword()).isEqualTo("secret");
+		assertThat(user.getFullname()).isEqualTo(request.fullname());
+		assertThat(user.getNickname()).isEqualTo(request.nickname());
+		assertThat(user.getUsername()).isEqualTo(request.username());
+		assertThat(user.getPassword()).isEqualTo(request.password());
 	}
 
 	@Test
 	void mapsRequestToExistingEntityAndPreservesIdentity() {
-		User user = new User();
-		user.setId(1L);
-		user.setUuid("user-uuid");
-		user.setFullname("Old name");
-		user.setNickname("old nickname");
-		user.setUsername("old username");
-		user.setPassword("old password");
-		UserRequestDTO request = new UserRequestDTO(
-				"New name",
-				"new nickname",
-				"new username",
-				"new password"
-		);
+		User user = UserFactory.toEntity();
+
+		Long originalId = user.getId();
+		String originalUuid = user.getUuid();
+
+		UserRequestDTO request = UserFactory.toCreate(2).getLast();
 
 		User mappedUser = UserMapper.toEntity(request, user);
 
 		assertThat(mappedUser).isSameAs(user);
-		assertThat(mappedUser.getId()).isEqualTo(1L);
-		assertThat(mappedUser.getUuid()).isEqualTo("user-uuid");
-		assertThat(mappedUser.getFullname()).isEqualTo("New name");
-		assertThat(mappedUser.getNickname()).isEqualTo("new nickname");
-		assertThat(mappedUser.getUsername()).isEqualTo("new username");
-		assertThat(mappedUser.getPassword()).isEqualTo("new password");
+		assertThat(mappedUser.getId()).isEqualTo(originalId);
+		assertThat(mappedUser.getUuid()).isEqualTo(originalUuid);
+		assertThat(mappedUser.getFullname()).isEqualTo(request.fullname());
+		assertThat(mappedUser.getNickname()).isEqualTo(request.nickname());
+		assertThat(mappedUser.getUsername()).isEqualTo(request.username());
+		assertThat(mappedUser.getPassword()).isEqualTo(request.password());
 	}
 }

@@ -2,71 +2,65 @@ package com.streamora.streamora.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.streamora.streamora.dto.PlaylistRequestDTO;
 import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.PlaylistFile;
+import com.streamora.streamora.factory.PlaylistFactory;
+import com.streamora.streamora.factory.PlaylistFileFactory;
 
 class PlaylistMapperTests {
 
 	@Test
 	void mapsEntityToResponseWithFileUuids() {
-		Playlist playlist = new Playlist();
-		playlist.setId(1L);
-		playlist.setUuid("playlist-uuid");
-		playlist.setName("Playlist");
-		PlaylistFile firstFile = file("first-file-uuid");
-		PlaylistFile secondFile = file("second-file-uuid");
-		playlist.getFiles().add(firstFile);
-		playlist.getFiles().add(secondFile);
+		Playlist playlist = PlaylistFactory.toEntity();
+		List<PlaylistFile> files = PlaylistFileFactory.toEntity(2);
+
+		playlist.getFiles().addAll(files);
 
 		PlaylistResponseDTO response = PlaylistMapper.toResponse(playlist);
 
-		assertThat(response.uuid()).isEqualTo("playlist-uuid");
-		assertThat(response.name()).isEqualTo("Playlist");
+		assertThat(response.uuid()).isEqualTo(playlist.getUuid());
+		assertThat(response.name()).isEqualTo(playlist.getName());
 		assertThat(response.fileUuids())
-				.containsExactlyInAnyOrder("first-file-uuid", "second-file-uuid");
+			.containsExactlyInAnyOrder(files.getFirst().getUuid(), files.getLast().getUuid());
 		assertThat(PlaylistResponseDTO.class.getRecordComponents())
-				.extracting(component -> component.getName())
-				.doesNotContain("id");
+			.extracting(component -> component.getName())
+			.doesNotContain("id");
 	}
 
 	@Test
 	void mapsRequestToNewEntity() {
-		Playlist playlist = PlaylistMapper.toEntity(new PlaylistRequestDTO("Playlist"));
+		PlaylistRequestDTO request = PlaylistFactory.toCreate();
+
+		Playlist playlist = PlaylistMapper.toEntity(request);
 
 		assertThat(playlist.getId()).isNull();
 		assertThat(playlist.getUuid()).isNull();
-		assertThat(playlist.getName()).isEqualTo("Playlist");
+		assertThat(playlist.getName()).isEqualTo(request.name());
 		assertThat(playlist.getFiles()).isEmpty();
 	}
 
 	@Test
 	void mapsRequestToExistingEntityAndPreservesIdentityAndFiles() {
-		Playlist playlist = new Playlist();
-		playlist.setId(1L);
-		playlist.setUuid("playlist-uuid");
-		playlist.setName("Old name");
-		PlaylistFile playlistFile = file("file-uuid");
-		playlist.getFiles().add(playlistFile);
+		Playlist playlist = PlaylistFactory.toEntity();
+		PlaylistFile playlistFile = PlaylistFileFactory.toEntity();
 
-		Playlist mappedPlaylist = PlaylistMapper.toEntity(
-				new PlaylistRequestDTO("New name"),
-				playlist
-		);
+		PlaylistRequestDTO request = PlaylistFactory.toCreate(2).getLast();
+		playlist.getFiles().add(playlistFile);
+		Long originalId = playlist.getId();
+		String originalUuid = playlist.getUuid();
+
+		Playlist mappedPlaylist = PlaylistMapper.toEntity(request, playlist);
 
 		assertThat(mappedPlaylist).isSameAs(playlist);
-		assertThat(mappedPlaylist.getId()).isEqualTo(1L);
-		assertThat(mappedPlaylist.getUuid()).isEqualTo("playlist-uuid");
-		assertThat(mappedPlaylist.getName()).isEqualTo("New name");
+		assertThat(mappedPlaylist.getId()).isEqualTo(originalId);
+		assertThat(mappedPlaylist.getUuid()).isEqualTo(originalUuid);
+		assertThat(mappedPlaylist.getName()).isEqualTo(request.name());
 		assertThat(mappedPlaylist.getFiles()).containsExactly(playlistFile);
-	}
-
-	private PlaylistFile file(String uuid) {
-		PlaylistFile file = new PlaylistFile();
-		file.setUuid(uuid);
-		return file;
 	}
 }

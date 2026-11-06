@@ -21,12 +21,12 @@ public final class PlaylistMapper {
 		);
 	}
 
-	public static Playlist toEntity(PlaylistRequestDTO request) {
-		return toEntity(request, new Playlist());
+	public static Playlist toEntity(PlaylistRequestDTO playlistRequest) {
+		return toEntity(playlistRequest, new Playlist());
 	}
 
-	public static Playlist toEntity(PlaylistRequestDTO request, Playlist playlist) {
-		playlist.setName(request.name());
+	public static Playlist toEntity(PlaylistRequestDTO playlistRequest, Playlist playlist) {
+		playlist.setName(playlistRequest.name());
 
 		return playlist;
 	}

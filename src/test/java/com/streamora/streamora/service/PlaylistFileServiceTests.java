@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -18,8 +18,9 @@ import com.streamora.streamora.dto.PlaylistFileRequestDTO;
 import com.streamora.streamora.dto.PlaylistFileResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.PlaylistFile;
-import com.streamora.streamora.entity.type.PlaylistFileType;
 import com.streamora.streamora.exception.ResourceNotFoundException;
+import com.streamora.streamora.factory.PlaylistFactory;
+import com.streamora.streamora.factory.PlaylistFileFactory;
 import com.streamora.streamora.repository.PlaylistFileRepository;
 import com.streamora.streamora.repository.PlaylistRepository;
 
@@ -32,154 +33,154 @@ class PlaylistFileServiceTests {
 	@Mock
 	private PlaylistRepository playlistRepository;
 
+	@InjectMocks
 	private PlaylistFileService playlistFileService;
-
-	@BeforeEach
-	void setUp() {
-		playlistFileService = new PlaylistFileService(playlistFileRepository, playlistRepository);
-	}
 
 	@Test
 	void indexesFiles() {
-		List<PlaylistFile> files = List.of(file("file-uuid", "File"));
-		when(playlistFileRepository.findAll()).thenReturn(files);
+		List<PlaylistFile> playlistFileEntities = PlaylistFileFactory.toEntity(2);
+
+		when(playlistFileRepository.findAll())
+			.thenReturn(playlistFileEntities);
 
 		assertThat(playlistFileService.index())
-				.extracting(PlaylistFileResponseDTO::uuid)
-				.containsExactly("file-uuid");
+			.extracting(playlistFile -> playlistFile.uuid())
+			.containsExactly(playlistFileEntities.getFirst().getUuid(), playlistFileEntities.getLast().getUuid());
 	}
 
 	@Test
 	void showsFileByUuid() {
-		PlaylistFile file = file("file-uuid", "File");
-		when(playlistFileRepository.findByUuid("file-uuid")).thenReturn(Optional.of(file));
+		PlaylistFile playlistFileEntity = PlaylistFileFactory.toEntity();
 
-		assertThat(playlistFileService.show("file-uuid").uuid()).isEqualTo("file-uuid");
+		when(playlistFileRepository.findByUuid(playlistFileEntity.getUuid()))
+			.thenReturn(Optional.of(playlistFileEntity));
+
+		assertThat(playlistFileService.show(playlistFileEntity.getUuid()).uuid()).isEqualTo(playlistFileEntity.getUuid());
 	}
 
 	@Test
 	void storesFile() {
+		PlaylistFileRequestDTO playlistFileCreateRequest = PlaylistFileFactory.toCreate();
+
 		when(playlistFileRepository.save(org.mockito.ArgumentMatchers.any(PlaylistFile.class)))
-				.thenAnswer(invocation -> {
-					PlaylistFile file = invocation.getArgument(0);
-					assertThat(file.getUuid()).isNull();
-					file.setUuid("generated-by-persistence");
-					return file;
-				});
+			.thenAnswer(invocation -> {
+				PlaylistFile playlistFileToPersist = invocation.getArgument(0);
+				assertThat(playlistFileToPersist.getUuid()).isNull();
+				playlistFileToPersist.setUuid("generated-by-persistence");
+				return playlistFileToPersist;
+			});
 
-		PlaylistFileResponseDTO response = playlistFileService.store(request("File"));
+		PlaylistFileResponseDTO createdPlaylistFile = playlistFileService.store(playlistFileCreateRequest);
 
-		assertThat(response.uuid()).isEqualTo("generated-by-persistence");
-		assertThat(response.name()).isEqualTo("File");
+		assertThat(createdPlaylistFile.uuid()).isEqualTo("generated-by-persistence");
+		assertThat(createdPlaylistFile.name()).isEqualTo(playlistFileCreateRequest.name());
 	}
 
 	@Test
 	void updatesEditableFieldsAndPreservesIdentityAndPlaylists() {
-		PlaylistFile storedFile = file("stored-uuid", "Old name");
-		storedFile.setId(1L);
-		storedFile.getPlaylists().add(playlist("playlist-uuid"));
-		PlaylistFileRequestDTO changes = new PlaylistFileRequestDTO(
-				PlaylistFileType.jingle,
-				"New name",
-				"new/path.mp3"
-		);
-		when(playlistFileRepository.findByUuid("stored-uuid")).thenReturn(Optional.of(storedFile));
-		when(playlistFileRepository.save(storedFile)).thenReturn(storedFile);
+		PlaylistFile storedFile = PlaylistFileFactory.toEntity();
+		Playlist playlist = PlaylistFactory.toEntity();
+		storedFile.getPlaylists().add(playlist);
+		PlaylistFileRequestDTO playlistFileUpdateRequest = PlaylistFileFactory.toCreate(2).getLast();
+		Long originalId = storedFile.getId();
 
-		PlaylistFileResponseDTO updatedFile = playlistFileService.update("stored-uuid", changes);
+		when(playlistFileRepository.findByUuid(storedFile.getUuid()))
+			.thenReturn(Optional.of(storedFile));
 
-		assertThat(updatedFile.uuid()).isEqualTo("stored-uuid");
-		assertThat(updatedFile.name()).isEqualTo("New name");
-		assertThat(updatedFile.type()).isEqualTo(PlaylistFileType.jingle);
-		assertThat(updatedFile.path()).isEqualTo("new/path.mp3");
-		assertThat(updatedFile.playlistUuids()).containsExactly("playlist-uuid");
-		assertThat(storedFile.getId()).isEqualTo(1L);
+		when(playlistFileRepository.save(storedFile))
+			.thenReturn(storedFile);
+
+		PlaylistFileResponseDTO updatedFile = playlistFileService.update(storedFile.getUuid(), playlistFileUpdateRequest);
+
+		assertThat(updatedFile.uuid()).isEqualTo(storedFile.getUuid());
+		assertThat(updatedFile.name()).isEqualTo(playlistFileUpdateRequest.name());
+		assertThat(updatedFile.type()).isEqualTo(playlistFileUpdateRequest.type());
+		assertThat(updatedFile.path()).isEqualTo(playlistFileUpdateRequest.path());
+		assertThat(updatedFile.playlistUuids()).containsExactly(playlist.getUuid());
+		assertThat(storedFile.getId()).isEqualTo(originalId);
 	}
 
 	@Test
 	void deletesFileByUuid() {
-		PlaylistFile file = file("file-uuid", "File");
-		when(playlistFileRepository.findByUuid("file-uuid")).thenReturn(Optional.of(file));
+		PlaylistFile file = PlaylistFileFactory.toEntity();
 
-		playlistFileService.delete("file-uuid");
+		when(playlistFileRepository.findByUuid(file.getUuid()))
+			.thenReturn(Optional.of(file));
+
+		playlistFileService.delete(file.getUuid());
 
 		verify(playlistFileRepository).delete(file);
 	}
 
 	@Test
 	void addsFileToPlaylistOnBothSides() {
-		PlaylistFile file = file("file-uuid", "File");
-		Playlist playlist = playlist("playlist-uuid");
-		when(playlistFileRepository.findByUuid("file-uuid")).thenReturn(Optional.of(file));
-		when(playlistRepository.findByUuid("playlist-uuid")).thenReturn(Optional.of(playlist));
+		PlaylistFile playlistFile = PlaylistFileFactory.toEntity();
+		Playlist playlist = PlaylistFactory.toEntity();
 
-		PlaylistFileResponseDTO result = playlistFileService.addToPlaylist("file-uuid", "playlist-uuid");
+		when(playlistFileRepository.findByUuid(playlistFile.getUuid()))
+			.thenReturn(Optional.of(playlistFile));
 
-		assertThat(result.uuid()).isEqualTo("file-uuid");
-		assertThat(result.playlistUuids()).containsExactly("playlist-uuid");
-		assertThat(playlist.getFiles()).containsExactly(file);
-		assertThat(file.getPlaylists()).containsExactly(playlist);
+		when(playlistRepository.findByUuid(playlist.getUuid()))
+			.thenReturn(Optional.of(playlist));
+
+		PlaylistFileResponseDTO associatedPlaylistFile = playlistFileService.addToPlaylist(
+			playlistFile.getUuid(), playlist.getUuid()
+		);
+
+		assertThat(associatedPlaylistFile.uuid()).isEqualTo(playlistFile.getUuid());
+		assertThat(associatedPlaylistFile.playlistUuids()).containsExactly(playlist.getUuid());
+		assertThat(playlist.getFiles()).containsExactly(playlistFile);
+		assertThat(playlistFile.getPlaylists()).containsExactly(playlist);
 		verify(playlistRepository).save(playlist);
 	}
 
 	@Test
 	void removesFileFromPlaylistOnBothSides() {
-		PlaylistFile file = file("file-uuid", "File");
-		Playlist playlist = playlist("playlist-uuid");
-		playlist.getFiles().add(file);
-		file.getPlaylists().add(playlist);
-		when(playlistFileRepository.findByUuid("file-uuid")).thenReturn(Optional.of(file));
-		when(playlistRepository.findByUuid("playlist-uuid")).thenReturn(Optional.of(playlist));
+		PlaylistFile playlistFile = PlaylistFileFactory.toEntity();
+		Playlist playlist = PlaylistFactory.toEntity();
+		playlist.getFiles().add(playlistFile);
+		playlistFile.getPlaylists().add(playlist);
 
-		PlaylistFileResponseDTO result = playlistFileService.removeFromPlaylist(
-				"file-uuid",
-				"playlist-uuid"
+		when(playlistFileRepository.findByUuid(playlistFile.getUuid()))
+			.thenReturn(Optional.of(playlistFile));
+
+		when(playlistRepository.findByUuid(playlist.getUuid()))
+			.thenReturn(Optional.of(playlist));
+
+		PlaylistFileResponseDTO dissociatedPlaylistFile = playlistFileService.removeFromPlaylist(
+			playlistFile.getUuid(),
+			playlist.getUuid()
 		);
 
-		assertThat(result.uuid()).isEqualTo("file-uuid");
-		assertThat(result.playlistUuids()).isEmpty();
+		assertThat(dissociatedPlaylistFile.uuid()).isEqualTo(playlistFile.getUuid());
+		assertThat(dissociatedPlaylistFile.playlistUuids()).isEmpty();
 		assertThat(playlist.getFiles()).isEmpty();
-		assertThat(file.getPlaylists()).isEmpty();
+		assertThat(playlistFile.getPlaylists()).isEmpty();
 		verify(playlistRepository).save(playlist);
 	}
 
 	@Test
 	void rejectsUnknownFile() {
-		when(playlistFileRepository.findByUuid("unknown")).thenReturn(Optional.empty());
+		when(playlistFileRepository.findByUuid("unknown"))
+			.thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> playlistFileService.show("unknown"))
-				.isInstanceOf(ResourceNotFoundException.class)
-				.hasMessage("PlaylistFile not found with uuid: unknown");
+			.isInstanceOf(ResourceNotFoundException.class)
+			.hasMessage("PlaylistFile not found with uuid: unknown");
 	}
 
 	@Test
 	void rejectsUnknownPlaylistWhenAddingFile() {
-		PlaylistFile file = file("file-uuid", "File");
-		when(playlistFileRepository.findByUuid("file-uuid")).thenReturn(Optional.of(file));
-		when(playlistRepository.findByUuid("unknown")).thenReturn(Optional.empty());
+		PlaylistFile file = PlaylistFileFactory.toEntity();
 
-		assertThatThrownBy(() -> playlistFileService.addToPlaylist("file-uuid", "unknown"))
-				.isInstanceOf(ResourceNotFoundException.class)
-				.hasMessage("Playlist not found with uuid: unknown");
-	}
+		when(playlistFileRepository.findByUuid(file.getUuid()))
+			.thenReturn(Optional.of(file));
 
-	private PlaylistFile file(String uuid, String name) {
-		PlaylistFile file = new PlaylistFile();
-		file.setUuid(uuid);
-		file.setType(PlaylistFileType.music);
-		file.setName(name);
-		file.setPath("path.mp3");
-		return file;
-	}
+		when(playlistRepository.findByUuid("unknown"))
+			.thenReturn(Optional.empty());
 
-	private Playlist playlist(String uuid) {
-		Playlist playlist = new Playlist();
-		playlist.setUuid(uuid);
-		playlist.setName("Playlist");
-		return playlist;
-	}
-
-	private PlaylistFileRequestDTO request(String name) {
-		return new PlaylistFileRequestDTO(PlaylistFileType.music, name, "path.mp3");
+		assertThatThrownBy(() -> playlistFileService.addToPlaylist(file.getUuid(), "unknown"))
+			.isInstanceOf(ResourceNotFoundException.class)
+			.hasMessage("Playlist not found with uuid: unknown");
 	}
 }

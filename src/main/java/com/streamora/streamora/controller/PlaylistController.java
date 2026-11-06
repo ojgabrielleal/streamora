@@ -35,13 +35,13 @@ public class PlaylistController {
 	}
 
 	@PostMapping
-	public PlaylistResponseDTO store(@RequestBody PlaylistRequestDTO request) {
-		return playlistService.store(request);
+	public PlaylistResponseDTO store(@RequestBody PlaylistRequestDTO playlistRequest) {
+		return playlistService.store(playlistRequest);
 	}
 
 	@PutMapping("/{uuid}")
-	public PlaylistResponseDTO update(@PathVariable String uuid, @RequestBody PlaylistRequestDTO request) {
-		return playlistService.update(uuid, request);
+	public PlaylistResponseDTO update(@PathVariable String uuid, @RequestBody PlaylistRequestDTO playlistRequest) {
+		return playlistService.update(uuid, playlistRequest);
 	}
 
 	@DeleteMapping("/{uuid}")

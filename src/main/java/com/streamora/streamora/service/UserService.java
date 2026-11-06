@@ -33,15 +33,15 @@ public class UserService {
 		return UserMapper.toResponse(findByUuid(uuid));
 	}
 
-	public UserResponseDTO store(UserRequestDTO request) {
-		User user = UserMapper.toEntity(request);
+	public UserResponseDTO store(UserRequestDTO userRequest) {
+		User userToPersist = UserMapper.toEntity(userRequest);
 
-		return UserMapper.toResponse(userRepository.save(user));
+		return UserMapper.toResponse(userRepository.save(userToPersist));
 	}
 
-	public UserResponseDTO update(String uuid, UserRequestDTO request) {
+	public UserResponseDTO update(String uuid, UserRequestDTO userRequest) {
 		User storedUser = findByUuid(uuid);
-		UserMapper.toEntity(request, storedUser);
+		UserMapper.toEntity(userRequest, storedUser);
 
 		return UserMapper.toResponse(userRepository.save(storedUser));
 	}

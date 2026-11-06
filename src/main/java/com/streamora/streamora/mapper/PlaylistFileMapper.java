@@ -23,14 +23,14 @@ public final class PlaylistFileMapper {
 		);
 	}
 
-	public static PlaylistFile toEntity(PlaylistFileRequestDTO request) {
-		return toEntity(request, new PlaylistFile());
+	public static PlaylistFile toEntity(PlaylistFileRequestDTO playlistFileRequest) {
+		return toEntity(playlistFileRequest, new PlaylistFile());
 	}
 
-	public static PlaylistFile toEntity(PlaylistFileRequestDTO request, PlaylistFile playlistFile) {
-		playlistFile.setType(request.type());
-		playlistFile.setName(request.name());
-		playlistFile.setPath(request.path());
+	public static PlaylistFile toEntity(PlaylistFileRequestDTO playlistFileRequest, PlaylistFile playlistFile) {
+		playlistFile.setType(playlistFileRequest.type());
+		playlistFile.setName(playlistFileRequest.name());
+		playlistFile.setPath(playlistFileRequest.path());
 
 		return playlistFile;
 	}

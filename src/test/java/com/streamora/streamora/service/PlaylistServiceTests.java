@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -19,6 +19,8 @@ import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.PlaylistFile;
 import com.streamora.streamora.exception.ResourceNotFoundException;
+import com.streamora.streamora.factory.PlaylistFactory;
+import com.streamora.streamora.factory.PlaylistFileFactory;
 import com.streamora.streamora.repository.PlaylistRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,91 +29,94 @@ class PlaylistServiceTests {
 	@Mock
 	private PlaylistRepository playlistRepository;
 
+	@InjectMocks
 	private PlaylistService playlistService;
-
-	@BeforeEach
-	void setUp() {
-		playlistService = new PlaylistService(playlistRepository);
-	}
 
 	@Test
 	void indexesPlaylists() {
-		List<Playlist> playlists = List.of(playlist("playlist-uuid", "Playlist"));
-		when(playlistRepository.findAll()).thenReturn(playlists);
+		List<Playlist> playlistEntities = PlaylistFactory.toEntity(2);
+
+		when(playlistRepository.findAll())
+			.thenReturn(playlistEntities);
 
 		assertThat(playlistService.index())
-				.extracting(PlaylistResponseDTO::uuid)
-				.containsExactly("playlist-uuid");
+			.extracting(playlist -> playlist.uuid())
+			.containsExactly(playlistEntities.getFirst().getUuid(), playlistEntities.getLast().getUuid());
 	}
 
 	@Test
 	void showsPlaylistByUuid() {
-		Playlist playlist = playlist("playlist-uuid", "Playlist");
-		when(playlistRepository.findByUuid("playlist-uuid")).thenReturn(Optional.of(playlist));
+		Playlist playlistEntity = PlaylistFactory.toEntity();
 
-		assertThat(playlistService.show("playlist-uuid").uuid()).isEqualTo("playlist-uuid");
+		when(playlistRepository.findByUuid(playlistEntity.getUuid()))
+			.thenReturn(Optional.of(playlistEntity));
+
+		assertThat(playlistService.show(playlistEntity.getUuid()).uuid()).isEqualTo(playlistEntity.getUuid());
 	}
 
 	@Test
 	void storesPlaylist() {
+		PlaylistRequestDTO playlistCreateRequest = PlaylistFactory.toCreate();
+
 		when(playlistRepository.save(org.mockito.ArgumentMatchers.any(Playlist.class)))
-				.thenAnswer(invocation -> {
-					Playlist playlist = invocation.getArgument(0);
-					assertThat(playlist.getUuid()).isNull();
-					playlist.setUuid("generated-by-persistence");
-					return playlist;
-				});
+			.thenAnswer(invocation -> {
+				Playlist playlistToPersist = invocation.getArgument(0);
+				assertThat(playlistToPersist.getUuid()).isNull();
+				playlistToPersist.setUuid("generated-by-persistence");
+				return playlistToPersist;
+			});
 
-		PlaylistResponseDTO response = playlistService.store(new PlaylistRequestDTO("Playlist"));
+		PlaylistResponseDTO createdPlaylist = playlistService.store(playlistCreateRequest);
 
-		assertThat(response.uuid()).isEqualTo("generated-by-persistence");
-		assertThat(response.name()).isEqualTo("Playlist");
+		assertThat(createdPlaylist.uuid()).isEqualTo("generated-by-persistence");
+		assertThat(createdPlaylist.name()).isEqualTo(playlistCreateRequest.name());
 	}
 
 	@Test
 	void updatesNameAndPreservesIdentityAndFiles() {
-		Playlist storedPlaylist = playlist("stored-uuid", "Old name");
-		storedPlaylist.setId(1L);
-		PlaylistFile file = new PlaylistFile();
-		file.setUuid("file-uuid");
-		storedPlaylist.getFiles().add(file);
-		when(playlistRepository.findByUuid("stored-uuid")).thenReturn(Optional.of(storedPlaylist));
-		when(playlistRepository.save(storedPlaylist)).thenReturn(storedPlaylist);
+		Playlist storedPlaylist = PlaylistFactory.toEntity();
+		PlaylistFile playlistFile = PlaylistFileFactory.toEntity();
+
+		PlaylistRequestDTO playlistUpdateRequest = PlaylistFactory.toCreate(2).getLast();
+		Long originalId = storedPlaylist.getId();
+		storedPlaylist.getFiles().add(playlistFile);
+
+		when(playlistRepository.findByUuid(storedPlaylist.getUuid()))
+			.thenReturn(Optional.of(storedPlaylist));
+
+		when(playlistRepository.save(storedPlaylist))
+			.thenReturn(storedPlaylist);
 
 		PlaylistResponseDTO updatedPlaylist = playlistService.update(
-				"stored-uuid",
-				new PlaylistRequestDTO("New name")
+			storedPlaylist.getUuid(),
+			playlistUpdateRequest
 		);
 
-		assertThat(updatedPlaylist.uuid()).isEqualTo("stored-uuid");
-		assertThat(updatedPlaylist.name()).isEqualTo("New name");
-		assertThat(updatedPlaylist.fileUuids()).containsExactly("file-uuid");
-		assertThat(storedPlaylist.getId()).isEqualTo(1L);
+		assertThat(updatedPlaylist.uuid()).isEqualTo(storedPlaylist.getUuid());
+		assertThat(updatedPlaylist.name()).isEqualTo(playlistUpdateRequest.name());
+		assertThat(updatedPlaylist.fileUuids()).containsExactly(playlistFile.getUuid());
+		assertThat(storedPlaylist.getId()).isEqualTo(originalId);
 	}
 
 	@Test
 	void deletesPlaylistByUuid() {
-		Playlist playlist = playlist("playlist-uuid", "Playlist");
-		when(playlistRepository.findByUuid("playlist-uuid")).thenReturn(Optional.of(playlist));
+		Playlist playlistToDelete = PlaylistFactory.toEntity();
 
-		playlistService.delete("playlist-uuid");
+		when(playlistRepository.findByUuid(playlistToDelete.getUuid()))
+			.thenReturn(Optional.of(playlistToDelete));
 
-		verify(playlistRepository).delete(playlist);
+		playlistService.delete(playlistToDelete.getUuid());
+
+		verify(playlistRepository).delete(playlistToDelete);
 	}
 
 	@Test
 	void rejectsUnknownPlaylist() {
-		when(playlistRepository.findByUuid("unknown")).thenReturn(Optional.empty());
+		when(playlistRepository.findByUuid("unknown"))
+			.thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> playlistService.show("unknown"))
-				.isInstanceOf(ResourceNotFoundException.class)
-				.hasMessage("Playlist not found with uuid: unknown");
-	}
-
-	private Playlist playlist(String uuid, String name) {
-		Playlist playlist = new Playlist();
-		playlist.setUuid(uuid);
-		playlist.setName(name);
-		return playlist;
+			.isInstanceOf(ResourceNotFoundException.class)
+			.hasMessage("Playlist not found with uuid: unknown");
 	}
 }

@@ -17,9 +17,9 @@ import com.streamora.streamora.entity.User;
 class RepositoryStructureTests {
 
 	private static final Map<Class<?>, Class<?>> REPOSITORIES = Map.of(
-			UserRepository.class, User.class,
-			PlaylistRepository.class, Playlist.class,
-			PlaylistFileRepository.class, PlaylistFile.class
+		UserRepository.class, User.class,
+		PlaylistRepository.class, Playlist.class,
+		PlaylistFileRepository.class, PlaylistFile.class
 	);
 
 	@Test

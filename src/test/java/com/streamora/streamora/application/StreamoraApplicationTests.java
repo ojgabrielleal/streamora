@@ -10,12 +10,13 @@ import com.streamora.streamora.repository.PlaylistRepository;
 import com.streamora.streamora.repository.UserRepository;
 
 @SpringBootTest(
-		classes = StreamoraApplication.class,
-		properties = {
-			"spring.autoconfigure.exclude="
-					+ "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,"
-					+ "org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration"
-		})
+	classes = StreamoraApplication.class,
+	properties = {
+		"spring.autoconfigure.exclude="
+			+ "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,"
+			+ "org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration"
+	}
+)
 class StreamoraApplicationTests {
 
 	@MockitoBean

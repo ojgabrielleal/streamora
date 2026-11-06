@@ -35,13 +35,13 @@ public class UserController {
 	}
 
 	@PostMapping
-	public UserResponseDTO store(@RequestBody UserRequestDTO request) {
-		return userService.store(request);
+	public UserResponseDTO store(@RequestBody UserRequestDTO userRequest) {
+		return userService.store(userRequest);
 	}
 
 	@PutMapping("/{uuid}")
-	public UserResponseDTO update(@PathVariable String uuid, @RequestBody UserRequestDTO request) {
-		return userService.update(uuid, request);
+	public UserResponseDTO update(@PathVariable String uuid, @RequestBody UserRequestDTO userRequest) {
+		return userService.update(uuid, userRequest);
 	}
 
 	@DeleteMapping("/{uuid}")

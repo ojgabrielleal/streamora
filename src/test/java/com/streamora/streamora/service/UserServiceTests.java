@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -18,6 +18,7 @@ import com.streamora.streamora.dto.UserRequestDTO;
 import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.exception.ResourceNotFoundException;
+import com.streamora.streamora.factory.UserFactory;
 import com.streamora.streamora.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,101 +27,90 @@ class UserServiceTests {
 	@Mock
 	private UserRepository userRepository;
 
+	@InjectMocks
 	private UserService userService;
-
-	@BeforeEach
-	void setUp() {
-		userService = new UserService(userRepository);
-	}
 
 	@Test
 	void indexesUsers() {
-		List<User> users = List.of(user("user-uuid"));
-		when(userRepository.findAll()).thenReturn(users);
+		List<User> userEntities = UserFactory.toEntity(2);
+
+		when(userRepository.findAll())
+			.thenReturn(userEntities);
 
 		assertThat(userService.index())
-				.extracting(UserResponseDTO::uuid)
-				.containsExactly("user-uuid");
+			.extracting(user -> user.uuid())
+			.containsExactly(userEntities.getFirst().getUuid(), userEntities.getLast().getUuid());
 	}
 
 	@Test
 	void showsUserByUuid() {
-		User user = user("user-uuid");
-		when(userRepository.findByUuid("user-uuid")).thenReturn(Optional.of(user));
+		User userEntity = UserFactory.toEntity();
 
-		assertThat(userService.show("user-uuid").uuid()).isEqualTo("user-uuid");
+		when(userRepository.findByUuid(userEntity.getUuid()))
+			.thenReturn(Optional.of(userEntity));
+
+		assertThat(userService.show(userEntity.getUuid()).uuid()).isEqualTo(userEntity.getUuid());
 	}
 
 	@Test
 	void storesUser() {
-		UserRequestDTO request = request("Name");
+		UserRequestDTO userCreateRequest = UserFactory.toCreate();
+
 		when(userRepository.save(org.mockito.ArgumentMatchers.any(User.class)))
-				.thenAnswer(invocation -> {
-					User user = invocation.getArgument(0);
-					assertThat(user.getUuid()).isNull();
-					user.setUuid("generated-by-persistence");
-					return user;
-				});
+			.thenAnswer(invocation -> {
+				User userToPersist = invocation.getArgument(0);
+				assertThat(userToPersist.getUuid()).isNull();
+				userToPersist.setUuid("generated-by-persistence");
+				return userToPersist;
+			});
 
-		UserResponseDTO response = userService.store(request);
+		UserResponseDTO createdUser = userService.store(userCreateRequest);
 
-		assertThat(response.uuid()).isEqualTo("generated-by-persistence");
-		assertThat(response.fullname()).isEqualTo("Name");
+		assertThat(createdUser.uuid()).isEqualTo("generated-by-persistence");
+		assertThat(createdUser.fullname()).isEqualTo(userCreateRequest.fullname());
 	}
 
 	@Test
 	void updatesEditableFieldsAndPreservesIdentity() {
-		User storedUser = user("stored-uuid");
-		storedUser.setId(1L);
-		UserRequestDTO changes = new UserRequestDTO(
-				"New name",
-				"new nickname",
-				"new username",
-				"new password"
-		);
-		when(userRepository.findByUuid("stored-uuid")).thenReturn(Optional.of(storedUser));
-		when(userRepository.save(storedUser)).thenReturn(storedUser);
+		User storedUser = UserFactory.toEntity();
+		UserRequestDTO userUpdateRequest = UserFactory.toCreate(2).getLast();
+		Long originalId = storedUser.getId();
 
-		UserResponseDTO updatedUser = userService.update("stored-uuid", changes);
+		when(userRepository.findByUuid(storedUser.getUuid()))
+			.thenReturn(Optional.of(storedUser));
 
-		assertThat(updatedUser.uuid()).isEqualTo("stored-uuid");
-		assertThat(updatedUser.fullname()).isEqualTo("New name");
-		assertThat(updatedUser.nickname()).isEqualTo("new nickname");
-		assertThat(updatedUser.username()).isEqualTo("new username");
-		assertThat(storedUser.getId()).isEqualTo(1L);
-		assertThat(storedUser.getPassword()).isEqualTo("new password");
+		when(userRepository.save(storedUser))
+			.thenReturn(storedUser);
+
+		UserResponseDTO updatedUser = userService.update(storedUser.getUuid(), userUpdateRequest);
+
+		assertThat(updatedUser.uuid()).isEqualTo(storedUser.getUuid());
+		assertThat(updatedUser.fullname()).isEqualTo(userUpdateRequest.fullname());
+		assertThat(updatedUser.nickname()).isEqualTo(userUpdateRequest.nickname());
+		assertThat(updatedUser.username()).isEqualTo(userUpdateRequest.username());
+		assertThat(storedUser.getId()).isEqualTo(originalId);
+		assertThat(storedUser.getPassword()).isEqualTo(userUpdateRequest.password());
 	}
 
 	@Test
 	void deletesUserByUuid() {
-		User user = user("user-uuid");
-		when(userRepository.findByUuid("user-uuid")).thenReturn(Optional.of(user));
+		User userToDelete = UserFactory.toEntity();
 
-		userService.delete("user-uuid");
+		when(userRepository.findByUuid(userToDelete.getUuid()))
+			.thenReturn(Optional.of(userToDelete));
 
-		verify(userRepository).delete(user);
+		userService.delete(userToDelete.getUuid());
+
+		verify(userRepository).delete(userToDelete);
 	}
 
 	@Test
 	void rejectsUnknownUser() {
-		when(userRepository.findByUuid("unknown")).thenReturn(Optional.empty());
+		when(userRepository.findByUuid("unknown"))
+			.thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> userService.show("unknown"))
-				.isInstanceOf(ResourceNotFoundException.class)
-				.hasMessage("User not found with uuid: unknown");
-	}
-
-	private User user(String uuid) {
-		User user = new User();
-		user.setUuid(uuid);
-		user.setFullname("Name");
-		user.setNickname("nickname");
-		user.setUsername("username");
-		user.setPassword("password");
-		return user;
-	}
-
-	private UserRequestDTO request(String fullname) {
-		return new UserRequestDTO(fullname, "nickname", "username", "password");
+			.isInstanceOf(ResourceNotFoundException.class)
+			.hasMessage("User not found with uuid: unknown");
 	}
 }
