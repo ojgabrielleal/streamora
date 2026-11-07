@@ -96,8 +96,39 @@ private static final Map<Class<?>, Class<?>> REPOSITORIES = Map.of(
 
 ### Parâmetros em métodos de controllers
 
-Quando um método de controller tiver exatamente dois parâmetros, mantenha toda a
-assinatura na mesma linha.
+Quando um parâmetro de controller possuir anotações do Swagger e do Spring,
+declare primeiro a anotação de documentação do Swagger e depois a anotação
+funcional do Spring. Mantenha todas as anotações imediatamente antes do
+parâmetro ao qual pertencem.
+
+Correto:
+
+```java
+public PlaylistResponseDTO update(
+	@Parameter(description = "UUID da playlist")
+	@PathVariable String uuid,
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Novos dados da playlist")
+	@RequestBody PlaylistRequestDTO playlistRequest
+) {
+	return playlistService.update(uuid, playlistRequest);
+}
+```
+
+Evite:
+
+```java
+public PlaylistResponseDTO update(
+	@PathVariable String uuid,
+	@Parameter(description = "UUID da playlist")
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Novos dados da playlist")
+	@RequestBody PlaylistRequestDTO playlistRequest
+) {
+	return playlistService.update(uuid, playlistRequest);
+}
+```
+
+Quando um método de controller tiver exatamente dois parâmetros sem anotações de
+documentação em linhas próprias, mantenha toda a assinatura na mesma linha.
 
 Correto:
 

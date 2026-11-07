@@ -25,6 +25,7 @@ streamora/
 │   │   ├── java/com/streamora/streamora/
 │   │   │   ├── StreamoraApplication.java
 │   │   │   ├── config/
+│   │   │   │   ├── OpenApiConfig.java
 │   │   │   │   └── SecurityConfig.java
 │   │   │   ├── controller/
 │   │   │   │   ├── PlaylistController.java
@@ -69,6 +70,7 @@ streamora/
 │           │   ├── PlaylistFileControllerTests.java
 │           │   └── UserControllerTests.java
 │           ├── config/
+│           │   ├── OpenApiDocumentationTests.java
 │           │   └── SecurityConfigTests.java
 │           ├── entity/
 │           │   └── EntityMappingsTests.java
@@ -103,7 +105,7 @@ devem continuar fora do controle de versão.
 
 - `entity`: representa o modelo persistido e seus relacionamentos JPA.
 - `config`: centraliza configurações da aplicação, como a cadeia de filtros
-  do Spring Security.
+  do Spring Security e os metadados da documentação OpenAPI.
 - `controller`: expõe os endpoints HTTP e delega cada operação diretamente ao
   service correspondente, sem tratar ou manipular dados.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.

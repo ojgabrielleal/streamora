@@ -39,17 +39,17 @@ class SecurityConfigTests {
 	}
 
 	@Test
-	void permitsAnonymousRequests() throws Exception {
+	void protectsApplicationEndpointsFromAnonymousRequests() throws Exception {
 		when(userService.index()).thenReturn(List.of());
 
 		mockMvc.perform(get("/user"))
-			.andExpect(status().isOk());
+			.andExpect(status().isForbidden());
 	}
 
 	@Test
 	void doesNotExposeAutomaticLoginForm() throws Exception {
 		mockMvc.perform(get("/login"))
-			.andExpect(status().isNotFound());
+			.andExpect(status().isForbidden());
 	}
 }
 

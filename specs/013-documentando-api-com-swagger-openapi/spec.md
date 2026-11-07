@@ -1,6 +1,6 @@
 # Spec 013 - Documentando a API com Swagger e OpenAPI
 
-**Status:** Pendente
+**Status:** Concluída
 
 ## Objetivo
 
@@ -12,7 +12,8 @@ OpenAPI e Swagger UI.
 - Utilizar o Springdoc OpenAPI para gerar a especificação OpenAPI da aplicação.
 - Disponibilizar a especificação OpenAPI no formato JSON.
 - Disponibilizar a interface Swagger UI para consulta e execução dos endpoints.
-- Configurar na documentação o título, a descrição e a versão da API na pasta `src/main/java/streamora/streamora/config`
+- Configurar na documentação o título, a descrição e a versão da API na
+  pasta `src/main/java/com/streamora/streamora/config`.
 - Documentar os endpoints dos controllers de usuários, playlists e arquivos de
   playlist.
 - Organizar os endpoints documentados por recurso.
@@ -21,29 +22,45 @@ OpenAPI e Swagger UI.
 - Documentar os DTOs utilizados como contratos de entrada e saída da API.
 - Permitir o acesso aos endpoints da especificação OpenAPI e do Swagger UI sem
   autenticação.
+- Manter público somente o método HTTP `GET` nos caminhos necessários à
+  documentação: `/v3/api-docs`, `/v3/api-docs/**`, `/swagger-ui.html` e
+  `/swagger-ui/**`.
+- Exigir autenticação para outros métodos HTTP, inclusive quando utilizarem os
+  caminhos públicos da documentação.
+- Exigir autenticação para qualquer outra requisição da aplicação.
 - Manter inalterados os caminhos, os verbos HTTP e o comportamento dos
   endpoints existentes.
 
 ## Critérios de aceite
 
-- [ ] A especificação OpenAPI pode ser consultada em formato JSON.
-- [ ] O Swagger UI pode ser acessado e carrega a especificação da API sem
+- [x] A especificação OpenAPI pode ser consultada em formato JSON.
+- [x] O Swagger UI pode ser acessado e carrega a especificação da API sem
   erros.
-- [ ] Os endpoints de documentação podem ser acessados sem autenticação.
-- [ ] A documentação apresenta o título, a descrição e a versão da API
+- [x] Os endpoints de documentação podem ser acessados sem autenticação.
+- [x] Somente requisições `GET` aos caminhos da documentação são permitidas
+  sem autenticação.
+- [x] Requisições sem autenticação para qualquer caminho que não pertença à
+  documentação são bloqueadas pelo Spring Security.
+- [x] Nenhum recurso auxiliar necessário para carregar o Swagger UI exige
+  autenticação.
+- [x] A documentação apresenta o título, a descrição e a versão da API
   Streamora.
-- [ ] Todos os endpoints de usuários, playlists e arquivos de playlist estão
+- [x] Todos os endpoints de usuários, playlists e arquivos de playlist estão
   documentados e organizados por recurso.
-- [ ] Os parâmetros, os corpos das requisições, as respostas e os DTOs estão
+- [x] Os parâmetros, os corpos das requisições, as respostas e os DTOs estão
   representados corretamente na especificação OpenAPI.
-- [ ] É possível executar os endpoints documentados por meio do Swagger UI.
-- [ ] Os contratos e o comportamento dos endpoints existentes permanecem
+- [x] O Swagger UI permite enviar requisições aos endpoints documentados e
+  exibe a resposta do servidor, mantendo o bloqueio quando não houver um
+  usuário autenticado.
+- [x] Os contratos e o comportamento dos endpoints existentes permanecem
   inalterados.
-- [ ] Os testes existentes continuam passando e o projeto compila com sucesso.
+- [x] Os testes existentes continuam passando e o projeto compila com sucesso.
 
 ## Fora do escopo
 
 - Criar ou alterar endpoints da API.
 - Alterar regras de negócio, services, repositories, entities ou migrations.
-- Implementar autenticação ou autorização para os endpoints da aplicação.
+- Implementar um mecanismo de autenticação, cadastro de credenciais, papéis ou
+  permissões; esta spec somente define quais rotas são públicas e quais exigem
+  um usuário autenticado.
 - Alterar versões de Java, Spring Boot ou de dependências existentes.

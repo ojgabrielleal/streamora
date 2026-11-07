@@ -15,37 +15,73 @@ import com.streamora.streamora.dto.PlaylistRequestDTO;
 import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.service.PlaylistService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/playlist")
 @RequiredArgsConstructor
+@Tag(name = "Playlists", description = "Gerenciamento de playlists")
 public class PlaylistController {
 
 	private final PlaylistService playlistService;
 
 	@GetMapping
+	@Operation(summary = "Listar playlists")
+	@ApiResponse(
+		responseCode = "200",
+		description = "Playlists encontradas",
+		content = @Content(array = @ArraySchema(schema = @Schema(implementation = PlaylistResponseDTO.class)))
+	)
 	public List<PlaylistResponseDTO> index() {
 		return playlistService.index();
 	}
 
 	@GetMapping("/{uuid}")
-	public PlaylistResponseDTO show(@PathVariable String uuid) {
+	@Operation(summary = "Consultar playlist")
+	@ApiResponse(responseCode = "200", description = "Playlist encontrada")
+	public PlaylistResponseDTO show(
+		@Parameter(description = "UUID da playlist", example = "550e8400-e29b-41d4-a716-446655440000")
+		@PathVariable String uuid
+	) {
 		return playlistService.show(uuid);
 	}
 
 	@PostMapping
-	public PlaylistResponseDTO store(@RequestBody PlaylistRequestDTO playlistRequest) {
+	@Operation(summary = "Criar playlist")
+	@ApiResponse(responseCode = "200", description = "Playlist criada")
+	public PlaylistResponseDTO store(
+		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dados da playlist", required = true)
+		@RequestBody PlaylistRequestDTO playlistRequest
+	) {
 		return playlistService.store(playlistRequest);
 	}
 
 	@PutMapping("/{uuid}")
-	public PlaylistResponseDTO update(@PathVariable String uuid, @RequestBody PlaylistRequestDTO playlistRequest) {
+	@Operation(summary = "Atualizar playlist")
+	@ApiResponse(responseCode = "200", description = "Playlist atualizada")
+	public PlaylistResponseDTO update(
+		@Parameter(description = "UUID da playlist", example = "550e8400-e29b-41d4-a716-446655440000")
+		@PathVariable String uuid,
+		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Novos dados da playlist", required = true)
+		@RequestBody PlaylistRequestDTO playlistRequest
+	) {
 		return playlistService.update(uuid, playlistRequest);
 	}
 
 	@DeleteMapping("/{uuid}")
-	public void delete(@PathVariable String uuid) {
+	@Operation(summary = "Excluir playlist")
+	@ApiResponse(responseCode = "200", description = "Playlist excluída")
+	public void delete(
+		@Parameter(description = "UUID da playlist", example = "550e8400-e29b-41d4-a716-446655440000")
+		@PathVariable String uuid
+	) {
 		playlistService.delete(uuid);
 	}
 }
