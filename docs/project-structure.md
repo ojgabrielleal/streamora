@@ -48,6 +48,8 @@ streamora/
 │   │   │   │   ├── PlaylistFileMapper.java
 │   │   │   │   ├── PlaylistMapper.java
 │   │   │   │   └── UserMapper.java
+│   │   │   ├── filter/
+│   │   │   │   └── JwtAuthenticationFilter.java
 │   │   │   ├── exception/
 │   │   │   │   └── ResourceNotFoundException.java
 │   │   │   ├── repository/
@@ -57,7 +59,7 @@ streamora/
 │   │   │   └── service/
 │   │   │       ├── PlaylistFileService.java
 │   │   │       ├── PlaylistService.java
-│   │   │       ├── TokenService.java
+│   │   │       ├── JwtService.java
 │   │   │       └── UserService.java
 │   │   └── resources/
 │   │       ├── application.properties
@@ -87,12 +89,14 @@ streamora/
 │           │   ├── PlaylistFileMapperTests.java
 │           │   ├── PlaylistMapperTests.java
 │           │   └── UserMapperTests.java
+│           ├── filter/
+│           │   └── JwtAuthenticationFilterTests.java
 │           ├── repository/
 │           │   └── RepositoryStructureTests.java
 │           └── service/
 │               ├── PlaylistFileServiceTests.java
 │               ├── PlaylistServiceTests.java
-│               ├── TokenServiceTests.java
+│               ├── JwtServiceTests.java
 │               └── UserServiceTests.java
 ├── .env.example
 ├── docker-compose.yml
@@ -115,6 +119,8 @@ devem continuar fora do controle de versão.
 - `dto`: define os contratos imutáveis de entrada e saída da aplicação.
 - `mapper`: converte entities em DTOs de resposta e aplica DTOs de entrada em
   entities novas ou existentes.
+- `filter`: intercepta requisições HTTP para autenticar access tokens antes
+  que elas alcancem os controllers protegidos.
 - `exception`: reúne exceções próprias da aplicação.
 - `repository`: define as interfaces de acesso aos dados das entities.
 - `service`: concentra operações de negócio e coordena o acesso às repositories.
@@ -143,6 +149,8 @@ Os testes espelham a responsabilidade que validam no código principal:
   pelos testes.
 - `mapper`: conversão entre DTOs e entities, incluindo campos e
   relacionamentos expostos.
+- `filter`: validação isolada dos filtros HTTP, incluindo rejeição e
+  autenticação das requisições.
 - `migration`: convenções globais dos arquivos de migration.
 - `repository`: contratos estruturais das repositories.
 - `service`: comportamento unitário das operações de negócio, com repositories

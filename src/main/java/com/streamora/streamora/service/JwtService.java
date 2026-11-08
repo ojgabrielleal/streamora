@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class TokenService {
+public class JwtService {
 
 	private static final long ACCESS_TOKEN_EXPIRATION_MINUTES = 5;
 	private static final long REFRESH_TOKEN_EXPIRATION_DAYS = 7;

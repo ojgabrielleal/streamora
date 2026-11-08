@@ -12,7 +12,7 @@ usuário e um identificador imutável por token.
    do Java e do Spring Boot, sem alterar versões já existentes.
 2. Expor a configuração `JWT_SECRET` no `.env.example` e mapeá-la em
    `application.properties`, mantendo a chave real fora do repositório.
-3. Criar `TokenService` no pacote `service`, responsável por gerar e validar os
+3. Criar `JwtService` no pacote `service`, responsável por gerar e validar os
    dois tipos de token.
 4. Implementar `generateTokens(String username)` para chamar os métodos
    privados `generateAccessToken` e `generateRefreshToken` e retornar um

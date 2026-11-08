@@ -94,9 +94,9 @@ class OpenApiDocumentationTests {
 	@Test
 	void protectsNonGetDocumentationRequestsAndApplicationEndpoints() throws Exception {
 		mockMvc.perform(post("/v3/api-docs"))
-			.andExpect(status().isForbidden());
+			.andExpect(status().isUnauthorized());
 
 		mockMvc.perform(get("/user"))
-			.andExpect(status().isForbidden());
+			.andExpect(status().isUnauthorized());
 	}
 }

@@ -12,15 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.streamora.streamora.controller.UserController;
+import com.streamora.streamora.filter.JwtAuthenticationFilter;
+import com.streamora.streamora.service.JwtService;
 import com.streamora.streamora.service.UserService;
 
 @WebMvcTest(UserController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 class SecurityConfigTests {
 
 	@Autowired
@@ -32,6 +35,9 @@ class SecurityConfigTests {
 	@MockitoBean
 	private UserService userService;
 
+	@MockitoBean
+	private JwtService jwtService;
+
 	@Test
 	void registersSecurityFilterChain() {
 		assertThat(applicationContext.getBeansOfType(SecurityFilterChain.class))
@@ -40,16 +46,33 @@ class SecurityConfigTests {
 
 	@Test
 	void protectsApplicationEndpointsFromAnonymousRequests() throws Exception {
-		when(userService.index()).thenReturn(List.of());
+		when(userService.index())
+			.thenReturn(List.of());
 
-		mockMvc.perform(get("/user"))
-			.andExpect(status().isForbidden());
+		mockMvc.perform(
+			get("/user")
+		)
+		.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void allowsApplicationEndpointsWithValidAccessToken() throws Exception {
+		when(userService.index())
+			.thenReturn(List.of());
+		when(jwtService.validateAccessToken("valid-access-token"))
+			.thenReturn(true);
+
+		mockMvc.perform(
+			get("/user")
+				.header(HttpHeaders.AUTHORIZATION, "Bearer valid-access-token")
+			)
+			.andExpect(status().isOk());
 	}
 
 	@Test
 	void doesNotExposeAutomaticLoginForm() throws Exception {
 		mockMvc.perform(get("/login"))
-			.andExpect(status().isForbidden());
+			.andExpect(status().isUnauthorized());
 	}
 }
 

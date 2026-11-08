@@ -15,16 +15,16 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-class TokenServiceTests {
+class JwtServiceTests {
 
 	private static final String SECRET = "a-test-secret-that-is-long-enough-for-hmac-signing";
 	private static final String USERNAME = "streamora-user";
 
-	private final TokenService tokenService = new TokenService(Algorithm.HMAC256(SECRET));
+	private final JwtService jwtService = new JwtService(Algorithm.HMAC256(SECRET));
 
 	@Test
 	void generatesAccessAndRefreshTokens() {
-		Map<String, String> tokens = tokenService.generateTokens(USERNAME);
+		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
 
 		assertThat(tokens).containsOnlyKeys("accessToken", "refreshToken");
 		assertThat(tokens.values()).allSatisfy(token -> assertThat(token).isNotBlank());
@@ -32,7 +32,7 @@ class TokenServiceTests {
 
 	@Test
 	void storesUsernameAndImmutableUniqueIdentifiers() {
-		Map<String, String> tokens = tokenService.generateTokens(USERNAME);
+		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
 		DecodedJWT accessToken = JWT.decode(tokens.get("accessToken"));
 		DecodedJWT refreshToken = JWT.decode(tokens.get("refreshToken"));
 
@@ -44,7 +44,7 @@ class TokenServiceTests {
 
 	@Test
 	void usesExpectedExpirationForEachTokenType() {
-		Map<String, String> tokens = tokenService.generateTokens(USERNAME);
+		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
 		DecodedJWT accessToken = JWT.decode(tokens.get("accessToken"));
 		DecodedJWT refreshToken = JWT.decode(tokens.get("refreshToken"));
 
@@ -56,9 +56,9 @@ class TokenServiceTests {
 
 	@Test
 	void delegatesGenerationToPrivateTokenSpecificMethods() throws Exception {
-		Method accessTokenGenerator = TokenService.class
+		Method accessTokenGenerator = JwtService.class
 			.getDeclaredMethod("generateAccessToken", String.class);
-		Method refreshTokenGenerator = TokenService.class
+		Method refreshTokenGenerator = JwtService.class
 			.getDeclaredMethod("generateRefreshToken", String.class);
 
 		assertThat(Modifier.isPrivate(accessTokenGenerator.getModifiers())).isTrue();
@@ -67,31 +67,31 @@ class TokenServiceTests {
 
 	@Test
 	void validatesEachTokenOnlyWithItsExpectedType() {
-		Map<String, String> tokens = tokenService.generateTokens(USERNAME);
+		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
 
-		assertThat(tokenService.validateAccessToken(tokens.get("accessToken"))).isTrue();
-		assertThat(tokenService.validateRefreshToken(tokens.get("refreshToken"))).isTrue();
-		assertThat(tokenService.validateAccessToken(tokens.get("refreshToken"))).isFalse();
-		assertThat(tokenService.validateRefreshToken(tokens.get("accessToken"))).isFalse();
+		assertThat(jwtService.validateAccessToken(tokens.get("accessToken"))).isTrue();
+		assertThat(jwtService.validateRefreshToken(tokens.get("refreshToken"))).isTrue();
+		assertThat(jwtService.validateAccessToken(tokens.get("refreshToken"))).isFalse();
+		assertThat(jwtService.validateRefreshToken(tokens.get("accessToken"))).isFalse();
 	}
 
 	@Test
 	void rejectsTokensSignedWithAnotherKey() {
-		String token = new TokenService(Algorithm.HMAC256("another-test-secret-for-hmac-signing"))
+		String token = new JwtService(Algorithm.HMAC256("another-test-secret-for-hmac-signing"))
 			.generateTokens(USERNAME)
 			.get("accessToken");
 
-		assertThat(tokenService.validateAccessToken(token)).isFalse();
+		assertThat(jwtService.validateAccessToken(token)).isFalse();
 	}
 
 	@Test
 	void rejectsExpiredMalformedOrBlankTokens() {
 		String expiredToken = createToken(USERNAME, "token-id", "access", Instant.now().minusSeconds(1));
 
-		assertThat(tokenService.validateAccessToken(expiredToken)).isFalse();
-		assertThat(tokenService.validateAccessToken("not-a-jwt")).isFalse();
-		assertThat(tokenService.validateAccessToken(" ")).isFalse();
-		assertThat(tokenService.validateAccessToken(null)).isFalse();
+		assertThat(jwtService.validateAccessToken(expiredToken)).isFalse();
+		assertThat(jwtService.validateAccessToken("not-a-jwt")).isFalse();
+		assertThat(jwtService.validateAccessToken(" ")).isFalse();
+		assertThat(jwtService.validateAccessToken(null)).isFalse();
 	}
 
 	@Test
@@ -99,13 +99,13 @@ class TokenServiceTests {
 		String tokenWithoutUsername = createToken(null, "token-id", "access", Instant.now().plusSeconds(60));
 		String tokenWithoutIdentifier = createToken(USERNAME, null, "access", Instant.now().plusSeconds(60));
 
-		assertThat(tokenService.validateAccessToken(tokenWithoutUsername)).isFalse();
-		assertThat(tokenService.validateAccessToken(tokenWithoutIdentifier)).isFalse();
+		assertThat(jwtService.validateAccessToken(tokenWithoutUsername)).isFalse();
+		assertThat(jwtService.validateAccessToken(tokenWithoutIdentifier)).isFalse();
 	}
 
 	@Test
 	void rejectsBlankUsernameWhenGeneratingTokens() {
-		assertThatThrownBy(() -> tokenService.generateTokens(" "))
+		assertThatThrownBy(() -> jwtService.generateTokens(" "))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("Username must not be blank");
 	}
