@@ -53,23 +53,6 @@ public class TokenService {
 		return validateTokens(token, REFRESH_TOKEN_TYPE);
 	}
 
-	private boolean validateTokens(String token, String tokenType) {
-		try {
-			JWTVerifier verifier = JWT.require(algorithm)
-				.withClaim("token_type", tokenType)
-				.build();
-
-			DecodedJWT decodedToken = verifier.verify(token);
-
-			return decodedToken.getSubject() != null
-				&& !decodedToken.getSubject().isBlank()
-				&& decodedToken.getId() != null
-				&& !decodedToken.getId().isBlank();
-		} catch (JWTVerificationException exception) {
-			return false;
-		}
-	}
-
 	private String generateAccessToken(String username) {
 		return generateToken(
 			username,
@@ -94,6 +77,23 @@ public class TokenService {
 			.withExpiresAt(expiresAt)
 			.withClaim("token_type", tokenType)
 			.sign(algorithm);
+	}
+
+	private boolean validateTokens(String token, String tokenType) {
+		try {
+			JWTVerifier verifier = JWT.require(algorithm)
+				.withClaim("token_type", tokenType)
+				.build();
+
+			DecodedJWT decodedToken = verifier.verify(token);
+
+			return decodedToken.getSubject() != null
+				&& !decodedToken.getSubject().isBlank()
+				&& decodedToken.getId() != null
+				&& !decodedToken.getId().isBlank();
+		} catch (JWTVerificationException exception) {
+			return false;
+		}
 	}
 
 }
