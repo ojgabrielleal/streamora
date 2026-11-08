@@ -14,7 +14,8 @@ import com.streamora.streamora.repository.UserRepository;
 	properties = {
 		"spring.autoconfigure.exclude="
 			+ "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,"
-			+ "org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration"
+			+ "org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration",
+		"jwt.secret=context-test-secret-that-is-not-used-outside-tests"
 	}
 )
 class StreamoraApplicationTests {

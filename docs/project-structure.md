@@ -25,6 +25,7 @@ streamora/
 │   │   ├── java/com/streamora/streamora/
 │   │   │   ├── StreamoraApplication.java
 │   │   │   ├── config/
+│   │   │   │   ├── JwtConfig.java
 │   │   │   │   ├── OpenApiConfig.java
 │   │   │   │   └── SecurityConfig.java
 │   │   │   ├── controller/
@@ -56,6 +57,7 @@ streamora/
 │   │   │   └── service/
 │   │   │       ├── PlaylistFileService.java
 │   │   │       ├── PlaylistService.java
+│   │   │       ├── TokenService.java
 │   │   │       └── UserService.java
 │   │   └── resources/
 │   │       ├── application.properties
@@ -90,6 +92,7 @@ streamora/
 │           └── service/
 │               ├── PlaylistFileServiceTests.java
 │               ├── PlaylistServiceTests.java
+│               ├── TokenServiceTests.java
 │               └── UserServiceTests.java
 ├── .env.example
 ├── docker-compose.yml
