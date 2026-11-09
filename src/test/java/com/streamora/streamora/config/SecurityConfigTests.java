@@ -3,9 +3,12 @@ package com.streamora.streamora.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +16,19 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.streamora.streamora.controller.AuthController;
 import com.streamora.streamora.controller.UserController;
 import com.streamora.streamora.filter.JwtAuthenticationFilter;
+import com.streamora.streamora.service.AuthService;
 import com.streamora.streamora.service.JwtService;
 import com.streamora.streamora.service.UserService;
 
-@WebMvcTest(UserController.class)
+@WebMvcTest({AuthController.class, UserController.class})
 @Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 class SecurityConfigTests {
 
@@ -34,6 +40,9 @@ class SecurityConfigTests {
 
 	@MockitoBean
 	private UserService userService;
+
+	@MockitoBean
+	private AuthService authService;
 
 	@MockitoBean
 	private JwtService jwtService;
@@ -73,6 +82,26 @@ class SecurityConfigTests {
 	void doesNotExposeAutomaticLoginForm() throws Exception {
 		mockMvc.perform(get("/login"))
 			.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void allowsLoginWithoutAccessToken() throws Exception {
+		when(authService.auth(org.mockito.ArgumentMatchers.any()))
+			.thenReturn(Map.of(
+				"accessToken", "access-token",
+				"refreshToken", "refresh-token"
+			));
+
+		mockMvc.perform(
+			post("/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{"username":"username","password":"password"}
+					""")
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.accessToken").value("access-token"))
+			.andExpect(jsonPath("$.refreshToken").value("refresh-token"));
 	}
 }
 

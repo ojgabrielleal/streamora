@@ -2,6 +2,7 @@ package com.streamora.streamora.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	@Transactional(readOnly = true)
 	public List<UserResponseDTO> index() {
@@ -35,6 +37,7 @@ public class UserService {
 
 	public UserResponseDTO store(UserRequestDTO userRequest) {
 		User userToPersist = UserMapper.toEntity(userRequest);
+		userToPersist.hashPassword(passwordEncoder);
 
 		return UserMapper.toResponse(userRepository.save(userToPersist));
 	}
@@ -42,6 +45,9 @@ public class UserService {
 	public UserResponseDTO update(String uuid, UserRequestDTO userRequest) {
 		User storedUser = findByUuid(uuid);
 		UserMapper.toEntity(userRequest, storedUser);
+		if (userRequest.password() != null) {
+			storedUser.hashPassword(passwordEncoder);
+		}
 
 		return UserMapper.toResponse(userRepository.save(storedUser));
 	}

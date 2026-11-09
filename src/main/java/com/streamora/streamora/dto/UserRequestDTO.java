@@ -8,8 +8,8 @@ public record UserRequestDTO(
 	String fullname,
 	@Schema(description = "Nome de exibição", example = "João")
 	String nickname,
-	@Schema(description = "Nome usado para autenticação", example = "joao.silva")
+	@Schema(description = "Nome usado para autenticação; opcional na atualização", example = "joao.silva", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 	String username,
-	@Schema(description = "Senha do usuário", example = "senha-segura", accessMode = Schema.AccessMode.WRITE_ONLY)
+	@Schema(description = "Senha do usuário; opcional na atualização", example = "senha-segura", accessMode = Schema.AccessMode.WRITE_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 	String password
 ) {}

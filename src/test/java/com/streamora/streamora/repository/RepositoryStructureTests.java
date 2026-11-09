@@ -39,4 +39,12 @@ class RepositoryStructureTests {
 			assertThat(ResolvableType.forMethodReturnType(findByUuid).resolveGeneric(0)).isEqualTo(entityClass);
 		}
 	}
+
+	@Test
+	void userRepositoryExposesUsernameLookup() throws NoSuchMethodException {
+		Method findByUsername = UserRepository.class.getMethod("findByUsername", String.class);
+
+		assertThat(ResolvableType.forMethodReturnType(findByUsername).resolve()).isEqualTo(Optional.class);
+		assertThat(ResolvableType.forMethodReturnType(findByUsername).resolveGeneric(0)).isEqualTo(User.class);
+	}
 }

@@ -9,4 +9,6 @@ import com.streamora.streamora.entity.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByUuid(String uuid);
+
+	Optional<User> findByUsername(String username);
 }

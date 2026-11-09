@@ -59,4 +59,17 @@ class UserMapperTests {
 		assertThat(mappedUser.getUsername()).isEqualTo(request.username());
 		assertThat(mappedUser.getPassword()).isEqualTo(request.password());
 	}
+
+	@Test
+	void preservesOptionalCredentialsWhenTheyAreAbsent() {
+		User user = UserFactory.toEntity();
+		String originalUsername = user.getUsername();
+		String originalPassword = user.getPassword();
+		UserRequestDTO request = new UserRequestDTO("Updated Name", "updated", null, null);
+
+		UserMapper.toEntity(request, user);
+
+		assertThat(user.getUsername()).isEqualTo(originalUsername);
+		assertThat(user.getPassword()).isEqualTo(originalPassword);
+	}
 }

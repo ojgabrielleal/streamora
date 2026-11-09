@@ -29,6 +29,7 @@ streamora/
 │   │   │   │   ├── OpenApiConfig.java
 │   │   │   │   └── SecurityConfig.java
 │   │   │   ├── controller/
+│   │   │   │   ├── AuthController.java
 │   │   │   │   ├── PlaylistController.java
 │   │   │   │   ├── PlaylistFileController.java
 │   │   │   │   └── UserController.java
@@ -38,6 +39,7 @@ streamora/
 │   │   │   │   ├── PlaylistFile.java
 │   │   │   │   └── User.java
 │   │   │   ├── dto/
+│   │   │   │   ├── AuthRequestDTO.java
 │   │   │   │   ├── PlaylistFileRequestDTO.java
 │   │   │   │   ├── PlaylistFileResponseDTO.java
 │   │   │   │   ├── PlaylistRequestDTO.java
@@ -57,6 +59,7 @@ streamora/
 │   │   │   │   ├── PlaylistRepository.java
 │   │   │   │   └── UserRepository.java
 │   │   │   └── service/
+│   │   │       ├── AuthService.java
 │   │   │       ├── PlaylistFileService.java
 │   │   │       ├── PlaylistService.java
 │   │   │       ├── JwtService.java
@@ -70,6 +73,7 @@ streamora/
 │           │   ├── ApplicationPropertiesTests.java
 │           │   └── StreamoraApplicationTests.java
 │           ├── controller/
+│           │   ├── AuthControllerTests.java
 │           │   ├── PlaylistControllerTests.java
 │           │   ├── PlaylistFileControllerTests.java
 │           │   └── UserControllerTests.java
@@ -94,6 +98,7 @@ streamora/
 │           ├── repository/
 │           │   └── RepositoryStructureTests.java
 │           └── service/
+│               ├── AuthServiceTests.java
 │               ├── PlaylistFileServiceTests.java
 │               ├── PlaylistServiceTests.java
 │               ├── JwtServiceTests.java

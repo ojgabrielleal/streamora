@@ -9,6 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,6 +41,10 @@ public class User {
 
 	@Column(nullable = false)
 	private String password;
+
+	public void hashPassword(PasswordEncoder passwordEncoder) {
+		password = passwordEncoder.encode(password);
+	}
 
 	@PrePersist
 	private void generateUuid() {

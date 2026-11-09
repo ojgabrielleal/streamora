@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.streamora.streamora.dto.UserRequestDTO;
 import com.streamora.streamora.dto.UserResponseDTO;
@@ -26,6 +27,9 @@ class UserServiceTests {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private PasswordEncoder passwordEncoder;
 
 	@InjectMocks
 	private UserService userService;
@@ -55,11 +59,16 @@ class UserServiceTests {
 	@Test
 	void storesUser() {
 		UserRequestDTO userCreateRequest = UserFactory.toCreate();
+		String hashedPassword = "hashed-password";
+
+		when(passwordEncoder.encode(userCreateRequest.password()))
+			.thenReturn(hashedPassword);
 
 		when(userRepository.save(org.mockito.ArgumentMatchers.any(User.class)))
 			.thenAnswer(invocation -> {
 				User userToPersist = invocation.getArgument(0);
 				assertThat(userToPersist.getUuid()).isNull();
+				assertThat(userToPersist.getPassword()).isEqualTo(hashedPassword);
 				userToPersist.setUuid("generated-by-persistence");
 				return userToPersist;
 			});
@@ -75,6 +84,10 @@ class UserServiceTests {
 		User storedUser = UserFactory.toEntity();
 		UserRequestDTO userUpdateRequest = UserFactory.toCreate(2).getLast();
 		Long originalId = storedUser.getId();
+		String hashedPassword = "updated-hashed-password";
+
+		when(passwordEncoder.encode(userUpdateRequest.password()))
+			.thenReturn(hashedPassword);
 
 		when(userRepository.findByUuid(storedUser.getUuid()))
 			.thenReturn(Optional.of(storedUser));
@@ -89,7 +102,27 @@ class UserServiceTests {
 		assertThat(updatedUser.nickname()).isEqualTo(userUpdateRequest.nickname());
 		assertThat(updatedUser.username()).isEqualTo(userUpdateRequest.username());
 		assertThat(storedUser.getId()).isEqualTo(originalId);
-		assertThat(storedUser.getPassword()).isEqualTo(userUpdateRequest.password());
+		assertThat(storedUser.getPassword()).isEqualTo(hashedPassword);
+	}
+
+	@Test
+	void preservesOptionalCredentialsWhenUpdatingWithoutThem() {
+		User storedUser = UserFactory.toEntity();
+		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, null);
+		String originalUsername = storedUser.getUsername();
+		String originalPassword = storedUser.getPassword();
+
+		when(userRepository.findByUuid(storedUser.getUuid()))
+			.thenReturn(Optional.of(storedUser));
+		when(userRepository.save(storedUser))
+			.thenReturn(storedUser);
+
+		userService.update(storedUser.getUuid(), userUpdateRequest);
+
+		assertThat(storedUser.getUsername()).isEqualTo(originalUsername);
+		assertThat(storedUser.getPassword()).isEqualTo(originalPassword);
+
+		verify(passwordEncoder, org.mockito.Mockito.never()).encode(org.mockito.ArgumentMatchers.anyString());
 	}
 
 	@Test
