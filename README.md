@@ -44,17 +44,20 @@ auto-DJ ficam no volume `liquidsoap_media`. Ambos são montados no serviço
 
 ## Usuários do Pure-FTPd
 
-O Compose não cria usuários nem gerencia senhas automaticamente. A base de
-senhas é persistida separadamente no volume `pureftpd_passwords`. Para criar um
-usuário manualmente, execute:
+A aplicação sincroniza automaticamente a base virtual do Pure-FTPd quando um
+usuário é criado, tem suas credenciais alteradas ou é excluído. A senha é
+enviada diretamente à entrada padrão do `pure-pw` e não é incluída nos
+argumentos do processo ou nos logs.
 
-```bash
-docker exec -it streamora-pureftpd pure-pw useradd NOME \
-  -f /etc/pure-ftpd/passwd/pureftpd.passwd \
-  -m -u ftpuser -d /home/ftpusers/NOME
-```
+A base de credenciais é persistida no volume `pureftpd_passwords`, compartilhado
+entre os serviços `application` e `pureftpd`. Os valores `PUREFTPD_UID` e
+`PUREFTPD_GID` devem ser iguais nos dois serviços para que os diretórios dos
+usuários mantenham as permissões corretas; o padrão do Compose é `1000` para
+ambos.
 
-O comando solicitará a senha sem armazená-la no histórico do shell.
+O username é definido no cadastro e não pode ser alterado. Ele pode ser exibido
+ao próprio usuário para configuração do cliente FTP. Nome completo e apelido
+continuam editáveis, e alterações nesses campos não modificam o acesso FTP.
 
 ## Verificação dos volumes compartilhados
 

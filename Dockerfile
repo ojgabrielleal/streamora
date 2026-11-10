@@ -17,7 +17,10 @@ FROM eclipse-temurin:25-jre
 
 WORKDIR /app
 
-RUN mkdir -p /data/pureftpd /data/liquidsoap
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends pure-ftpd \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /data/pureftpd /data/liquidsoap /etc/pure-ftpd/passwd
 
 COPY --from=build /workspace/application.jar /app/application.jar
 

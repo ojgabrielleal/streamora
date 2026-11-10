@@ -3,6 +3,7 @@ package com.streamora.streamora.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -13,13 +14,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.streamora.streamora.dto.UserRequestDTO;
 import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.factory.UserFactory;
+import com.streamora.streamora.infrastructure.pureFtpd.PureFtpd;
 import com.streamora.streamora.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +34,9 @@ class UserServiceTests {
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
+
+	@Mock
+	private PureFtpd pureFtpd;
 
 	@InjectMocks
 	private UserService userService;
@@ -64,7 +71,7 @@ class UserServiceTests {
 		when(passwordEncoder.encode(userCreateRequest.password()))
 			.thenReturn(hashedPassword);
 
-		when(userRepository.save(org.mockito.ArgumentMatchers.any(User.class)))
+		when(userRepository.saveAndFlush(org.mockito.ArgumentMatchers.any(User.class)))
 			.thenAnswer(invocation -> {
 				User userToPersist = invocation.getArgument(0);
 				assertThat(userToPersist.getUuid()).isNull();
@@ -77,12 +84,18 @@ class UserServiceTests {
 
 		assertThat(createdUser.uuid()).isEqualTo("generated-by-persistence");
 		assertThat(createdUser.fullname()).isEqualTo(userCreateRequest.fullname());
+		verify(pureFtpd).createFtpdUser(userCreateRequest.username(), userCreateRequest.password());
 	}
 
 	@Test
 	void updatesEditableFieldsAndPreservesIdentity() {
 		User storedUser = UserFactory.toEntity();
-		UserRequestDTO userUpdateRequest = UserFactory.toCreate(2).getLast();
+		UserRequestDTO userUpdateRequest = new UserRequestDTO(
+			"Updated Name",
+			"updated",
+			storedUser.getUsername(),
+			"updated-password"
+		);
 		Long originalId = storedUser.getId();
 		String hashedPassword = "updated-hashed-password";
 
@@ -92,7 +105,7 @@ class UserServiceTests {
 		when(userRepository.findByUuid(storedUser.getUuid()))
 			.thenReturn(Optional.of(storedUser));
 
-		when(userRepository.save(storedUser))
+		when(userRepository.saveAndFlush(storedUser))
 			.thenReturn(storedUser);
 
 		UserResponseDTO updatedUser = userService.update(storedUser.getUuid(), userUpdateRequest);
@@ -103,6 +116,7 @@ class UserServiceTests {
 		assertThat(updatedUser.username()).isEqualTo(userUpdateRequest.username());
 		assertThat(storedUser.getId()).isEqualTo(originalId);
 		assertThat(storedUser.getPassword()).isEqualTo(hashedPassword);
+		verify(pureFtpd).updateFtpdPassword("username1", userUpdateRequest.password());
 	}
 
 	@Test
@@ -114,7 +128,7 @@ class UserServiceTests {
 
 		when(userRepository.findByUuid(storedUser.getUuid()))
 			.thenReturn(Optional.of(storedUser));
-		when(userRepository.save(storedUser))
+		when(userRepository.saveAndFlush(storedUser))
 			.thenReturn(storedUser);
 
 		userService.update(storedUser.getUuid(), userUpdateRequest);
@@ -123,6 +137,63 @@ class UserServiceTests {
 		assertThat(storedUser.getPassword()).isEqualTo(originalPassword);
 
 		verify(passwordEncoder, org.mockito.Mockito.never()).encode(org.mockito.ArgumentMatchers.anyString());
+		verifyNoInteractions(pureFtpd);
+	}
+
+	@Test
+	void updatesFtpPasswordWithoutReplacingUser() {
+		User storedUser = UserFactory.toEntity();
+		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, "new-password");
+
+		when(userRepository.findByUuid(storedUser.getUuid()))
+			.thenReturn(Optional.of(storedUser));
+		when(passwordEncoder.encode(userUpdateRequest.password()))
+			.thenReturn("new-password-hash");
+		when(userRepository.saveAndFlush(storedUser))
+			.thenReturn(storedUser);
+
+		userService.update(storedUser.getUuid(), userUpdateRequest);
+
+		verify(pureFtpd).updateFtpdPassword("username1", "new-password");
+	}
+
+	@Test
+	void rejectsUsernameChangeEvenWhenPasswordIsProvided() {
+		User storedUser = UserFactory.toEntity();
+		UserRequestDTO userUpdateRequest = new UserRequestDTO(
+			"Updated Name",
+			"updated",
+			"new-username",
+			"new-password"
+		);
+
+		when(userRepository.findByUuid(storedUser.getUuid()))
+			.thenReturn(Optional.of(storedUser));
+
+		assertThatThrownBy(() -> userService.update(storedUser.getUuid(), userUpdateRequest))
+			.isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+				assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+				assertThat(exception.getReason()).isEqualTo("Username cannot be changed");
+			});
+
+		verifyNoInteractions(passwordEncoder, pureFtpd);
+	}
+
+	@Test
+	void rejectsBlankPassword() {
+		User storedUser = UserFactory.toEntity();
+		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, " ");
+
+		when(userRepository.findByUuid(storedUser.getUuid()))
+			.thenReturn(Optional.of(storedUser));
+
+		assertThatThrownBy(() -> userService.update(storedUser.getUuid(), userUpdateRequest))
+			.isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+				assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+				assertThat(exception.getReason()).isEqualTo("Password must not be blank");
+			});
+
+		verifyNoInteractions(passwordEncoder, pureFtpd);
 	}
 
 	@Test
@@ -135,6 +206,8 @@ class UserServiceTests {
 		userService.delete(userToDelete.getUuid());
 
 		verify(userRepository).delete(userToDelete);
+		verify(userRepository).flush();
+		verify(pureFtpd).deleteFtpdUser(userToDelete.getUsername());
 	}
 
 	@Test

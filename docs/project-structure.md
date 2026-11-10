@@ -50,6 +50,16 @@ streamora/
 │   │   │   │   ├── PlaylistFileMapper.java
 │   │   │   │   ├── PlaylistMapper.java
 │   │   │   │   └── UserMapper.java
+│   │   │   ├── infrastructure/
+│   │   │   │   └── pureFtpd/
+│   │   │   │       ├── PureFtpd.java
+│   │   │   │       ├── FtpSystemCommandExecutor.java
+│   │   │   │       ├── exception/
+│   │   │   │       │   └── FtpUserManagementException.java
+│   │   │   │       ├── interfaces/
+│   │   │   │       │   └── FtpCommandExecutor.java
+│   │   │   │       └── records/
+│   │   │   │           └── PureFtpdProperties.java
 │   │   │   ├── filter/
 │   │   │   │   └── JwtAuthenticationFilter.java
 │   │   │   ├── exception/
@@ -93,6 +103,9 @@ streamora/
 │           │   ├── PlaylistFileMapperTests.java
 │           │   ├── PlaylistMapperTests.java
 │           │   └── UserMapperTests.java
+│           ├── infrastructure/
+│           │   └── pureFtpd/
+│           │       └── PureFtpdTests.java
 │           ├── filter/
 │           │   └── JwtAuthenticationFilterTests.java
 │           ├── repository/
@@ -124,6 +137,8 @@ devem continuar fora do controle de versão.
 - `dto`: define os contratos imutáveis de entrada e saída da aplicação.
 - `mapper`: converte entities em DTOs de resposta e aplica DTOs de entrada em
   entities novas ou existentes.
+- `infrastructure`: encapsula a integração da aplicação com serviços e
+  utilitários externos, incluindo o gerenciamento de usuários do Pure-FTPd.
 - `filter`: intercepta requisições HTTP para autenticar access tokens antes
   que elas alcancem os controllers protegidos.
 - `exception`: reúne exceções próprias da aplicação.
@@ -154,6 +169,8 @@ Os testes espelham a responsabilidade que validam no código principal:
   pelos testes.
 - `mapper`: conversão entre DTOs e entities, incluindo campos e
   relacionamentos expostos.
+- `infrastructure`: comportamento das integrações externas com seus executores
+  isolados, sem exigir que os serviços reais estejam em execução.
 - `filter`: validação isolada dos filtros HTTP, incluindo rejeição e
   autenticação das requisições.
 - `migration`: convenções globais dos arquivos de migration.

@@ -12,10 +12,13 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      PUREFTPD_UID: ${PUREFTPD_UID:-1000}
+      PUREFTPD_GID: ${PUREFTPD_GID:-1000}
     ports:
       - "${APPLICATION_PORT:-8080}:8080"
     volumes:
       - pureftpd_files:/data/pureftpd
+      - pureftpd_passwords:/etc/pure-ftpd/passwd
       - liquidsoap_media:/data/liquidsoap
     depends_on:
       mysql:
@@ -100,6 +103,8 @@ services:
     environment:
       PUBLICHOST: ${PUREFTPD_PUBLIC_HOST:-localhost}
       FTP_PASSIVE_PORTS: 30000:30009
+      FTP_USER_UID: ${PUREFTPD_UID:-1000}
+      FTP_USER_GID: ${PUREFTPD_GID:-1000}
     ports:
       - "${PUREFTPD_PORT:-21}:21"
       - "30000-30009:30000-30009"
