@@ -95,6 +95,6 @@ class PlaylistControllerTests {
 	}
 
 	private PlaylistResponseDTO playlistResponse() {
-		return new PlaylistResponseDTO("playlist-uuid", "Playlist", Set.of());
+		return new PlaylistResponseDTO("playlist-uuid", "Playlist", Set.of(), Set.of());
 	}
 }

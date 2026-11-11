@@ -18,7 +18,8 @@ class EntityMappingsTests {
 	private static final Map<Class<?>, String> MAIN_ENTITIES = Map.of(
 		User.class, "users",
 		Playlist.class, "playlists",
-		PlaylistFile.class, "files"
+		PlaylistFile.class, "files",
+		PlaylistSchedule.class, "playlist_schedules"
 	);
 
 	@Test

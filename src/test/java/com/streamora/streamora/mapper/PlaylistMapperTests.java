@@ -10,8 +10,10 @@ import com.streamora.streamora.dto.PlaylistRequestDTO;
 import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.PlaylistFile;
+import com.streamora.streamora.entity.PlaylistSchedule;
 import com.streamora.streamora.factory.PlaylistFactory;
 import com.streamora.streamora.factory.PlaylistFileFactory;
+import com.streamora.streamora.factory.PlaylistScheduleFactory;
 
 class PlaylistMapperTests {
 
@@ -31,6 +33,21 @@ class PlaylistMapperTests {
 		assertThat(PlaylistResponseDTO.class.getRecordComponents())
 			.extracting(component -> component.getName())
 			.doesNotContain("id");
+	}
+
+	@Test
+	void mapsPlaylistSchedulesWithoutNestedPlaylist() {
+		Playlist playlist = PlaylistFactory.toEntity();
+		PlaylistSchedule schedule = PlaylistScheduleFactory.toEntity();
+		schedule.setPlaylist(playlist);
+		playlist.getSchedules().add(schedule);
+
+		PlaylistResponseDTO response = PlaylistMapper.toResponse(playlist);
+
+		assertThat(response.schedules()).singleElement().satisfies(scheduleResponse -> {
+			assertThat(scheduleResponse.uuid()).isEqualTo(schedule.getUuid());
+			assertThat(scheduleResponse.dayOfWeek()).isEqualTo(schedule.getDayOfWeek());
+		});
 	}
 
 	@Test

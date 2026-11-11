@@ -89,9 +89,71 @@ Evite:
 
 ```java
 private static final Map<Class<?>, Class<?>> REPOSITORIES = Map.of(
-		UserRepository.class, User.class,
-		PlaylistRepository.class, Playlist.class,
-		PlaylistFileRepository.class, PlaylistFile.class);
+	UserRepository.class, User.class,
+	PlaylistRepository.class, Playlist.class,
+	PlaylistFileRepository.class, PlaylistFile.class);
+```
+
+### Chave em declarações de métodos com parâmetros em múltiplas linhas
+
+Quando a declaração de um método tiver os parâmetros distribuídos em mais de
+uma linha, coloque a chave de abertura em uma nova linha, imediatamente depois
+do parêntese de fechamento. Métodos cuja assinatura permanece em uma única
+linha mantêm a chave de abertura na mesma linha.
+
+Correto:
+
+```java
+public PlaylistResponseDTO update(
+	String uuid,
+	PlaylistRequestDTO playlistUpdateRequest
+)
+{
+	return playlistService.update(uuid, playlistUpdateRequest);
+}
+```
+
+Evite:
+
+```java
+public PlaylistResponseDTO update(
+	String uuid,
+	PlaylistRequestDTO playlistUpdateRequest
+) {
+	return playlistService.update(uuid, playlistUpdateRequest);
+}
+```
+
+Essa regra se aplica a declarações de métodos e construtores. Ela não altera
+o padrão de chamadas de métodos, estruturas condicionais ou records com corpo
+vazio.
+
+### Anotações OpenAPI em múltiplas linhas
+
+Quando uma anotação `@ApiResponse` ficar longa, ela pode ser distribuída em
+várias linhas. Mantenha cada atributo em sua própria linha e aumente o recuo a
+cada anotação aninhada. O parêntese de fechamento de cada nível deve ficar em
+uma linha própria, alinhado com o elemento que abriu aquele nível.
+
+Correto:
+
+```java
+@ApiResponse(
+	responseCode = "200",
+	description = "Horários encontrados",
+	content = @Content(
+		array = @ArraySchema(
+			schema = @Schema(implementation = PlaylistScheduleResponseDTO.class)
+		)
+	)
+)
+```
+
+Quando a anotação couber com legibilidade em uma linha, mantenha a forma
+compacta:
+
+```java
+@ApiResponse(responseCode = "200", description = "Horário encontrado")
 ```
 
 ### Parâmetros em métodos de controllers
@@ -109,7 +171,8 @@ public PlaylistResponseDTO update(
 	@PathVariable String uuid,
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Novos dados da playlist")
 	@RequestBody PlaylistRequestDTO playlistRequest
-) {
+)
+{
 	return playlistService.update(uuid, playlistRequest);
 }
 ```
@@ -122,7 +185,8 @@ public PlaylistResponseDTO update(
 	@Parameter(description = "UUID da playlist")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Novos dados da playlist")
 	@RequestBody PlaylistRequestDTO playlistRequest
-) {
+)
+{
 	return playlistService.update(uuid, playlistRequest);
 }
 ```

@@ -47,6 +47,7 @@ public final class PlaylistFactory {
 			.mapToObj(index -> new PlaylistResponseDTO(
 				"playlist-uuid-" + index,
 				"Playlist " + index,
+				Set.of(),
 				Set.of()
 			))
 			.toList();

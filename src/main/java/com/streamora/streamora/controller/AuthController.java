@@ -26,11 +26,18 @@ public class AuthController {
 	@PostMapping("/login")
 	@Operation(summary = "Autenticar usuário")
 	@ApiResponse(responseCode = "200", description = "Usuário autenticado")
-	@ApiResponse(responseCode = "401", description = "Credenciais inválidas", content = @Content(schema = @Schema(hidden = true)))
+	@ApiResponse(
+		responseCode = "401",
+		description = "Credenciais inválidas",
+		content = @Content(
+			schema = @Schema(hidden = true)
+		)
+	)
 	public Map<String, String> auth(
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Credenciais do usuário", required = true)
 		@RequestBody AuthRequestDTO authRequest
-	) {
+	)
+	{
 		return authService.auth(authRequest);
 	}
 }

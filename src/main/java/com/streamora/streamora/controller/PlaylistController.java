@@ -37,7 +37,11 @@ public class PlaylistController {
 	@ApiResponse(
 		responseCode = "200",
 		description = "Playlists encontradas",
-		content = @Content(array = @ArraySchema(schema = @Schema(implementation = PlaylistResponseDTO.class)))
+		content = @Content(
+			array = @ArraySchema(
+				schema = @Schema(implementation = PlaylistResponseDTO.class)
+			)
+		)
 	)
 	public List<PlaylistResponseDTO> index() {
 		return playlistService.index();
@@ -49,7 +53,8 @@ public class PlaylistController {
 	public PlaylistResponseDTO show(
 		@Parameter(description = "UUID da playlist", example = "550e8400-e29b-41d4-a716-446655440000")
 		@PathVariable String uuid
-	) {
+	)
+	{
 		return playlistService.show(uuid);
 	}
 
@@ -59,7 +64,8 @@ public class PlaylistController {
 	public PlaylistResponseDTO store(
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dados da playlist", required = true)
 		@RequestBody PlaylistRequestDTO playlistRequest
-	) {
+	)
+	{
 		return playlistService.store(playlistRequest);
 	}
 
@@ -71,7 +77,8 @@ public class PlaylistController {
 		@PathVariable String uuid,
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Novos dados da playlist", required = true)
 		@RequestBody PlaylistRequestDTO playlistRequest
-	) {
+	)
+	{
 		return playlistService.update(uuid, playlistRequest);
 	}
 
@@ -81,7 +88,8 @@ public class PlaylistController {
 	public void delete(
 		@Parameter(description = "UUID da playlist", example = "550e8400-e29b-41d4-a716-446655440000")
 		@PathVariable String uuid
-	) {
+	)
+	{
 		playlistService.delete(uuid);
 	}
 }

@@ -32,22 +32,29 @@ streamora/
 │   │   │   │   ├── AuthController.java
 │   │   │   │   ├── PlaylistController.java
 │   │   │   │   ├── PlaylistFileController.java
+│   │   │   │   ├── PlaylistScheduleController.java
 │   │   │   │   └── UserController.java
 │   │   │   ├── entity/
 │   │   │   │   ├── type/
 │   │   │   │   ├── Playlist.java
 │   │   │   │   ├── PlaylistFile.java
+│   │   │   │   ├── PlaylistSchedule.java
 │   │   │   │   └── User.java
 │   │   │   ├── dto/
 │   │   │   │   ├── AuthRequestDTO.java
 │   │   │   │   ├── PlaylistFileRequestDTO.java
 │   │   │   │   ├── PlaylistFileResponseDTO.java
+│   │   │   │   ├── PlaylistScheduleRequestDTO.java
+│   │   │   │   ├── PlaylistScheduleResponseDTO.java
+│   │   │   │   ├── PlaylistScheduleSummaryDTO.java
+│   │   │   │   ├── PlaylistSummaryDTO.java
 │   │   │   │   ├── PlaylistRequestDTO.java
 │   │   │   │   ├── PlaylistResponseDTO.java
 │   │   │   │   ├── UserRequestDTO.java
 │   │   │   │   └── UserResponseDTO.java
 │   │   │   ├── mapper/
 │   │   │   │   ├── PlaylistFileMapper.java
+│   │   │   │   ├── PlaylistScheduleMapper.java
 │   │   │   │   ├── PlaylistMapper.java
 │   │   │   │   └── UserMapper.java
 │   │   │   ├── infrastructure/
@@ -66,11 +73,13 @@ streamora/
 │   │   │   │   └── ResourceNotFoundException.java
 │   │   │   ├── repository/
 │   │   │   │   ├── PlaylistFileRepository.java
+│   │   │   │   ├── PlaylistScheduleRepository.java
 │   │   │   │   ├── PlaylistRepository.java
 │   │   │   │   └── UserRepository.java
 │   │   │   └── service/
 │   │   │       ├── AuthService.java
 │   │   │       ├── PlaylistFileService.java
+│   │   │       ├── PlaylistScheduleService.java
 │   │   │       ├── PlaylistService.java
 │   │   │       ├── JwtService.java
 │   │   │       └── UserService.java
@@ -86,6 +95,7 @@ streamora/
 │           │   ├── AuthControllerTests.java
 │           │   ├── PlaylistControllerTests.java
 │           │   ├── PlaylistFileControllerTests.java
+│           │   ├── PlaylistScheduleControllerTests.java
 │           │   └── UserControllerTests.java
 │           ├── config/
 │           │   ├── OpenApiDocumentationTests.java
@@ -96,11 +106,13 @@ streamora/
 │           │   ├── FactoriesTests.java
 │           │   ├── PlaylistFactory.java
 │           │   ├── PlaylistFileFactory.java
+│           │   ├── PlaylistScheduleFactory.java
 │           │   └── UserFactory.java
 │           ├── migration/
 │           │   └── MigrationFilesTests.java
 │           ├── mapper/
 │           │   ├── PlaylistFileMapperTests.java
+│           │   ├── PlaylistScheduleMapperTests.java
 │           │   ├── PlaylistMapperTests.java
 │           │   └── UserMapperTests.java
 │           ├── infrastructure/
@@ -113,6 +125,7 @@ streamora/
 │           └── service/
 │               ├── AuthServiceTests.java
 │               ├── PlaylistFileServiceTests.java
+│               ├── PlaylistScheduleServiceTests.java
 │               ├── PlaylistServiceTests.java
 │               ├── JwtServiceTests.java
 │               └── UserServiceTests.java

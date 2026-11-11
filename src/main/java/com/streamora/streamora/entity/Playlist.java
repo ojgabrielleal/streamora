@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -42,6 +43,9 @@ public class Playlist {
 		inverseJoinColumns = @JoinColumn(name = "file_id")
 	)
 	private Set<PlaylistFile> files = new HashSet<>();
+
+	@OneToMany(mappedBy = "playlist")
+	private Set<PlaylistSchedule> schedules = new HashSet<>();
 
 	@PrePersist
 	private void generateUuid() {

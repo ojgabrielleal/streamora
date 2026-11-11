@@ -37,7 +37,11 @@ public class PlaylistFileController {
 	@ApiResponse(
 		responseCode = "200",
 		description = "Arquivos encontrados",
-		content = @Content(array = @ArraySchema(schema = @Schema(implementation = PlaylistFileResponseDTO.class)))
+		content = @Content(
+			array = @ArraySchema(
+				schema = @Schema(implementation = PlaylistFileResponseDTO.class)
+			)
+		)
 	)
 	public List<PlaylistFileResponseDTO> index() {
 		return playlistFileService.index();
@@ -49,7 +53,8 @@ public class PlaylistFileController {
 	public PlaylistFileResponseDTO show(
 		@Parameter(description = "UUID do arquivo", example = "550e8400-e29b-41d4-a716-446655440000")
 		@PathVariable String uuid
-	) {
+	)
+	{
 		return playlistFileService.show(uuid);
 	}
 
@@ -59,7 +64,8 @@ public class PlaylistFileController {
 	public PlaylistFileResponseDTO store(
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dados do arquivo", required = true)
 		@RequestBody PlaylistFileRequestDTO playlistFileRequest
-	) {
+	)
+	{
 		return playlistFileService.store(playlistFileRequest);
 	}
 
@@ -71,7 +77,8 @@ public class PlaylistFileController {
 		@PathVariable String uuid,
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Novos dados do arquivo", required = true)
 		@RequestBody PlaylistFileRequestDTO playlistFileRequest
-	) {
+	)
+	{
 		return playlistFileService.update(uuid, playlistFileRequest);
 	}
 
@@ -81,7 +88,8 @@ public class PlaylistFileController {
 	public void delete(
 		@Parameter(description = "UUID do arquivo", example = "550e8400-e29b-41d4-a716-446655440000")
 		@PathVariable String uuid
-	) {
+	)
+	{
 		playlistFileService.delete(uuid);
 	}
 
@@ -93,7 +101,8 @@ public class PlaylistFileController {
 		@PathVariable String fileUuid,
 		@Parameter(description = "UUID da playlist", example = "9d13b7c1-0a2e-4f62-9430-1905c30ef340")
 		@PathVariable String playlistUuid
-	) {
+	)
+	{
 		return playlistFileService.addToPlaylist(fileUuid, playlistUuid);
 	}
 
@@ -105,7 +114,8 @@ public class PlaylistFileController {
 		@PathVariable String fileUuid,
 		@Parameter(description = "UUID da playlist", example = "9d13b7c1-0a2e-4f62-9430-1905c30ef340")
 		@PathVariable String playlistUuid
-	) {
+	)
+	{
 		return playlistFileService.removeFromPlaylist(fileUuid, playlistUuid);
 	}
 }

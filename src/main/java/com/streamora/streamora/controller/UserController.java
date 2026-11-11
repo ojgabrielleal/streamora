@@ -37,7 +37,11 @@ public class UserController {
 	@ApiResponse(
 		responseCode = "200",
 		description = "Usuários encontrados",
-		content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserResponseDTO.class)))
+		content = @Content(
+			array = @ArraySchema(
+				schema = @Schema(implementation = UserResponseDTO.class)
+			)
+		)
 	)
 	public List<UserResponseDTO> index() {
 		return userService.index();
@@ -49,7 +53,8 @@ public class UserController {
 	public UserResponseDTO show(
 		@Parameter(description = "UUID do usuário", example = "550e8400-e29b-41d4-a716-446655440000")
 		@PathVariable String uuid
-	) {
+	)
+	{
 		return userService.show(uuid);
 	}
 
@@ -59,7 +64,8 @@ public class UserController {
 	public UserResponseDTO store(
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dados do usuário", required = true)
 		@RequestBody UserRequestDTO userRequest
-	) {
+	)
+	{
 		return userService.store(userRequest);
 	}
 
@@ -71,7 +77,8 @@ public class UserController {
 		@PathVariable String uuid,
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Novos dados do usuário", required = true)
 		@RequestBody UserRequestDTO userRequest
-	) {
+	)
+	{
 		return userService.update(uuid, userRequest);
 	}
 
@@ -81,7 +88,8 @@ public class UserController {
 	public void delete(
 		@Parameter(description = "UUID do usuário", example = "550e8400-e29b-41d4-a716-446655440000")
 		@PathVariable String uuid
-	) {
+	)
+	{
 		userService.delete(uuid);
 	}
 }

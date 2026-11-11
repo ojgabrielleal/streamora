@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.streamora.streamora.StreamoraApplication;
 import com.streamora.streamora.repository.PlaylistFileRepository;
 import com.streamora.streamora.repository.PlaylistRepository;
+import com.streamora.streamora.repository.PlaylistScheduleRepository;
 import com.streamora.streamora.repository.UserRepository;
 
 @SpringBootTest(
@@ -41,6 +42,9 @@ class OpenApiDocumentationTests {
 
 	@MockitoBean
 	private PlaylistFileRepository playlistFileRepository;
+
+	@MockitoBean
+	private PlaylistScheduleRepository playlistScheduleRepository;
 
 	@Test
 	void exposesOpenApiMetadataAndDocumentedResourcesAnonymously() throws Exception {
@@ -71,7 +75,12 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.paths['/playlist-file/{uuid}'].put").exists())
 			.andExpect(jsonPath("$.paths['/playlist-file/{uuid}'].delete.responses['200']").exists())
 			.andExpect(jsonPath("$.paths['/playlist-file/{fileUuid}/playlist/{playlistUuid}'].post").exists())
-			.andExpect(jsonPath("$.paths['/playlist-file/{fileUuid}/playlist/{playlistUuid}'].delete").exists());
+			.andExpect(jsonPath("$.paths['/playlist-file/{fileUuid}/playlist/{playlistUuid}'].delete").exists())
+			.andExpect(jsonPath("$.paths['/playlist-schedule'].get.tags[0]").value("Playlist schedules"))
+			.andExpect(jsonPath("$.paths['/playlist-schedule'].post.requestBody.required").value(true))
+			.andExpect(jsonPath("$.paths['/playlist-schedule/{uuid}'].get").exists())
+			.andExpect(jsonPath("$.paths['/playlist-schedule/{uuid}'].put").exists())
+			.andExpect(jsonPath("$.paths['/playlist-schedule/{uuid}'].delete").exists());
 	}
 
 	@Test
@@ -86,6 +95,8 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.components.schemas.UserResponseDTO").exists())
 			.andExpect(jsonPath("$.components.schemas.PlaylistRequestDTO").exists())
 			.andExpect(jsonPath("$.components.schemas.PlaylistResponseDTO").exists())
+			.andExpect(jsonPath("$.components.schemas.PlaylistScheduleRequestDTO").exists())
+			.andExpect(jsonPath("$.components.schemas.PlaylistScheduleResponseDTO").exists())
 			.andExpect(jsonPath("$.components.schemas.PlaylistFileRequestDTO").exists())
 			.andExpect(jsonPath("$.components.schemas.PlaylistFileResponseDTO").exists());
 	}

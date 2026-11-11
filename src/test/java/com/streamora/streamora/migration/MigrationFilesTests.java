@@ -15,7 +15,8 @@ class MigrationFilesTests {
 	private static final List<String> MAIN_TABLE_MIGRATIONS = List.of(
 		"V1__create_users_table.sql",
 		"V2__create_playlists_table.sql",
-		"V3__create_files_table.sql"
+		"V3__create_files_table.sql",
+		"V5__create_playlist_schedules_table.sql"
 	);
 
 	@Test
