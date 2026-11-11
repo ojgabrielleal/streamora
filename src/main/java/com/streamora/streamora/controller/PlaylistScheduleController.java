@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/playlist-schedule")
 @RequiredArgsConstructor
-@Tag(name = "Playlist schedules", description = "Gerenciamento da grade de programação de playlists")
+@Tag(name = "Grade de programação", description = "Gerenciamento da grade de programação de playlists")
 public class PlaylistScheduleController {
 
 	private final PlaylistScheduleService playlistScheduleService;

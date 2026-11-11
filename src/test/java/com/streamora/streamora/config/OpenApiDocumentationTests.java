@@ -76,7 +76,7 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.paths['/playlist-file/{uuid}'].delete.responses['200']").exists())
 			.andExpect(jsonPath("$.paths['/playlist-file/{fileUuid}/playlist/{playlistUuid}'].post").exists())
 			.andExpect(jsonPath("$.paths['/playlist-file/{fileUuid}/playlist/{playlistUuid}'].delete").exists())
-			.andExpect(jsonPath("$.paths['/playlist-schedule'].get.tags[0]").value("Playlist schedules"))
+			.andExpect(jsonPath("$.paths['/playlist-schedule'].get.tags[0]").value("Grade de programação"))
 			.andExpect(jsonPath("$.paths['/playlist-schedule'].post.requestBody.required").value(true))
 			.andExpect(jsonPath("$.paths['/playlist-schedule/{uuid}'].get").exists())
 			.andExpect(jsonPath("$.paths['/playlist-schedule/{uuid}'].put").exists())
