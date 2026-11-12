@@ -14,12 +14,14 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
       PUREFTPD_UID: ${PUREFTPD_UID:-1000}
       PUREFTPD_GID: ${PUREFTPD_GID:-1000}
+      PUREFTPD_HOME_DIRECTORY: /pure-ftpd/uploads
     ports:
       - "${APPLICATION_PORT:-8080}:8080"
     volumes:
-      - pureftpd_files:/data/pureftpd
+      - ./liquidsoap:/liquidsoap/config
+      - liquidsoap_m3u:/liquidsoap/m3u
+      - pureftpd_uploads:/pure-ftpd/uploads
       - pureftpd_passwords:/etc/pure-ftpd/passwd
-      - liquidsoap_media:/data/liquidsoap
     depends_on:
       mysql:
         condition: service_healthy
@@ -89,8 +91,9 @@ services:
       ICECAST_SOURCE_PASSWORD: ${ICECAST_SOURCE_PASSWORD}
       ICECAST_MOUNT: ${ICECAST_MOUNT:-/stream.mp3}
     volumes:
-      - ./infrastructure/liquidsoap/radio.liq:/etc/liquidsoap/radio.liq:ro
-      - liquidsoap_media:/media:ro
+      - ./liquidsoap:/etc/liquidsoap:ro
+      - liquidsoap_m3u:/liquidsoap/m3u:ro
+      - pureftpd_uploads:/pure-ftpd/uploads:ro
     depends_on:
       - icecast
     restart: unless-stopped
@@ -109,7 +112,7 @@ services:
       - "${PUREFTPD_PORT:-21}:21"
       - "30000-30009:30000-30009"
     volumes:
-      - pureftpd_files:/home/ftpusers
+      - pureftpd_uploads:/pure-ftpd/uploads
       - pureftpd_passwords:/etc/pure-ftpd/passwd
     restart: unless-stopped
     networks:
@@ -128,9 +131,9 @@ services:
 
 volumes:
   mysql_data:
-  pureftpd_files:
+  liquidsoap_m3u:
+  pureftpd_uploads:
   pureftpd_passwords:
-  liquidsoap_media:
 
 networks:
   streamora:

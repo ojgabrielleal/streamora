@@ -11,9 +11,8 @@ streamora/
 │   ├── code-standards.md
 │   ├── database-schema.md
 │   └── project-structure.md
-├── infrastructure/
-│   └── liquidsoap/
-│       └── radio.liq
+├── liquidsoap/
+│   └── radio.liq
 ├── specs/
 │   └── XXX-nome-da-spec/
 │       ├── spec.md
@@ -158,8 +157,7 @@ devem continuar fora do controle de versão.
 - `repository`: define as interfaces de acesso aos dados das entities.
 - `service`: concentra operações de negócio e coordena o acesso às repositories.
 - `resources/db/migration`: mantém o histórico executável do banco com Flyway.
-- `infrastructure`: contém configurações de serviços externos, como Liquidsoap
-  e Icecast.
+- `liquidsoap`: contém a configuração versionada do serviço Liquidsoap.
 - `specs`: registra requisitos, planejamento, tarefas e revisões de cada mudança.
 - `docs`: mantém visões consolidadas da arquitetura e do banco de dados.
 

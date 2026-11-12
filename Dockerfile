@@ -20,7 +20,7 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends pure-ftpd \
     && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /data/pureftpd /data/liquidsoap /etc/pure-ftpd/passwd
+    && mkdir -p /liquidsoap/config /liquidsoap/m3u /pure-ftpd/uploads /etc/pure-ftpd/passwd
 
 COPY --from=build /workspace/application.jar /app/application.jar
 

@@ -1,6 +1,6 @@
 settings.log.stdout.set(true)
 
-media = playlist(mode="randomize", reload=60, "/media")
+media = playlist(mode="randomize", reload=60, "/liquidsoap/m3u")
 radio = fallback(track_sensitive=false, [media, blank()])
 
 output.icecast(

@@ -38,9 +38,13 @@ Serviços expostos por padrão:
 | MySQL | `localhost:3306` |
 | Pure-FTPd | `localhost:21` e portas passivas `30000-30009` |
 
-Os arquivos enviados por FTP ficam no volume `pureftpd_files`. As mídias do
-auto-DJ ficam no volume `liquidsoap_media`. Ambos são montados no serviço
-`application`, respectivamente em `/data/pureftpd` e `/data/liquidsoap`.
+Os arquivos enviados por FTP ficam no volume `pureftpd_uploads`, montado em
+`/pure-ftpd/uploads` na aplicação, no Pure-FTPd e no Liquidsoap. Os arquivos
+`.m3u` ficam no volume `liquidsoap_m3u`, montado em `/liquidsoap/m3u` na
+aplicação e no Liquidsoap. A configuração versionada em `./liquidsoap` fica
+disponível para escrita na aplicação em `/liquidsoap/config` e para leitura no
+Liquidsoap em `/etc/liquidsoap`. O Liquidsoap acessa as playlists, os áudios e
+a configuração somente para leitura.
 
 ## Usuários do Pure-FTPd
 
@@ -63,7 +67,7 @@ continuam editáveis, e alterações nesses campos não modificam o acesso FTP.
 
 ```bash
 docker exec streamora-application sh -c \
-  'test -d /data/pureftpd && test -d /data/liquidsoap'
+  'test -d /liquidsoap/config && test -d /liquidsoap/m3u && test -d /pure-ftpd/uploads'
 ```
 
 Para encerrar o ambiente sem remover os volumes persistentes:
