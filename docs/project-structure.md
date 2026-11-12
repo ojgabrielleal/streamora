@@ -53,14 +53,24 @@ streamora/
 │   │   │   │   └── UserMapper.java
 │   │   │   ├── infrastructure/
 │   │   │   │   └── pureFtpd/
-│   │   │   │       ├── PureFtpd.java
-│   │   │   │       ├── FtpSystemCommandExecutor.java
-│   │   │   │       ├── exception/
-│   │   │   │       │   └── FtpUserManagementException.java
-│   │   │   │       ├── interfaces/
-│   │   │   │       │   └── FtpCommandExecutor.java
-│   │   │   │       └── records/
-│   │   │   │           └── PureFtpdProperties.java
+│   │   │   │       ├── storage/
+│   │   │   │       │   ├── LocalFtpFileStorage.java
+│   │   │   │       │   ├── exception/
+│   │   │   │       │   │   └── FtpFileStorageException.java
+│   │   │   │       │   ├── interfaces/
+│   │   │   │       │   │   └── FtpFileStorage.java
+│   │   │   │       │   └── records/
+│   │   │   │       │       ├── FtpFileEntry.java
+│   │   │   │       │       └── FtpFileType.java
+│   │   │   │       └── user/
+│   │   │   │           ├── PureFtpd.java
+│   │   │   │           ├── FtpSystemCommandExecutor.java
+│   │   │   │           ├── exception/
+│   │   │   │           │   └── FtpUserManagementException.java
+│   │   │   │           ├── interfaces/
+│   │   │   │           │   └── FtpCommandExecutor.java
+│   │   │   │           └── records/
+│   │   │   │               └── PureFtpdProperties.java
 │   │   │   ├── filter/
 │   │   │   │   └── JwtAuthenticationFilter.java
 │   │   │   ├── exception/
@@ -71,6 +81,7 @@ streamora/
 │   │   │   │   └── UserRepository.java
 │   │   │   └── service/
 │   │   │       ├── AuthService.java
+│   │   │       ├── FtpFileService.java
 │   │   │       ├── PlaylistService.java
 │   │   │       ├── ScheduleService.java
 │   │   │       ├── JwtService.java
@@ -106,13 +117,17 @@ streamora/
 │           │   └── UserMapperTests.java
 │           ├── infrastructure/
 │           │   └── pureFtpd/
-│           │       └── PureFtpdTests.java
+│           │       ├── storage/
+│           │       │   └── LocalFtpFileStorageTests.java
+│           │       └── user/
+│           │           └── PureFtpdTests.java
 │           ├── filter/
 │           │   └── JwtAuthenticationFilterTests.java
 │           ├── repository/
 │           │   └── RepositoryStructureTests.java
 │           └── service/
 │               ├── AuthServiceTests.java
+│               ├── FtpFileServiceTests.java
 │               ├── PlaylistServiceTests.java
 │               ├── ScheduleServiceTests.java
 │               ├── JwtServiceTests.java
@@ -139,12 +154,19 @@ devem continuar fora do controle de versão.
 - `mapper`: converte entities em DTOs de resposta e aplica DTOs de entrada em
   entities novas ou existentes.
 - `infrastructure`: encapsula a integração da aplicação com serviços e
-  utilitários externos, incluindo o gerenciamento de usuários do Pure-FTPd.
+  utilitários externos.
+- `infrastructure/pureFtpd/user`: concentra a configuração, a validação de
+  credenciais e a execução dos comandos de gerenciamento de usuários do
+  Pure-FTPd.
+- `infrastructure/pureFtpd/storage`: concentra o contrato e a implementação
+  local das operações seguras sobre arquivos e diretórios do volume
+  compartilhado com o Pure-FTPd.
 - `filter`: intercepta requisições HTTP para autenticar access tokens antes
   que elas alcancem os controllers protegidos.
 - `exception`: reúne exceções próprias da aplicação.
 - `repository`: define as interfaces de acesso aos dados das entities.
-- `service`: concentra operações de negócio e coordena o acesso às repositories.
+- `service`: concentra operações de negócio e coordena o acesso às repositories
+  e aos contratos de infraestrutura, como `FtpFileStorage`.
 - `resources/db/migration`: mantém o histórico executável do banco com Flyway.
 - `liquidsoap`: contém a configuração versionada do serviço Liquidsoap.
 - `specs`: registra requisitos, planejamento, tarefas e revisões de cada mudança.
@@ -170,7 +192,9 @@ Os testes espelham a responsabilidade que validam no código principal:
 - `mapper`: conversão entre DTOs e entities, incluindo campos e
   relacionamentos expostos.
 - `infrastructure`: comportamento das integrações externas com seus executores
-  isolados, sem exigir que os serviços reais estejam em execução.
+  isolados, sem exigir que os serviços reais estejam em execução. Os testes de
+  usuários e armazenamento do Pure-FTPd espelham os subpacotes `user` e
+  `storage`; os testes de armazenamento usam diretórios temporários.
 - `filter`: validação isolada dos filtros HTTP, incluindo rejeição e
   autenticação das requisições.
 - `migration`: convenções globais dos arquivos de migration.

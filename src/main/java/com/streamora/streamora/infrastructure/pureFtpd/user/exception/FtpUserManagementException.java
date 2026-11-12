@@ -1,4 +1,4 @@
-package com.streamora.streamora.infrastructure.pureFtpd.exception;
+package com.streamora.streamora.infrastructure.pureFtpd.user.exception;
 
 public class FtpUserManagementException extends RuntimeException {
 

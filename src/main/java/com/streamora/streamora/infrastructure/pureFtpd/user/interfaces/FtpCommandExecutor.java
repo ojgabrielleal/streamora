@@ -1,4 +1,4 @@
-package com.streamora.streamora.infrastructure.pureFtpd.interfaces;
+package com.streamora.streamora.infrastructure.pureFtpd.user.interfaces;
 
 import java.util.List;
 

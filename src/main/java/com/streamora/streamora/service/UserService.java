@@ -12,7 +12,7 @@ import com.streamora.streamora.dto.UserRequestDTO;
 import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.exception.ResourceNotFoundException;
-import com.streamora.streamora.infrastructure.pureFtpd.PureFtpd;
+import com.streamora.streamora.infrastructure.pureFtpd.user.PureFtpd;
 import com.streamora.streamora.mapper.UserMapper;
 import com.streamora.streamora.repository.UserRepository;
 

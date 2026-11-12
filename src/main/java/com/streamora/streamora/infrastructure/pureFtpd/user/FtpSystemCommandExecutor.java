@@ -1,4 +1,4 @@
-package com.streamora.streamora.infrastructure.pureFtpd;
+package com.streamora.streamora.infrastructure.pureFtpd.user;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.streamora.streamora.infrastructure.pureFtpd.exception.FtpUserManagementException;
-import com.streamora.streamora.infrastructure.pureFtpd.interfaces.FtpCommandExecutor;
+import com.streamora.streamora.infrastructure.pureFtpd.user.exception.FtpUserManagementException;
+import com.streamora.streamora.infrastructure.pureFtpd.user.interfaces.FtpCommandExecutor;
 
 @Component
 public class FtpSystemCommandExecutor implements FtpCommandExecutor {
@@ -15,6 +15,7 @@ public class FtpSystemCommandExecutor implements FtpCommandExecutor {
 	@Override
 	public void execute(List<String> command, String standardInput) {
 		Process process;
+
 		try {
 			process = new ProcessBuilder(command)
 				.redirectErrorStream(true)
@@ -23,6 +24,7 @@ public class FtpSystemCommandExecutor implements FtpCommandExecutor {
 			process.getOutputStream().close();
 			String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 			int exitCode = process.waitFor();
+
 			if (exitCode != 0) {
 				throw new FtpUserManagementException("Pure-FTPd command failed: " + output.strip());
 			}

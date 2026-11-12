@@ -1,12 +1,12 @@
-package com.streamora.streamora.infrastructure.pureFtpd;
+package com.streamora.streamora.infrastructure.pureFtpd.user;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
-import com.streamora.streamora.infrastructure.pureFtpd.interfaces.FtpCommandExecutor;
-import com.streamora.streamora.infrastructure.pureFtpd.records.PureFtpdProperties;
+import com.streamora.streamora.infrastructure.pureFtpd.user.interfaces.FtpCommandExecutor;
+import com.streamora.streamora.infrastructure.pureFtpd.user.records.PureFtpdProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -69,6 +69,7 @@ public class PureFtpd {
 
 	private void validateCredentials(String username, String password) {
 		validateUsername(username);
+
 		if (password == null || password.isBlank()) {
 			throw new IllegalArgumentException("FTP password must not be blank");
 		}

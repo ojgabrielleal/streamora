@@ -1,4 +1,4 @@
-package com.streamora.streamora.infrastructure.pureFtpd.records;
+package com.streamora.streamora.infrastructure.pureFtpd.user.records;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

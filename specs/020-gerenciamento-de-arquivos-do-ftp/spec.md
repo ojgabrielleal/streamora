@@ -1,6 +1,6 @@
 # Spec 020 - Gerenciamento de arquivos do FTP
 
-**Status:** Planejada
+**Status:** Concluída
 
 ## Objetivo
 
@@ -95,29 +95,29 @@ próprios da integração com o Pure-FTPd.
 
 ## Critérios de aceite
 
-- [ ] A aplicação lista recursivamente os arquivos e diretórios da raiz
+- [x] A aplicação lista recursivamente os arquivos e diretórios da raiz
   configurada em formato de árvore.
-- [ ] Os componentes existentes de gerenciamento de usuários estão organizados
+- [x] Os componentes existentes de gerenciamento de usuários estão organizados
   em `infrastructure/pureFtpd/user`, com seus testes no pacote correspondente.
-- [ ] Os componentes novos de gerenciamento de arquivos estão organizados em
+- [x] Os componentes novos de gerenciamento de arquivos estão organizados em
   `infrastructure/pureFtpd/storage`, com seus testes no pacote correspondente.
-- [ ] O gerenciamento existente de usuários e credenciais continua funcionando
+- [x] O gerenciamento existente de usuários e credenciais continua funcionando
   após a reorganização dos packages.
-- [ ] Cada item da árvore informa nome e tipo, e cada diretório contém sua lista
+- [x] Cada item da árvore informa nome e tipo, e cada diretório contém sua lista
   ordenada de filhos.
-- [ ] Um arquivo existente pode ser excluído fisicamente.
-- [ ] Um arquivo pode ser renomeado sem alteração de seu conteúdo.
-- [ ] Um arquivo pode ser movido para um diretório existente ou para a raiz.
-- [ ] Um diretório pode ser criado e renomeado fisicamente.
-- [ ] Um diretório vazio pode ser excluído.
-- [ ] Um diretório com conteúdo não pode ser excluído.
-- [ ] Operações com origem inexistente, destino inválido ou colisão de nomes
+- [x] Um arquivo existente pode ser excluído fisicamente.
+- [x] Um arquivo pode ser renomeado sem alteração de seu conteúdo.
+- [x] Um arquivo pode ser movido para um diretório existente ou para a raiz.
+- [x] Um diretório pode ser criado e renomeado fisicamente.
+- [x] Um diretório vazio pode ser excluído.
+- [x] Um diretório com conteúdo não pode ser excluído.
+- [x] Operações com origem inexistente, destino inválido ou colisão de nomes
   falham sem sobrescrever ou remover outros itens.
-- [ ] Tentativas de acessar caminhos fora da raiz são rejeitadas.
-- [ ] Links simbólicos não permitem escapar da raiz configurada.
-- [ ] O service depende da abstração `FtpFileStorage`, sem executar operações
+- [x] Tentativas de acessar caminhos fora da raiz são rejeitadas.
+- [x] Links simbólicos não permitem escapar da raiz configurada.
+- [x] O service depende da abstração `FtpFileStorage`, sem executar operações
   físicas diretamente.
-- [ ] A implementação física utiliza somente APIs nativas de `java.nio.file`.
-- [ ] Os testes da implementação física usam diretórios temporários.
-- [ ] `docs/project-structure.md` descreve os novos componentes.
-- [ ] O projeto compila e todos os testes passam.
+- [x] A implementação física utiliza somente APIs nativas de `java.nio.file`.
+- [x] Os testes da implementação física usam diretórios temporários.
+- [x] `docs/project-structure.md` descreve os novos componentes.
+- [x] O projeto compila e todos os testes passam.

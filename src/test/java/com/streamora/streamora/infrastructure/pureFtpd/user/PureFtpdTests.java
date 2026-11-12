@@ -1,4 +1,4 @@
-package com.streamora.streamora.infrastructure.pureFtpd;
+package com.streamora.streamora.infrastructure.pureFtpd.user;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.never;
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.streamora.streamora.infrastructure.pureFtpd.interfaces.FtpCommandExecutor;
-import com.streamora.streamora.infrastructure.pureFtpd.records.PureFtpdProperties;
+import com.streamora.streamora.infrastructure.pureFtpd.user.interfaces.FtpCommandExecutor;
+import com.streamora.streamora.infrastructure.pureFtpd.user.records.PureFtpdProperties;
 
 @ExtendWith(MockitoExtension.class)
 class PureFtpdTests {
