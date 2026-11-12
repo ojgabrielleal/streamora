@@ -48,6 +48,7 @@ class JwtAuthenticationFilterTests {
 		MockHttpServletResponse response = performRequest("Bearer invalid-token", "/user");
 
 		assertThat(response.getStatus()).isEqualTo(401);
+
 		verify(filterChain, never()).doFilter(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
 	}
 
@@ -68,6 +69,7 @@ class JwtAuthenticationFilterTests {
 				assertThat(authentication.isAuthenticated()).isTrue();
 				assertThat(authentication.getPrincipal()).isEqualTo("valid-token");
 			});
+
 		verify(filterChain).doFilter(request, response);
 	}
 

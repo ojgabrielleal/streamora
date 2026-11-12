@@ -17,11 +17,11 @@ class PlaylistMapperTests {
 	void mapsEntityToResponseWithM3uFileName() {
 		Playlist playlist = PlaylistFactory.toEntity();
 
-		PlaylistResponseDTO response = PlaylistMapper.toResponse(playlist);
+		PlaylistResponseDTO playlistResponse = PlaylistMapper.toResponse(playlist);
 
-		assertThat(response.uuid()).isEqualTo(playlist.getUuid());
-		assertThat(response.name()).isEqualTo(playlist.getName());
-		assertThat(response.m3uFileName()).isEqualTo(playlist.getM3uFileName());
+		assertThat(playlistResponse.uuid()).isEqualTo(playlist.getUuid());
+		assertThat(playlistResponse.name()).isEqualTo(playlist.getName());
+		assertThat(playlistResponse.m3uFileName()).isEqualTo(playlist.getM3uFileName());
 		assertThat(PlaylistResponseDTO.class.getRecordComponents())
 			.extracting(component -> component.getName())
 			.doesNotContain("id");
@@ -34,9 +34,9 @@ class PlaylistMapperTests {
 		schedule.setPlaylist(playlist);
 		playlist.getSchedules().add(schedule);
 
-		PlaylistResponseDTO response = PlaylistMapper.toResponse(playlist);
+		PlaylistResponseDTO playlistResponse = PlaylistMapper.toResponse(playlist);
 
-		assertThat(response.schedules()).singleElement().satisfies(scheduleResponse -> {
+		assertThat(playlistResponse.schedules()).singleElement().satisfies(scheduleResponse -> {
 			assertThat(scheduleResponse.uuid()).isEqualTo(schedule.getUuid());
 			assertThat(scheduleResponse.dayOfWeek()).isEqualTo(schedule.getDayOfWeek());
 		});
@@ -44,32 +44,32 @@ class PlaylistMapperTests {
 
 	@Test
 	void mapsRequestToNewEntity() {
-		PlaylistRequestDTO request = PlaylistFactory.toCreate();
+		PlaylistRequestDTO playlistCreateRequest = PlaylistFactory.toCreate();
 
-		Playlist playlist = PlaylistMapper.toEntity(request);
+		Playlist playlist = PlaylistMapper.toEntity(playlistCreateRequest);
 
 		assertThat(playlist.getId()).isNull();
 		assertThat(playlist.getUuid()).isNull();
-		assertThat(playlist.getName()).isEqualTo(request.name());
-		assertThat(playlist.getM3uFileName()).isEqualTo(request.m3uFileName());
+		assertThat(playlist.getName()).isEqualTo(playlistCreateRequest.name());
+		assertThat(playlist.getM3uFileName()).isEqualTo(playlistCreateRequest.m3uFileName());
 	}
 
 	@Test
 	void mapsRequestToExistingEntityAndPreservesIdentity() {
 		Playlist playlist = PlaylistFactory.toEntity();
 
-		PlaylistRequestDTO request = PlaylistFactory.toCreate(2).getLast();
+		PlaylistRequestDTO playlistUpdateRequest = PlaylistFactory.toCreate(2).getLast();
 		Long originalId = playlist.getId();
 		String originalUuid = playlist.getUuid();
 
-		Playlist mappedPlaylist = PlaylistMapper.toEntity(request, playlist);
+		Playlist mappedPlaylist = PlaylistMapper.toEntity(playlistUpdateRequest, playlist);
 
 		assertThat(mappedPlaylist)
 			.isSameAs(playlist);
 		assertThat(mappedPlaylist.getId()).isEqualTo(originalId);
 		assertThat(mappedPlaylist.getUuid()).isEqualTo(originalUuid);
-		assertThat(mappedPlaylist.getName()).isEqualTo(request.name());
-		assertThat(mappedPlaylist.getM3uFileName()).isEqualTo(request.m3uFileName());
+		assertThat(mappedPlaylist.getName()).isEqualTo(playlistUpdateRequest.name());
+		assertThat(mappedPlaylist.getM3uFileName()).isEqualTo(playlistUpdateRequest.m3uFileName());
 	}
 
 	@Test
@@ -81,9 +81,9 @@ class PlaylistMapperTests {
 
 	@Test
 	void rejectsM3uFileNameWithWindowsDirectoryPath() {
-		PlaylistRequestDTO request = new PlaylistRequestDTO("Playlist", "directory\\playlist.m3u");
+		PlaylistRequestDTO invalidPlaylistRequest = new PlaylistRequestDTO("Playlist", "directory\\playlist.m3u");
 
-		org.assertj.core.api.Assertions.assertThatThrownBy(() -> PlaylistMapper.toEntity(request))
+		org.assertj.core.api.Assertions.assertThatThrownBy(() -> PlaylistMapper.toEntity(invalidPlaylistRequest))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("M3U file name must not contain a directory path");
 	}

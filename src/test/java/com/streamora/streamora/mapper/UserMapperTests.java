@@ -15,12 +15,12 @@ class UserMapperTests {
 	void mapsEntityToResponseWithoutInternalIdOrPassword() {
 		User user = UserFactory.toEntity();
 
-		UserResponseDTO response = UserMapper.toResponse(user);
+		UserResponseDTO userResponse = UserMapper.toResponse(user);
 
-		assertThat(response.uuid()).isEqualTo(user.getUuid());
-		assertThat(response.fullname()).isEqualTo(user.getFullname());
-		assertThat(response.nickname()).isEqualTo(user.getNickname());
-		assertThat(response.username()).isEqualTo(user.getUsername());
+		assertThat(userResponse.uuid()).isEqualTo(user.getUuid());
+		assertThat(userResponse.fullname()).isEqualTo(user.getFullname());
+		assertThat(userResponse.nickname()).isEqualTo(user.getNickname());
+		assertThat(userResponse.username()).isEqualTo(user.getUsername());
 		assertThat(UserResponseDTO.class.getRecordComponents())
 			.extracting(component -> component.getName())
 			.doesNotContain("id", "password");
@@ -28,16 +28,16 @@ class UserMapperTests {
 
 	@Test
 	void mapsRequestToNewEntity() {
-		UserRequestDTO request = UserFactory.toCreate();
+		UserRequestDTO userCreateRequest = UserFactory.toCreate();
 
-		User user = UserMapper.toEntity(request);
+		User user = UserMapper.toEntity(userCreateRequest);
 
 		assertThat(user.getId()).isNull();
 		assertThat(user.getUuid()).isNull();
-		assertThat(user.getFullname()).isEqualTo(request.fullname());
-		assertThat(user.getNickname()).isEqualTo(request.nickname());
-		assertThat(user.getUsername()).isEqualTo(request.username());
-		assertThat(user.getPassword()).isEqualTo(request.password());
+		assertThat(user.getFullname()).isEqualTo(userCreateRequest.fullname());
+		assertThat(user.getNickname()).isEqualTo(userCreateRequest.nickname());
+		assertThat(user.getUsername()).isEqualTo(userCreateRequest.username());
+		assertThat(user.getPassword()).isEqualTo(userCreateRequest.password());
 	}
 
 	@Test
@@ -47,18 +47,18 @@ class UserMapperTests {
 		Long originalId = user.getId();
 		String originalUuid = user.getUuid();
 
-		UserRequestDTO request = UserFactory.toCreate(2).getLast();
+		UserRequestDTO userUpdateRequest = UserFactory.toCreate(2).getLast();
 
-		User mappedUser = UserMapper.toEntity(request, user);
+		User mappedUser = UserMapper.toEntity(userUpdateRequest, user);
 
 		assertThat(mappedUser)
 			.isSameAs(user);
 		assertThat(mappedUser.getId()).isEqualTo(originalId);
 		assertThat(mappedUser.getUuid()).isEqualTo(originalUuid);
-		assertThat(mappedUser.getFullname()).isEqualTo(request.fullname());
-		assertThat(mappedUser.getNickname()).isEqualTo(request.nickname());
-		assertThat(mappedUser.getUsername()).isEqualTo(request.username());
-		assertThat(mappedUser.getPassword()).isEqualTo(request.password());
+		assertThat(mappedUser.getFullname()).isEqualTo(userUpdateRequest.fullname());
+		assertThat(mappedUser.getNickname()).isEqualTo(userUpdateRequest.nickname());
+		assertThat(mappedUser.getUsername()).isEqualTo(userUpdateRequest.username());
+		assertThat(mappedUser.getPassword()).isEqualTo(userUpdateRequest.password());
 	}
 
 	@Test
@@ -66,9 +66,9 @@ class UserMapperTests {
 		User user = UserFactory.toEntity();
 		String originalUsername = user.getUsername();
 		String originalPassword = user.getPassword();
-		UserRequestDTO request = new UserRequestDTO("Updated Name", "updated", null, null);
+		UserRequestDTO partialUserUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, null);
 
-		UserMapper.toEntity(request, user);
+		UserMapper.toEntity(partialUserUpdateRequest, user);
 
 		assertThat(user.getUsername()).isEqualTo(originalUsername);
 		assertThat(user.getPassword()).isEqualTo(originalPassword);

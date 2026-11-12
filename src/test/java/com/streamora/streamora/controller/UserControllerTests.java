@@ -39,7 +39,9 @@ class UserControllerTests {
 		when(userService.index())
 			.thenReturn(userResponses);
 
-		assertThat(userController.index())
+		List<UserResponseDTO> returnedUsers = userController.index();
+
+		assertThat(returnedUsers)
 			.isSameAs(userResponses);
 
 		verify(userService).index();
@@ -52,7 +54,9 @@ class UserControllerTests {
 		when(userService.show("user-uuid"))
 			.thenReturn(userResponse);
 
-		assertThat(userController.show("user-uuid"))
+		UserResponseDTO returnedUser = userController.show("user-uuid");
+
+		assertThat(returnedUser)
 			.isSameAs(userResponse);
 
 		verify(userService).show("user-uuid");
@@ -66,7 +70,9 @@ class UserControllerTests {
 		when(userService.store(userRequest))
 			.thenReturn(userResponse);
 
-		assertThat(userController.store(userRequest))
+		UserResponseDTO createdUser = userController.store(userRequest);
+
+		assertThat(createdUser)
 			.isSameAs(userResponse);
 
 		verify(userService).store(userRequest);
@@ -80,7 +86,9 @@ class UserControllerTests {
 		when(userService.update("user-uuid", userRequest))
 			.thenReturn(userResponse);
 
-		assertThat(userController.update("user-uuid", userRequest))
+		UserResponseDTO updatedUser = userController.update("user-uuid", userRequest);
+
+		assertThat(updatedUser)
 			.isSameAs(userResponse);
 
 		verify(userService).update("user-uuid", userRequest);

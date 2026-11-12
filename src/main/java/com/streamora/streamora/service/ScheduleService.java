@@ -36,22 +36,24 @@ public class ScheduleService {
 		return ScheduleMapper.toResponse(findScheduleByUuid(uuid));
 	}
 
-	public ScheduleResponseDTO store(ScheduleRequestDTO request) {
-		validateInterval(request);
+	public ScheduleResponseDTO store(ScheduleRequestDTO scheduleRequest) {
+		validateInterval(scheduleRequest);
 
-		Playlist playlist = findPlaylistByUuid(request.playlistUuid());
+		Playlist playlist = findPlaylistByUuid(scheduleRequest.playlistUuid());
 
-		Schedule schedule = ScheduleMapper.toEntity(request, playlist);
+		Schedule schedule = ScheduleMapper.toEntity(scheduleRequest, playlist);
+
 		return ScheduleMapper.toResponse(scheduleRepository.save(schedule));
 	}
 
-	public ScheduleResponseDTO update(String uuid, ScheduleRequestDTO request) {
-		validateInterval(request);
+	public ScheduleResponseDTO update(String uuid, ScheduleRequestDTO scheduleRequest) {
+		validateInterval(scheduleRequest);
 
 		Schedule storedSchedule = findScheduleByUuid(uuid);
-		Playlist playlist = findPlaylistByUuid(request.playlistUuid());
+		Playlist playlist = findPlaylistByUuid(scheduleRequest.playlistUuid());
 
-		ScheduleMapper.toEntity(request, playlist, storedSchedule);
+		ScheduleMapper.toEntity(scheduleRequest, playlist, storedSchedule);
+
 		return ScheduleMapper.toResponse(scheduleRepository.save(storedSchedule));
 	}
 
@@ -59,8 +61,9 @@ public class ScheduleService {
 		scheduleRepository.delete(findScheduleByUuid(uuid));
 	}
 
-	private void validateInterval(ScheduleRequestDTO request) {
-		if (request.startTime() == null || request.endTime() == null || !request.endTime().isAfter(request.startTime())) {
+	private void validateInterval(ScheduleRequestDTO scheduleRequest) {
+		if (scheduleRequest.startTime() == null || scheduleRequest.endTime() == null
+			|| !scheduleRequest.endTime().isAfter(scheduleRequest.startTime())) {
 			throw new IllegalArgumentException("End time must be after start time");
 		}
 	}

@@ -36,56 +36,64 @@ class ScheduleControllerTests {
 
 	@Test
 	void delegatesIndexToService() {
-		ScheduleResponseDTO response = ScheduleMapper.toResponse(ScheduleFactory.toEntity());
+		ScheduleResponseDTO scheduleResponse = ScheduleMapper.toResponse(ScheduleFactory.toEntity());
 
 		when(scheduleService.index())
-			.thenReturn(List.of(response));
+			.thenReturn(List.of(scheduleResponse));
 
-		assertThat(scheduleController.index())
-			.containsExactly(response);
+		List<ScheduleResponseDTO> returnedSchedules = scheduleController.index();
+
+		assertThat(returnedSchedules)
+			.containsExactly(scheduleResponse);
 
 		verify(scheduleService).index();
 	}
 
 	@Test
 	void delegatesShowToService() {
-		ScheduleResponseDTO response = ScheduleMapper.toResponse(ScheduleFactory.toEntity());
+		ScheduleResponseDTO scheduleResponse = ScheduleMapper.toResponse(ScheduleFactory.toEntity());
 
 		when(scheduleService.show("schedule-uuid-1"))
-			.thenReturn(response);
+			.thenReturn(scheduleResponse);
 
-		assertThat(scheduleController.show("schedule-uuid-1"))
-			.isSameAs(response);
+		ScheduleResponseDTO returnedSchedule = scheduleController.show("schedule-uuid-1");
+
+		assertThat(returnedSchedule)
+			.isSameAs(scheduleResponse);
 
 		verify(scheduleService).show("schedule-uuid-1");
 	}
 
 	@Test
 	void delegatesStoreToService() {
-		ScheduleRequestDTO request = ScheduleFactory.toRequest();
-		ScheduleResponseDTO response = ScheduleMapper.toResponse(ScheduleFactory.toEntity());
+		ScheduleRequestDTO scheduleRequest = ScheduleFactory.toRequest();
+		ScheduleResponseDTO scheduleResponse = ScheduleMapper.toResponse(ScheduleFactory.toEntity());
 
-		when(scheduleService.store(request))
-			.thenReturn(response);
+		when(scheduleService.store(scheduleRequest))
+			.thenReturn(scheduleResponse);
 
-		assertThat(scheduleController.store(request))
-			.isSameAs(response);
+		ScheduleResponseDTO createdSchedule = scheduleController.store(scheduleRequest);
 
-		verify(scheduleService).store(request);
+		assertThat(createdSchedule)
+			.isSameAs(scheduleResponse);
+
+		verify(scheduleService).store(scheduleRequest);
 	}
 
 	@Test
 	void delegatesUpdateToService() {
-		ScheduleRequestDTO request = ScheduleFactory.toRequest();
-		ScheduleResponseDTO response = ScheduleMapper.toResponse(ScheduleFactory.toEntity());
+		ScheduleRequestDTO scheduleRequest = ScheduleFactory.toRequest();
+		ScheduleResponseDTO scheduleResponse = ScheduleMapper.toResponse(ScheduleFactory.toEntity());
 
-		when(scheduleService.update("schedule-uuid-1", request))
-			.thenReturn(response);
+		when(scheduleService.update("schedule-uuid-1", scheduleRequest))
+			.thenReturn(scheduleResponse);
 
-		assertThat(scheduleController.update("schedule-uuid-1", request))
-			.isSameAs(response);
+		ScheduleResponseDTO updatedSchedule = scheduleController.update("schedule-uuid-1", scheduleRequest);
 
-		verify(scheduleService).update("schedule-uuid-1", request);
+		assertThat(updatedSchedule)
+			.isSameAs(scheduleResponse);
+
+		verify(scheduleService).update("schedule-uuid-1", scheduleRequest);
 	}
 
 	@Test

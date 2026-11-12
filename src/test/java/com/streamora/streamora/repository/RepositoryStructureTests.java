@@ -34,7 +34,6 @@ class RepositoryStructureTests {
 			assertThat(repositoryClass.isInterface()).isTrue();
 			assertThat(repositoryType.resolveGeneric(0)).isEqualTo(entityClass);
 			assertThat(repositoryType.resolveGeneric(1)).isEqualTo(Long.class);
-
 			assertThat(ResolvableType.forMethodReturnType(findByUuid).resolve()).isEqualTo(Optional.class);
 			assertThat(ResolvableType.forMethodReturnType(findByUuid).resolveGeneric(0)).isEqualTo(entityClass);
 		}

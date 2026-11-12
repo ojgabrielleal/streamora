@@ -39,7 +39,9 @@ class PlaylistControllerTests {
 		when(playlistService.index())
 			.thenReturn(playlistResponses);
 
-		assertThat(playlistController.index())
+		List<PlaylistResponseDTO> returnedPlaylists = playlistController.index();
+
+		assertThat(returnedPlaylists)
 			.isSameAs(playlistResponses);
 
 		verify(playlistService).index();
@@ -52,7 +54,9 @@ class PlaylistControllerTests {
 		when(playlistService.show("playlist-uuid"))
 			.thenReturn(playlistResponse);
 
-		assertThat(playlistController.show("playlist-uuid"))
+		PlaylistResponseDTO returnedPlaylist = playlistController.show("playlist-uuid");
+
+		assertThat(returnedPlaylist)
 			.isSameAs(playlistResponse);
 
 		verify(playlistService).show("playlist-uuid");
@@ -66,7 +70,9 @@ class PlaylistControllerTests {
 		when(playlistService.store(playlistRequest))
 			.thenReturn(playlistResponse);
 
-		assertThat(playlistController.store(playlistRequest))
+		PlaylistResponseDTO createdPlaylist = playlistController.store(playlistRequest);
+
+		assertThat(createdPlaylist)
 			.isSameAs(playlistResponse);
 
 		verify(playlistService).store(playlistRequest);
@@ -80,7 +86,9 @@ class PlaylistControllerTests {
 		when(playlistService.update("playlist-uuid", playlistRequest))
 			.thenReturn(playlistResponse);
 
-		assertThat(playlistController.update("playlist-uuid", playlistRequest))
+		PlaylistResponseDTO updatedPlaylist = playlistController.update("playlist-uuid", playlistRequest);
+
+		assertThat(updatedPlaylist)
 			.isSameAs(playlistResponse);
 
 		verify(playlistService).update("playlist-uuid", playlistRequest);

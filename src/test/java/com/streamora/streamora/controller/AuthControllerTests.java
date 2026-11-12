@@ -46,7 +46,9 @@ class AuthControllerTests {
 		when(authService.auth(authRequest))
 			.thenReturn(generatedTokens);
 
-		assertThat(authController.auth(authRequest))
+		Map<String, String> returnedTokens = authController.auth(authRequest);
+
+		assertThat(returnedTokens)
 			.isSameAs(generatedTokens);
 
 		verify(authService).auth(authRequest);

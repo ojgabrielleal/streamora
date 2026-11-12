@@ -29,7 +29,11 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+	SecurityFilterChain securityFilterChain(
+		HttpSecurity http,
+		JwtAuthenticationFilter jwtAuthenticationFilter
+	) throws Exception
+	{
 		http
 			.formLogin(form->form.disable())
 			.csrf(csrf -> csrf.disable())

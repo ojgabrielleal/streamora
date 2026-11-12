@@ -29,6 +29,7 @@ public final class UserMapper {
 		if (userRequest.username() != null) {
 			user.setUsername(userRequest.username());
 		}
+
 		if (userRequest.password() != null) {
 			user.setPassword(userRequest.password());
 		}

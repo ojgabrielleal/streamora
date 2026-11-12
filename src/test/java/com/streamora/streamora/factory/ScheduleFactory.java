@@ -31,7 +31,7 @@ public final class ScheduleFactory {
 		schedule.setDayOfWeek(WeekDay.MONDAY);
 		schedule.setStartTime(LocalTime.of(8, 0));
 		schedule.setEndTime(LocalTime.of(12, 0));
-		
+
 		return schedule;
 	}
 }

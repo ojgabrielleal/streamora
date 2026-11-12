@@ -23,7 +23,7 @@ import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.factory.UserFactory;
-import com.streamora.streamora.infrastructure.pureFtpd.PureFtpd;
+import com.streamora.streamora.infrastructure.pureFtpd.user.PureFtpd;
 import com.streamora.streamora.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +48,9 @@ class UserServiceTests {
 		when(userRepository.findAll())
 			.thenReturn(userEntities);
 
-		assertThat(userService.index())
+		List<UserResponseDTO> indexedUsers = userService.index();
+
+		assertThat(indexedUsers)
 			.extracting(user -> user.uuid())
 			.containsExactly(userEntities.getFirst().getUuid(), userEntities.getLast().getUuid());
 	}
@@ -60,7 +62,9 @@ class UserServiceTests {
 		when(userRepository.findByUuid(userEntity.getUuid()))
 			.thenReturn(Optional.of(userEntity));
 
-		assertThat(userService.show(userEntity.getUuid()).uuid()).isEqualTo(userEntity.getUuid());
+		UserResponseDTO returnedUser = userService.show(userEntity.getUuid());
+
+		assertThat(returnedUser.uuid()).isEqualTo(userEntity.getUuid());
 	}
 
 	@Test

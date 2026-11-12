@@ -62,10 +62,10 @@ public class ScheduleController {
 	@ApiResponse(responseCode = "200", description = "Horário criado")
 	public ScheduleResponseDTO store(
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dados do horário", required = true)
-		@RequestBody ScheduleRequestDTO request
+		@RequestBody ScheduleRequestDTO scheduleRequest
 	)
 	{
-		return scheduleService.store(request);
+		return scheduleService.store(scheduleRequest);
 	}
 
 	@PutMapping("/{uuid}")
@@ -74,10 +74,10 @@ public class ScheduleController {
 	public ScheduleResponseDTO update(
 		@Parameter(description = "UUID do horário") @PathVariable String uuid,
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dados do horário", required = true)
-		@RequestBody ScheduleRequestDTO request
+		@RequestBody ScheduleRequestDTO scheduleRequest
 	)
 	{
-		return scheduleService.update(uuid, request);
+		return scheduleService.update(uuid, scheduleRequest);
 	}
 
 	@DeleteMapping("/{uuid}")

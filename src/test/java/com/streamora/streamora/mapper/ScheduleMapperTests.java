@@ -17,27 +17,27 @@ class ScheduleMapperTests {
 	void mapsScheduleWithPlaylistSummary() {
 		Schedule schedule = ScheduleFactory.toEntity();
 
-		ScheduleResponseDTO response = ScheduleMapper.toResponse(schedule);
+		ScheduleResponseDTO scheduleResponse = ScheduleMapper.toResponse(schedule);
 
-		assertThat(response.uuid()).isEqualTo(schedule.getUuid());
-		assertThat(response.playlist().uuid()).isEqualTo(schedule.getPlaylist().getUuid());
-		assertThat(response.playlist().name()).isEqualTo(schedule.getPlaylist().getName());
-		assertThat(response.dayOfWeek()).isEqualTo(schedule.getDayOfWeek());
-		assertThat(response.startTime()).isEqualTo(schedule.getStartTime());
-		assertThat(response.endTime()).isEqualTo(schedule.getEndTime());
+		assertThat(scheduleResponse.uuid()).isEqualTo(schedule.getUuid());
+		assertThat(scheduleResponse.playlist().uuid()).isEqualTo(schedule.getPlaylist().getUuid());
+		assertThat(scheduleResponse.playlist().name()).isEqualTo(schedule.getPlaylist().getName());
+		assertThat(scheduleResponse.dayOfWeek()).isEqualTo(schedule.getDayOfWeek());
+		assertThat(scheduleResponse.startTime()).isEqualTo(schedule.getStartTime());
+		assertThat(scheduleResponse.endTime()).isEqualTo(schedule.getEndTime());
 	}
 
 	@Test
 	void mapsRequestToScheduleAndPlaylistRelationship() {
-		ScheduleRequestDTO request = ScheduleFactory.toRequest();
+		ScheduleRequestDTO scheduleRequest = ScheduleFactory.toRequest();
 		Playlist playlist = PlaylistFactory.toEntity();
 
-		Schedule schedule = ScheduleMapper.toEntity(request, playlist);
+		Schedule schedule = ScheduleMapper.toEntity(scheduleRequest, playlist);
 
 		assertThat(schedule.getPlaylist())
 			.isSameAs(playlist);
-		assertThat(schedule.getDayOfWeek()).isEqualTo(request.dayOfWeek());
-		assertThat(schedule.getStartTime()).isEqualTo(request.startTime());
-		assertThat(schedule.getEndTime()).isEqualTo(request.endTime());
+		assertThat(schedule.getDayOfWeek()).isEqualTo(scheduleRequest.dayOfWeek());
+		assertThat(schedule.getStartTime()).isEqualTo(scheduleRequest.startTime());
+		assertThat(schedule.getEndTime()).isEqualTo(scheduleRequest.endTime());
 	}
 }

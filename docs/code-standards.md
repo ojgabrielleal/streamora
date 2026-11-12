@@ -128,6 +128,92 @@ Essa regra se aplica a declarações de métodos e construtores. Ela não altera
 o padrão de chamadas de métodos, estruturas condicionais ou records com corpo
 vazio.
 
+### Organização interna dos métodos
+
+Organize o corpo dos métodos em blocos de responsabilidade separados por uma
+linha em branco. Separe validações iniciais, preparação de dados, condicionais
+independentes, execução da operação principal e retorno ou lançamento final
+quando representarem etapas distintas do fluxo.
+
+Mantenha juntas as instruções que fazem parte da mesma operação. Não adicione
+linhas vazias entre atribuições relacionadas, entre uma condição e seu corpo ou
+apenas para aumentar visualmente o método.
+
+Separe por uma linha em branco as declarações locais sem inicialização do bloco
+que atribuirá seus valores, como um `try` usado para capturar falhas da
+inicialização. Quando houver várias declarações relacionadas, mantenha-as juntas
+e insira uma única linha em branco antes do bloco operacional.
+
+Aplique a mesma separação entre declarações locais já inicializadas e uma
+estrutura de controle que consome esses valores, como `for`, `while`, `if` ou
+`try`. Mantenha as declarações relacionadas no mesmo grupo e insira uma única
+linha em branco antes da estrutura de controle.
+
+```java
+Path current = root;
+Path relativePath = root.relativize(path);
+
+for (Path segment : relativePath) {
+	current = current.resolve(segment);
+}
+```
+
+Correto:
+
+```java
+Path relativePath;
+
+try {
+	relativePath = Path.of(path);
+} catch (InvalidPathException exception) {
+	throw new FtpFileStorageException("Invalid FTP path", exception);
+}
+```
+
+Evite:
+
+```java
+Path relativePath;
+try {
+	relativePath = Path.of(path);
+} catch (InvalidPathException exception) {
+	throw new FtpFileStorageException("Invalid FTP path", exception);
+}
+```
+
+Quando condicionais independentes encerrarem o fluxo com `return` ou `throw`,
+separe cada condicional da próxima etapa com uma linha em branco. Antes de um
+`return` ou `throw` final, use uma linha em branco quando ele representar o
+resultado residual depois das condições anteriores.
+
+Correto:
+
+```java
+private FtpFileEntry readEntry(Path path) {
+	rejectSymbolicLink(path);
+
+	if (Files.isDirectory(path, NO_FOLLOW_LINKS)) {
+		return new FtpFileEntry(
+			path.getFileName().toString(),
+			FtpFileType.DIRECTORY,
+			readChildren(path)
+		);
+	}
+
+	if (Files.isRegularFile(path, NO_FOLLOW_LINKS)) {
+		return new FtpFileEntry(
+			path.getFileName().toString(),
+			FtpFileType.FILE,
+			List.of()
+		);
+	}
+
+	throw new FtpFileStorageException(
+		"Unsupported item in FTP storage: " + path.getFileName()
+	);
+}
+```
+
 ### Anotações OpenAPI em múltiplas linhas
 
 Quando uma anotação `@ApiResponse` ficar longa, ela pode ser distribuída em
@@ -197,8 +283,8 @@ documentação em linhas próprias, mantenha toda a assinatura na mesma linha.
 Correto:
 
 ```java
-public ScheduleResponseDTO update(@PathVariable String uuid, @RequestBody ScheduleRequestDTO request) {
-	return scheduleService.update(uuid, request);
+public ScheduleResponseDTO update(@PathVariable String uuid, @RequestBody ScheduleRequestDTO scheduleRequest) {
+	return scheduleService.update(uuid, scheduleRequest);
 }
 ```
 
@@ -207,9 +293,9 @@ Evite:
 ```java
 public ScheduleResponseDTO update(
 	@PathVariable String uuid,
-	@RequestBody ScheduleRequestDTO request
+	@RequestBody ScheduleRequestDTO scheduleRequest
 ) {
-	return scheduleService.update(uuid, request);
+	return scheduleService.update(uuid, scheduleRequest);
 }
 ```
 
@@ -273,20 +359,30 @@ espaços ou tabulações em linhas vazias.
 
 Dentro de cada teste, agrupe as instruções por finalidade e separe cada grupo
 com uma linha em branco: primeiro os dados do cenário, depois todas as
-configurações `when`, em seguida a execução e as asserções `assertThat` e, por
-último, todas as verificações `verify`. Não insira linhas em branco entre
-instruções consecutivas do mesmo grupo.
+configurações `when`, em seguida a execução, depois as asserções `assertThat` e,
+por último, todas as verificações `verify`. Não insira linhas em branco entre
+instruções consecutivas do mesmo grupo. Não execute o método principal sob
+teste diretamente dentro de uma asserção; armazene seu retorno em uma variável
+específica no bloco de execução. Testes de exceção com `assertThatThrownBy`
+constituem a exceção, pois a chamada precisa permanecer dentro da função
+executável avaliada pela asserção.
 
 Nas asserções com `isSameAs(...)` ou `containsExactly(...)`, mantenha
 `assertThat(...)` em uma linha e inicie a operação de verificação na linha
 seguinte, com um nível adicional de recuo.
 
 ```java
-assertThat(scheduleController.show(uuid))
-	.isSameAs(response);
+ScheduleResponseDTO returnedSchedule = scheduleController.show(uuid);
 
-assertThat(scheduleController.index())
-	.containsExactly(response);
+assertThat(returnedSchedule)
+	.isSameAs(expectedSchedule);
+```
+
+```java
+List<ScheduleResponseDTO> returnedSchedules = scheduleController.index();
+
+assertThat(returnedSchedules)
+	.containsExactly(expectedSchedule);
 ```
 
 Nos testes de controllers, mantenha os DTOs individuais juntos e separe por
@@ -311,7 +407,7 @@ Correto:
 void updatesNameAndM3uFileNameAndPreservesIdentity() {
 	Playlist storedPlaylist = PlaylistFactory.toEntity();
 
-	PlaylistRequestDTO changes = PlaylistFactory.toCreate(2).getLast();
+	PlaylistRequestDTO playlistUpdateRequest = PlaylistFactory.toCreate(2).getLast();
 	Long originalId = storedPlaylist.getId();
 
 	when(playlistRepository.findByUuid(storedPlaylist.getUuid()))
@@ -319,11 +415,14 @@ void updatesNameAndM3uFileNameAndPreservesIdentity() {
 	when(playlistRepository.save(storedPlaylist))
 		.thenReturn(storedPlaylist);
 
-	PlaylistResponseDTO updatedPlaylist = playlistService.update(storedPlaylist.getUuid(), changes);
+	PlaylistResponseDTO updatedPlaylist = playlistService.update(
+		storedPlaylist.getUuid(),
+		playlistUpdateRequest
+	);
 
 	assertThat(updatedPlaylist.uuid()).isEqualTo(storedPlaylist.getUuid());
-	assertThat(updatedPlaylist.name()).isEqualTo(changes.name());
-	assertThat(updatedPlaylist.m3uFileName()).isEqualTo(changes.m3uFileName());
+	assertThat(updatedPlaylist.name()).isEqualTo(playlistUpdateRequest.name());
+	assertThat(updatedPlaylist.m3uFileName()).isEqualTo(playlistUpdateRequest.m3uFileName());
 }
 ```
 

@@ -23,20 +23,20 @@ public final class ScheduleMapper {
 		);
 	}
 
-	public static Schedule toEntity(ScheduleRequestDTO request, Playlist playlist) {
-		return toEntity(request, playlist, new Schedule());
+	public static Schedule toEntity(ScheduleRequestDTO scheduleRequest, Playlist playlist) {
+		return toEntity(scheduleRequest, playlist, new Schedule());
 	}
 
 	public static Schedule toEntity(
-		ScheduleRequestDTO request,
+		ScheduleRequestDTO scheduleRequest,
 		Playlist playlist,
 		Schedule schedule
 	)
 	{
 		schedule.setPlaylist(playlist);
-		schedule.setDayOfWeek(request.dayOfWeek());
-		schedule.setStartTime(request.startTime());
-		schedule.setEndTime(request.endTime());
+		schedule.setDayOfWeek(scheduleRequest.dayOfWeek());
+		schedule.setStartTime(scheduleRequest.startTime());
+		schedule.setEndTime(scheduleRequest.endTime());
 
 		return schedule;
 	}

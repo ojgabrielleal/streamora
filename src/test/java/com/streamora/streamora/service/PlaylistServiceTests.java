@@ -37,7 +37,9 @@ class PlaylistServiceTests {
 		when(playlistRepository.findAll())
 			.thenReturn(playlistEntities);
 
-		assertThat(playlistService.index())
+		List<PlaylistResponseDTO> indexedPlaylists = playlistService.index();
+
+		assertThat(indexedPlaylists)
 			.extracting(playlist -> playlist.uuid())
 			.containsExactly(playlistEntities.getFirst().getUuid(), playlistEntities.getLast().getUuid());
 	}
@@ -49,7 +51,9 @@ class PlaylistServiceTests {
 		when(playlistRepository.findByUuid(playlistEntity.getUuid()))
 			.thenReturn(Optional.of(playlistEntity));
 
-		assertThat(playlistService.show(playlistEntity.getUuid()).uuid()).isEqualTo(playlistEntity.getUuid());
+		PlaylistResponseDTO returnedPlaylist = playlistService.show(playlistEntity.getUuid());
+
+		assertThat(returnedPlaylist.uuid()).isEqualTo(playlistEntity.getUuid());
 	}
 
 	@Test
@@ -96,9 +100,9 @@ class PlaylistServiceTests {
 
 	@Test
 	void rejectsM3uFileNameWithDirectoryPath() {
-		PlaylistRequestDTO request = new PlaylistRequestDTO("Playlist", "directory/playlist.m3u");
+		PlaylistRequestDTO invalidPlaylistRequest = new PlaylistRequestDTO("Playlist", "directory/playlist.m3u");
 
-		assertThatThrownBy(() -> playlistService.store(request))
+		assertThatThrownBy(() -> playlistService.store(invalidPlaylistRequest))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("M3U file name must not contain a directory path");
 	}

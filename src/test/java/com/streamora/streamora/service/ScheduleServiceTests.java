@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.streamora.streamora.dto.ScheduleRequestDTO;
+import com.streamora.streamora.dto.ScheduleResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
 import com.streamora.streamora.entity.type.WeekDay;
@@ -45,18 +46,20 @@ class ScheduleServiceTests {
 		when(scheduleRepository.findAll())
 			.thenReturn(List.of(schedule));
 
-		assertThat(scheduleService.index()).singleElement().satisfies(response -> {
-			assertThat(response.uuid()).isEqualTo(schedule.getUuid());
-			assertThat(response.playlist().uuid()).isEqualTo(schedule.getPlaylist().getUuid());
+		List<ScheduleResponseDTO> indexedSchedules = scheduleService.index();
+
+		assertThat(indexedSchedules).singleElement().satisfies(scheduleResponse -> {
+			assertThat(scheduleResponse.uuid()).isEqualTo(schedule.getUuid());
+			assertThat(scheduleResponse.playlist().uuid()).isEqualTo(schedule.getPlaylist().getUuid());
 		});
 	}
 
 	@Test
 	void storesScheduleResolvingPlaylistByUuid() {
-		ScheduleRequestDTO request = ScheduleFactory.toRequest();
+		ScheduleRequestDTO scheduleRequest = ScheduleFactory.toRequest();
 		Playlist playlist = PlaylistFactory.toEntity();
 
-		when(playlistRepository.findByUuid(request.playlistUuid()))
+		when(playlistRepository.findByUuid(scheduleRequest.playlistUuid()))
 			.thenReturn(Optional.of(playlist));
 		when(scheduleRepository.save(any(Schedule.class)))
 			.thenAnswer(invocation -> {
@@ -65,27 +68,29 @@ class ScheduleServiceTests {
 				return schedule;
 			});
 
-		assertThat(scheduleService.store(request).playlist().uuid()).isEqualTo(playlist.getUuid());
+		ScheduleResponseDTO createdSchedule = scheduleService.store(scheduleRequest);
+
+		assertThat(createdSchedule.playlist().uuid()).isEqualTo(playlist.getUuid());
 	}
 
 	@Test
 	void rejectsInvalidInterval() {
-		ScheduleRequestDTO request = new ScheduleRequestDTO(
+		ScheduleRequestDTO invalidScheduleRequest = new ScheduleRequestDTO(
 			"playlist-uuid-1", WeekDay.MONDAY, LocalTime.NOON, LocalTime.of(8, 0));
 
-		assertThatThrownBy(() -> scheduleService.store(request))
+		assertThatThrownBy(() -> scheduleService.store(invalidScheduleRequest))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessage("End time must be after start time");
 	}
 
 	@Test
 	void rejectsUnknownPlaylist() {
-		ScheduleRequestDTO request = ScheduleFactory.toRequest();
+		ScheduleRequestDTO scheduleRequest = ScheduleFactory.toRequest();
 
-		when(playlistRepository.findByUuid(request.playlistUuid()))
+		when(playlistRepository.findByUuid(scheduleRequest.playlistUuid()))
 			.thenReturn(Optional.empty());
 
-		assertThatThrownBy(() -> scheduleService.store(request))
+		assertThatThrownBy(() -> scheduleService.store(scheduleRequest))
 			.isInstanceOf(ResourceNotFoundException.class);
 	}
 

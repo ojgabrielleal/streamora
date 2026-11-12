@@ -54,7 +54,9 @@ class AuthServiceTests {
 		when(jwtService.generateTokens(storedUser.getUsername()))
 			.thenReturn(generatedTokens);
 
-		assertThat(authService.auth(authRequest))
+		Map<String, String> returnedTokens = authService.auth(authRequest);
+
+		assertThat(returnedTokens)
 			.isSameAs(generatedTokens);
 
 		verify(jwtService).generateTokens(storedUser.getUsername());

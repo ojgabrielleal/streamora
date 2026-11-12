@@ -66,13 +66,25 @@ class JwtServiceTests {
 	}
 
 	@Test
-	void validatesEachTokenOnlyWithItsExpectedType() {
+	void validatesOnlyAccessTokenAsAccessToken() {
 		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
 
-		assertThat(jwtService.validateAccessToken(tokens.get("accessToken"))).isTrue();
-		assertThat(jwtService.validateRefreshToken(tokens.get("refreshToken"))).isTrue();
-		assertThat(jwtService.validateAccessToken(tokens.get("refreshToken"))).isFalse();
-		assertThat(jwtService.validateRefreshToken(tokens.get("accessToken"))).isFalse();
+		boolean validAccessToken = jwtService.validateAccessToken(tokens.get("accessToken"));
+		boolean invalidRefreshToken = jwtService.validateAccessToken(tokens.get("refreshToken"));
+
+		assertThat(validAccessToken).isTrue();
+		assertThat(invalidRefreshToken).isFalse();
+	}
+
+	@Test
+	void validatesOnlyRefreshTokenAsRefreshToken() {
+		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
+
+		boolean validRefreshToken = jwtService.validateRefreshToken(tokens.get("refreshToken"));
+		boolean invalidAccessToken = jwtService.validateRefreshToken(tokens.get("accessToken"));
+
+		assertThat(validRefreshToken).isTrue();
+		assertThat(invalidAccessToken).isFalse();
 	}
 
 	@Test
@@ -81,17 +93,24 @@ class JwtServiceTests {
 			.generateTokens(USERNAME)
 			.get("accessToken");
 
-		assertThat(jwtService.validateAccessToken(token)).isFalse();
+		boolean validToken = jwtService.validateAccessToken(token);
+
+		assertThat(validToken).isFalse();
 	}
 
 	@Test
 	void rejectsExpiredMalformedOrBlankTokens() {
 		String expiredToken = createToken(USERNAME, "token-id", "access", Instant.now().minusSeconds(1));
 
-		assertThat(jwtService.validateAccessToken(expiredToken)).isFalse();
-		assertThat(jwtService.validateAccessToken("not-a-jwt")).isFalse();
-		assertThat(jwtService.validateAccessToken(" ")).isFalse();
-		assertThat(jwtService.validateAccessToken(null)).isFalse();
+		boolean validExpiredToken = jwtService.validateAccessToken(expiredToken);
+		boolean validMalformedToken = jwtService.validateAccessToken("not-a-jwt");
+		boolean validBlankToken = jwtService.validateAccessToken(" ");
+		boolean validNullToken = jwtService.validateAccessToken(null);
+
+		assertThat(validExpiredToken).isFalse();
+		assertThat(validMalformedToken).isFalse();
+		assertThat(validBlankToken).isFalse();
+		assertThat(validNullToken).isFalse();
 	}
 
 	@Test
@@ -99,8 +118,11 @@ class JwtServiceTests {
 		String tokenWithoutUsername = createToken(null, "token-id", "access", Instant.now().plusSeconds(60));
 		String tokenWithoutIdentifier = createToken(USERNAME, null, "access", Instant.now().plusSeconds(60));
 
-		assertThat(jwtService.validateAccessToken(tokenWithoutUsername)).isFalse();
-		assertThat(jwtService.validateAccessToken(tokenWithoutIdentifier)).isFalse();
+		boolean validTokenWithoutUsername = jwtService.validateAccessToken(tokenWithoutUsername);
+		boolean validTokenWithoutIdentifier = jwtService.validateAccessToken(tokenWithoutIdentifier);
+
+		assertThat(validTokenWithoutUsername).isFalse();
+		assertThat(validTokenWithoutIdentifier).isFalse();
 	}
 
 	@Test

@@ -40,6 +40,11 @@ documento.
 - Evite duplicação, use o que já existe.
 - Utilize nomes claros para classes, métodos, variáveis e arquivos.
 - Siga as convenções da linguagem e do framework.
+- Todo código Java novo ou alterado deve seguir `docs/code-standards.md`, que é
+  a fonte principal das convenções de escrita e formatação do projeto.
+- Ao alterar um arquivo existente, corrija no trecho modificado as
+  inconsistências com `docs/code-standards.md`, sem ampliar a mudança para
+  refatorações fora do escopo.
 - Use Lombok quando ele reduzir código repetitivo sem esconder regras de
   negócio, seguindo os padrões já existentes no projeto.
 - Não faça refatorações desnecessárias fora do escopo de trabalho solicitado.
