@@ -23,22 +23,10 @@ erDiagram
         BIGINT id PK
         CHAR uuid UK
         VARCHAR name
+        VARCHAR m3u_file_name
     }
 
-    files {
-        BIGINT id PK
-        CHAR uuid UK
-        ENUM type
-        VARCHAR name
-        VARCHAR path
-    }
-
-    playlist_files {
-        BIGINT playlist_id PK, FK
-        BIGINT file_id PK, FK
-    }
-
-    playlist_schedules {
+    schedules {
         BIGINT id PK
         CHAR uuid UK
         BIGINT playlist_id FK
@@ -47,24 +35,19 @@ erDiagram
         TIME end_time
     }
 
-    playlists ||--o{ playlist_files : contains
-    files ||--o{ playlist_files : contains
-    playlists ||--o{ playlist_schedules : schedules
+    playlists ||--o{ schedules : schedules
 ```
 
 ## Restrições e tipos
 
 - Todas as chaves primárias `id` são `BIGINT UNSIGNED` e auto incrementais.
 - Todos os campos `uuid` são `CHAR(36)`, obrigatórios e únicos.
-- Os campos textuais são `VARCHAR(255)` e obrigatórios.
-- `files.type` aceita `music`, `station_id`, `sweeper`, `jingle`, `commercial`
-  ou `bumper`.
-- `playlist_files` possui chave primária composta por `playlist_id` e `file_id`.
-- As duas chaves estrangeiras de `playlist_files` usam `ON DELETE CASCADE` e
-  `ON UPDATE CASCADE`.
-- `playlist_schedules.day_of_week` aceita os valores `MONDAY`, `TUESDAY`,
+- Os campos textuais obrigatórios são `VARCHAR(255)`.
+- `playlists.m3u_file_name` é um `VARCHAR(255)` opcional e armazena somente o
+  nome do arquivo M3U, sem caminho de diretório.
+- `schedules.day_of_week` aceita os valores `MONDAY`, `TUESDAY`,
   `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY` ou `SUNDAY`.
-- `playlist_schedules.start_time` e `playlist_schedules.end_time` armazenam o
+- `schedules.start_time` e `schedules.end_time` armazenam o
   intervalo de execução da playlist.
-- A chave estrangeira `playlist_schedules.playlist_id` referencia
+- A chave estrangeira `schedules.playlist_id` referencia
   `playlists.id` e usa `ON DELETE CASCADE` e `ON UPDATE CASCADE`.

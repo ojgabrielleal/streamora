@@ -10,8 +10,8 @@ public record PlaylistResponseDTO(
 	String uuid,
 	@Schema(description = "Nome da playlist", example = "Programação da manhã")
 	String name,
-	@Schema(description = "Identificadores dos arquivos vinculados à playlist")
-	Set<String> fileUuids,
+	@Schema(description = "Nome do arquivo M3U associado, sem caminho", example = "programacao-manha.m3u", nullable = true)
+	String m3uFileName,
 	@Schema(description = "Horários vinculados à playlist")
-	Set<PlaylistScheduleSummaryDTO> schedules
+	Set<ScheduleSummaryDTO> schedules
 ) {}

@@ -5,7 +5,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +39,8 @@ class PlaylistControllerTests {
 		when(playlistService.index())
 			.thenReturn(playlistResponses);
 
-		assertThat(playlistController.index()).isSameAs(playlistResponses);
+		assertThat(playlistController.index())
+			.isSameAs(playlistResponses);
 
 		verify(playlistService).index();
 	}
@@ -52,7 +52,8 @@ class PlaylistControllerTests {
 		when(playlistService.show("playlist-uuid"))
 			.thenReturn(playlistResponse);
 
-		assertThat(playlistController.show("playlist-uuid")).isSameAs(playlistResponse);
+		assertThat(playlistController.show("playlist-uuid"))
+			.isSameAs(playlistResponse);
 
 		verify(playlistService).show("playlist-uuid");
 	}
@@ -65,7 +66,8 @@ class PlaylistControllerTests {
 		when(playlistService.store(playlistRequest))
 			.thenReturn(playlistResponse);
 
-		assertThat(playlistController.store(playlistRequest)).isSameAs(playlistResponse);
+		assertThat(playlistController.store(playlistRequest))
+			.isSameAs(playlistResponse);
 
 		verify(playlistService).store(playlistRequest);
 	}
@@ -78,7 +80,8 @@ class PlaylistControllerTests {
 		when(playlistService.update("playlist-uuid", playlistRequest))
 			.thenReturn(playlistResponse);
 
-		assertThat(playlistController.update("playlist-uuid", playlistRequest)).isSameAs(playlistResponse);
+		assertThat(playlistController.update("playlist-uuid", playlistRequest))
+			.isSameAs(playlistResponse);
 
 		verify(playlistService).update("playlist-uuid", playlistRequest);
 	}
@@ -91,10 +94,10 @@ class PlaylistControllerTests {
 	}
 
 	private PlaylistRequestDTO playlistRequest() {
-		return new PlaylistRequestDTO("Playlist");
+		return new PlaylistRequestDTO("Playlist", "playlist.m3u");
 	}
 
 	private PlaylistResponseDTO playlistResponse() {
-		return new PlaylistResponseDTO("playlist-uuid", "Playlist", Set.of(), Set.of());
+		return new PlaylistResponseDTO("playlist-uuid", "Playlist", "playlist.m3u", java.util.Set.of());
 	}
 }

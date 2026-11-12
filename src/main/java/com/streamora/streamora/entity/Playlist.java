@@ -9,9 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -36,16 +33,11 @@ public class Playlist {
 	@Column(nullable = false)
 	private String name;
 
-	@ManyToMany
-	@JoinTable(
-		name = "playlist_files",
-		joinColumns = @JoinColumn(name = "playlist_id"),
-		inverseJoinColumns = @JoinColumn(name = "file_id")
-	)
-	private Set<PlaylistFile> files = new HashSet<>();
+	@Column(name = "m3u_file_name")
+	private String m3uFileName;
 
 	@OneToMany(mappedBy = "playlist")
-	private Set<PlaylistSchedule> schedules = new HashSet<>();
+	private Set<Schedule> schedules = new HashSet<>();
 
 	@PrePersist
 	private void generateUuid() {

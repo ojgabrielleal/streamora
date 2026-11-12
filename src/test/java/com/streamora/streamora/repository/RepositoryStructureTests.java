@@ -11,8 +11,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.streamora.streamora.entity.Playlist;
-import com.streamora.streamora.entity.PlaylistFile;
-import com.streamora.streamora.entity.PlaylistSchedule;
+import com.streamora.streamora.entity.Schedule;
 import com.streamora.streamora.entity.User;
 
 class RepositoryStructureTests {
@@ -20,8 +19,7 @@ class RepositoryStructureTests {
 	private static final Map<Class<?>, Class<?>> REPOSITORIES = Map.of(
 		UserRepository.class, User.class,
 		PlaylistRepository.class, Playlist.class,
-		PlaylistFileRepository.class, PlaylistFile.class,
-		PlaylistScheduleRepository.class, PlaylistSchedule.class
+		ScheduleRepository.class, Schedule.class
 	);
 
 	@Test

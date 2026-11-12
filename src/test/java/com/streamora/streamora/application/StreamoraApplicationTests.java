@@ -5,9 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.streamora.streamora.StreamoraApplication;
-import com.streamora.streamora.repository.PlaylistFileRepository;
 import com.streamora.streamora.repository.PlaylistRepository;
-import com.streamora.streamora.repository.PlaylistScheduleRepository;
+import com.streamora.streamora.repository.ScheduleRepository;
 import com.streamora.streamora.repository.UserRepository;
 
 @SpringBootTest(
@@ -28,10 +27,7 @@ class StreamoraApplicationTests {
 	private PlaylistRepository playlistRepository;
 
 	@MockitoBean
-	private PlaylistFileRepository playlistFileRepository;
-
-	@MockitoBean
-	private PlaylistScheduleRepository playlistScheduleRepository;
+	private ScheduleRepository scheduleRepository;
 
 	@Test
 	void contextLoads() {

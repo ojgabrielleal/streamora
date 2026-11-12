@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.streamora.streamora.dto.PlaylistScheduleRequestDTO;
-import com.streamora.streamora.dto.PlaylistScheduleResponseDTO;
-import com.streamora.streamora.service.PlaylistScheduleService;
+import com.streamora.streamora.dto.ScheduleRequestDTO;
+import com.streamora.streamora.dto.ScheduleResponseDTO;
+import com.streamora.streamora.service.ScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,12 +25,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/playlist-schedule")
+@RequestMapping("/schedules")
 @RequiredArgsConstructor
 @Tag(name = "Grade de programação", description = "Gerenciamento da grade de programação de playlists")
-public class PlaylistScheduleController {
+public class ScheduleController {
 
-	private final PlaylistScheduleService playlistScheduleService;
+	private final ScheduleService scheduleService;
 
 	@GetMapping
 	@Operation(summary = "Listar horários de playlists")
@@ -39,45 +39,45 @@ public class PlaylistScheduleController {
 		description = "Horários encontrados",
 		content = @Content(
 			array = @ArraySchema(
-				schema = @Schema(implementation = PlaylistScheduleResponseDTO.class)
+				schema = @Schema(implementation = ScheduleResponseDTO.class)
 			)
 		)
 	)
-	public List<PlaylistScheduleResponseDTO> index() {
-		return playlistScheduleService.index();
+	public List<ScheduleResponseDTO> index() {
+		return scheduleService.index();
 	}
 
 	@GetMapping("/{uuid}")
 	@Operation(summary = "Consultar horário de playlist")
 	@ApiResponse(responseCode = "200", description = "Horário encontrado")
-	public PlaylistScheduleResponseDTO show(
+	public ScheduleResponseDTO show(
 		@Parameter(description = "UUID do horário") @PathVariable String uuid
 	)
 	{
-		return playlistScheduleService.show(uuid);
+		return scheduleService.show(uuid);
 	}
 
 	@PostMapping
 	@Operation(summary = "Criar horário de playlist")
 	@ApiResponse(responseCode = "200", description = "Horário criado")
-	public PlaylistScheduleResponseDTO store(
+	public ScheduleResponseDTO store(
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dados do horário", required = true)
-		@RequestBody PlaylistScheduleRequestDTO request
+		@RequestBody ScheduleRequestDTO request
 	)
 	{
-		return playlistScheduleService.store(request);
+		return scheduleService.store(request);
 	}
 
 	@PutMapping("/{uuid}")
 	@Operation(summary = "Atualizar horário de playlist")
 	@ApiResponse(responseCode = "200", description = "Horário atualizado")
-	public PlaylistScheduleResponseDTO update(
+	public ScheduleResponseDTO update(
 		@Parameter(description = "UUID do horário") @PathVariable String uuid,
 		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Dados do horário", required = true)
-		@RequestBody PlaylistScheduleRequestDTO request
+		@RequestBody ScheduleRequestDTO request
 	)
 	{
-		return playlistScheduleService.update(uuid, request);
+		return scheduleService.update(uuid, request);
 	}
 
 	@DeleteMapping("/{uuid}")
@@ -87,6 +87,6 @@ public class PlaylistScheduleController {
 		@Parameter(description = "UUID do horário") @PathVariable String uuid
 	)
 	{
-		playlistScheduleService.delete(uuid);
+		scheduleService.delete(uuid);
 	}
 }

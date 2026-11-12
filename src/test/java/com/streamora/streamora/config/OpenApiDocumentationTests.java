@@ -14,9 +14,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.streamora.streamora.StreamoraApplication;
-import com.streamora.streamora.repository.PlaylistFileRepository;
 import com.streamora.streamora.repository.PlaylistRepository;
-import com.streamora.streamora.repository.PlaylistScheduleRepository;
+import com.streamora.streamora.repository.ScheduleRepository;
 import com.streamora.streamora.repository.UserRepository;
 
 @SpringBootTest(
@@ -41,10 +40,7 @@ class OpenApiDocumentationTests {
 	private PlaylistRepository playlistRepository;
 
 	@MockitoBean
-	private PlaylistFileRepository playlistFileRepository;
-
-	@MockitoBean
-	private PlaylistScheduleRepository playlistScheduleRepository;
+	private ScheduleRepository scheduleRepository;
 
 	@Test
 	void exposesOpenApiMetadataAndDocumentedResourcesAnonymously() throws Exception {
@@ -69,18 +65,11 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.paths['/playlist/{uuid}'].get").exists())
 			.andExpect(jsonPath("$.paths['/playlist/{uuid}'].put.parameters[0].name").value("uuid"))
 			.andExpect(jsonPath("$.paths['/playlist/{uuid}'].delete").exists())
-			.andExpect(jsonPath("$.paths['/playlist-file'].get.tags[0]").value("Arquivos de playlist"))
-			.andExpect(jsonPath("$.paths['/playlist-file'].post.requestBody.required").value(true))
-			.andExpect(jsonPath("$.paths['/playlist-file/{uuid}'].get").exists())
-			.andExpect(jsonPath("$.paths['/playlist-file/{uuid}'].put").exists())
-			.andExpect(jsonPath("$.paths['/playlist-file/{uuid}'].delete.responses['200']").exists())
-			.andExpect(jsonPath("$.paths['/playlist-file/{fileUuid}/playlist/{playlistUuid}'].post").exists())
-			.andExpect(jsonPath("$.paths['/playlist-file/{fileUuid}/playlist/{playlistUuid}'].delete").exists())
-			.andExpect(jsonPath("$.paths['/playlist-schedule'].get.tags[0]").value("Grade de programação"))
-			.andExpect(jsonPath("$.paths['/playlist-schedule'].post.requestBody.required").value(true))
-			.andExpect(jsonPath("$.paths['/playlist-schedule/{uuid}'].get").exists())
-			.andExpect(jsonPath("$.paths['/playlist-schedule/{uuid}'].put").exists())
-			.andExpect(jsonPath("$.paths['/playlist-schedule/{uuid}'].delete").exists());
+			.andExpect(jsonPath("$.paths['/schedules'].get.tags[0]").value("Grade de programação"))
+			.andExpect(jsonPath("$.paths['/schedules'].post.requestBody.required").value(true))
+			.andExpect(jsonPath("$.paths['/schedules/{uuid}'].get").exists())
+			.andExpect(jsonPath("$.paths['/schedules/{uuid}'].put").exists())
+			.andExpect(jsonPath("$.paths['/schedules/{uuid}'].delete").exists());
 	}
 
 	@Test
@@ -94,11 +83,11 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.components.schemas.UserRequestDTO.properties.password.writeOnly").value(true))
 			.andExpect(jsonPath("$.components.schemas.UserResponseDTO").exists())
 			.andExpect(jsonPath("$.components.schemas.PlaylistRequestDTO").exists())
+			.andExpect(jsonPath("$.components.schemas.PlaylistRequestDTO.properties.m3uFileName").exists())
 			.andExpect(jsonPath("$.components.schemas.PlaylistResponseDTO").exists())
-			.andExpect(jsonPath("$.components.schemas.PlaylistScheduleRequestDTO").exists())
-			.andExpect(jsonPath("$.components.schemas.PlaylistScheduleResponseDTO").exists())
-			.andExpect(jsonPath("$.components.schemas.PlaylistFileRequestDTO").exists())
-			.andExpect(jsonPath("$.components.schemas.PlaylistFileResponseDTO").exists());
+			.andExpect(jsonPath("$.components.schemas.PlaylistResponseDTO.properties.m3uFileName").exists())
+			.andExpect(jsonPath("$.components.schemas.ScheduleRequestDTO").exists())
+			.andExpect(jsonPath("$.components.schemas.ScheduleResponseDTO").exists());
 	}
 
 	@Test

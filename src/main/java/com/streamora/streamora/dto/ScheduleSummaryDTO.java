@@ -4,7 +4,7 @@ import java.time.LocalTime;
 
 import com.streamora.streamora.entity.type.WeekDay;
 
-public record PlaylistScheduleSummaryDTO(
+public record ScheduleSummaryDTO(
 	String uuid,
 	WeekDay dayOfWeek,
 	LocalTime startTime,

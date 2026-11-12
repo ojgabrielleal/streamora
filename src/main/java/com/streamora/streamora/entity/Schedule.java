@@ -22,11 +22,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "playlist_schedules")
+@Table(name = "schedules")
 @Getter
 @Setter
 @NoArgsConstructor
-public class PlaylistSchedule {
+public class Schedule {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

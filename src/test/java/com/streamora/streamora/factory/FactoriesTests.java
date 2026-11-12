@@ -4,14 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import com.streamora.streamora.dto.PlaylistFileRequestDTO;
-import com.streamora.streamora.dto.PlaylistFileResponseDTO;
 import com.streamora.streamora.dto.PlaylistRequestDTO;
 import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.dto.UserRequestDTO;
 import com.streamora.streamora.dto.UserResponseDTO;
 import com.streamora.streamora.entity.Playlist;
-import com.streamora.streamora.entity.PlaylistFile;
 import com.streamora.streamora.entity.User;
 
 class FactoriesTests {
@@ -90,40 +87,4 @@ class FactoriesTests {
 			.doesNotHaveDuplicates();
 	}
 
-	@Test
-	void createsSinglePlaylistFileRequest() {
-		assertThat(PlaylistFileFactory.toCreate()).isInstanceOf(PlaylistFileRequestDTO.class);
-	}
-
-	@Test
-	void createsRequestedQuantityOfPlaylistFileRequests() {
-		assertThat(PlaylistFileFactory.toCreate(2))
-			.hasSize(2)
-			.doesNotHaveDuplicates();
-	}
-
-	@Test
-	void createsSinglePlaylistFileEntity() {
-		assertThat(PlaylistFileFactory.toEntity()).isInstanceOf(PlaylistFile.class);
-	}
-
-	@Test
-	void createsRequestedQuantityOfPlaylistFileEntities() {
-		assertThat(PlaylistFileFactory.toEntity(2))
-			.hasSize(2)
-			.extracting(playlistFile -> playlistFile.getUuid())
-			.doesNotHaveDuplicates();
-	}
-
-	@Test
-	void createsSinglePlaylistFileResponse() {
-		assertThat(PlaylistFileFactory.toResponse()).isInstanceOf(PlaylistFileResponseDTO.class);
-	}
-
-	@Test
-	void createsRequestedQuantityOfPlaylistFileResponses() {
-		assertThat(PlaylistFileFactory.toResponse(2))
-			.hasSize(2)
-			.doesNotHaveDuplicates();
-	}
 }

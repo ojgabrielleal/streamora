@@ -18,7 +18,7 @@ public final class PlaylistFactory {
 
 	public static List<PlaylistRequestDTO> toCreate(int quantity) {
 		return indexes(quantity)
-			.mapToObj(index -> new PlaylistRequestDTO("Playlist " + index))
+			.mapToObj(index -> new PlaylistRequestDTO("Playlist " + index, "playlist-" + index + ".m3u"))
 			.toList();
 	}
 
@@ -33,6 +33,7 @@ public final class PlaylistFactory {
 				playlist.setId((long) index);
 				playlist.setUuid("playlist-uuid-" + index);
 				playlist.setName("Playlist " + index);
+				playlist.setM3uFileName("playlist-" + index + ".m3u");
 				return playlist;
 			})
 			.toList();
@@ -47,7 +48,7 @@ public final class PlaylistFactory {
 			.mapToObj(index -> new PlaylistResponseDTO(
 				"playlist-uuid-" + index,
 				"Playlist " + index,
-				Set.of(),
+				"playlist-" + index + ".m3u",
 				Set.of()
 			))
 			.toList();

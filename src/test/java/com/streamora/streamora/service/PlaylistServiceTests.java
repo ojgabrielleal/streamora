@@ -17,10 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.streamora.streamora.dto.PlaylistRequestDTO;
 import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
-import com.streamora.streamora.entity.PlaylistFile;
 import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.factory.PlaylistFactory;
-import com.streamora.streamora.factory.PlaylistFileFactory;
 import com.streamora.streamora.repository.PlaylistRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,20 +68,18 @@ class PlaylistServiceTests {
 
 		assertThat(createdPlaylist.uuid()).isEqualTo("generated-by-persistence");
 		assertThat(createdPlaylist.name()).isEqualTo(playlistCreateRequest.name());
+		assertThat(createdPlaylist.m3uFileName()).isEqualTo(playlistCreateRequest.m3uFileName());
 	}
 
 	@Test
-	void updatesNameAndPreservesIdentityAndFiles() {
+	void updatesNameAndM3uFileNameAndPreservesIdentity() {
 		Playlist storedPlaylist = PlaylistFactory.toEntity();
-		PlaylistFile playlistFile = PlaylistFileFactory.toEntity();
 
 		PlaylistRequestDTO playlistUpdateRequest = PlaylistFactory.toCreate(2).getLast();
 		Long originalId = storedPlaylist.getId();
-		storedPlaylist.getFiles().add(playlistFile);
 
 		when(playlistRepository.findByUuid(storedPlaylist.getUuid()))
 			.thenReturn(Optional.of(storedPlaylist));
-
 		when(playlistRepository.save(storedPlaylist))
 			.thenReturn(storedPlaylist);
 
@@ -94,8 +90,17 @@ class PlaylistServiceTests {
 
 		assertThat(updatedPlaylist.uuid()).isEqualTo(storedPlaylist.getUuid());
 		assertThat(updatedPlaylist.name()).isEqualTo(playlistUpdateRequest.name());
-		assertThat(updatedPlaylist.fileUuids()).containsExactly(playlistFile.getUuid());
+		assertThat(updatedPlaylist.m3uFileName()).isEqualTo(playlistUpdateRequest.m3uFileName());
 		assertThat(storedPlaylist.getId()).isEqualTo(originalId);
+	}
+
+	@Test
+	void rejectsM3uFileNameWithDirectoryPath() {
+		PlaylistRequestDTO request = new PlaylistRequestDTO("Playlist", "directory/playlist.m3u");
+
+		assertThatThrownBy(() -> playlistService.store(request))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("M3U file name must not contain a directory path");
 	}
 
 	@Test

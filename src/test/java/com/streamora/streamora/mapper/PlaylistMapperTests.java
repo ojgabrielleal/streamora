@@ -2,43 +2,35 @@ package com.streamora.streamora.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 import com.streamora.streamora.dto.PlaylistRequestDTO;
 import com.streamora.streamora.dto.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
-import com.streamora.streamora.entity.PlaylistFile;
-import com.streamora.streamora.entity.PlaylistSchedule;
+import com.streamora.streamora.entity.Schedule;
 import com.streamora.streamora.factory.PlaylistFactory;
-import com.streamora.streamora.factory.PlaylistFileFactory;
-import com.streamora.streamora.factory.PlaylistScheduleFactory;
+import com.streamora.streamora.factory.ScheduleFactory;
 
 class PlaylistMapperTests {
 
 	@Test
-	void mapsEntityToResponseWithFileUuids() {
+	void mapsEntityToResponseWithM3uFileName() {
 		Playlist playlist = PlaylistFactory.toEntity();
-		List<PlaylistFile> files = PlaylistFileFactory.toEntity(2);
-
-		playlist.getFiles().addAll(files);
 
 		PlaylistResponseDTO response = PlaylistMapper.toResponse(playlist);
 
 		assertThat(response.uuid()).isEqualTo(playlist.getUuid());
 		assertThat(response.name()).isEqualTo(playlist.getName());
-		assertThat(response.fileUuids())
-			.containsExactlyInAnyOrder(files.getFirst().getUuid(), files.getLast().getUuid());
+		assertThat(response.m3uFileName()).isEqualTo(playlist.getM3uFileName());
 		assertThat(PlaylistResponseDTO.class.getRecordComponents())
 			.extracting(component -> component.getName())
 			.doesNotContain("id");
 	}
 
 	@Test
-	void mapsPlaylistSchedulesWithoutNestedPlaylist() {
+	void mapsSchedulesWithoutNestedPlaylist() {
 		Playlist playlist = PlaylistFactory.toEntity();
-		PlaylistSchedule schedule = PlaylistScheduleFactory.toEntity();
+		Schedule schedule = ScheduleFactory.toEntity();
 		schedule.setPlaylist(playlist);
 		playlist.getSchedules().add(schedule);
 
@@ -59,25 +51,40 @@ class PlaylistMapperTests {
 		assertThat(playlist.getId()).isNull();
 		assertThat(playlist.getUuid()).isNull();
 		assertThat(playlist.getName()).isEqualTo(request.name());
-		assertThat(playlist.getFiles()).isEmpty();
+		assertThat(playlist.getM3uFileName()).isEqualTo(request.m3uFileName());
 	}
 
 	@Test
-	void mapsRequestToExistingEntityAndPreservesIdentityAndFiles() {
+	void mapsRequestToExistingEntityAndPreservesIdentity() {
 		Playlist playlist = PlaylistFactory.toEntity();
-		PlaylistFile playlistFile = PlaylistFileFactory.toEntity();
 
 		PlaylistRequestDTO request = PlaylistFactory.toCreate(2).getLast();
-		playlist.getFiles().add(playlistFile);
 		Long originalId = playlist.getId();
 		String originalUuid = playlist.getUuid();
 
 		Playlist mappedPlaylist = PlaylistMapper.toEntity(request, playlist);
 
-		assertThat(mappedPlaylist).isSameAs(playlist);
+		assertThat(mappedPlaylist)
+			.isSameAs(playlist);
 		assertThat(mappedPlaylist.getId()).isEqualTo(originalId);
 		assertThat(mappedPlaylist.getUuid()).isEqualTo(originalUuid);
 		assertThat(mappedPlaylist.getName()).isEqualTo(request.name());
-		assertThat(mappedPlaylist.getFiles()).containsExactly(playlistFile);
+		assertThat(mappedPlaylist.getM3uFileName()).isEqualTo(request.m3uFileName());
+	}
+
+	@Test
+	void allowsM3uFileNameToRemainEmpty() {
+		Playlist playlist = PlaylistMapper.toEntity(new PlaylistRequestDTO("Playlist", null));
+
+		assertThat(playlist.getM3uFileName()).isNull();
+	}
+
+	@Test
+	void rejectsM3uFileNameWithWindowsDirectoryPath() {
+		PlaylistRequestDTO request = new PlaylistRequestDTO("Playlist", "directory\\playlist.m3u");
+
+		org.assertj.core.api.Assertions.assertThatThrownBy(() -> PlaylistMapper.toEntity(request))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("M3U file name must not contain a directory path");
 	}
 }

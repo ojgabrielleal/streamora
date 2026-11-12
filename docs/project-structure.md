@@ -30,31 +30,26 @@ streamora/
 │   │   │   ├── controller/
 │   │   │   │   ├── AuthController.java
 │   │   │   │   ├── PlaylistController.java
-│   │   │   │   ├── PlaylistFileController.java
-│   │   │   │   ├── PlaylistScheduleController.java
+│   │   │   │   ├── ScheduleController.java
 │   │   │   │   └── UserController.java
 │   │   │   ├── entity/
 │   │   │   │   ├── type/
 │   │   │   │   ├── Playlist.java
-│   │   │   │   ├── PlaylistFile.java
-│   │   │   │   ├── PlaylistSchedule.java
+│   │   │   │   ├── Schedule.java
 │   │   │   │   └── User.java
 │   │   │   ├── dto/
 │   │   │   │   ├── AuthRequestDTO.java
-│   │   │   │   ├── PlaylistFileRequestDTO.java
-│   │   │   │   ├── PlaylistFileResponseDTO.java
-│   │   │   │   ├── PlaylistScheduleRequestDTO.java
-│   │   │   │   ├── PlaylistScheduleResponseDTO.java
-│   │   │   │   ├── PlaylistScheduleSummaryDTO.java
 │   │   │   │   ├── PlaylistSummaryDTO.java
 │   │   │   │   ├── PlaylistRequestDTO.java
 │   │   │   │   ├── PlaylistResponseDTO.java
+│   │   │   │   ├── ScheduleRequestDTO.java
+│   │   │   │   ├── ScheduleResponseDTO.java
+│   │   │   │   ├── ScheduleSummaryDTO.java
 │   │   │   │   ├── UserRequestDTO.java
 │   │   │   │   └── UserResponseDTO.java
 │   │   │   ├── mapper/
-│   │   │   │   ├── PlaylistFileMapper.java
-│   │   │   │   ├── PlaylistScheduleMapper.java
 │   │   │   │   ├── PlaylistMapper.java
+│   │   │   │   ├── ScheduleMapper.java
 │   │   │   │   └── UserMapper.java
 │   │   │   ├── infrastructure/
 │   │   │   │   └── pureFtpd/
@@ -71,15 +66,13 @@ streamora/
 │   │   │   ├── exception/
 │   │   │   │   └── ResourceNotFoundException.java
 │   │   │   ├── repository/
-│   │   │   │   ├── PlaylistFileRepository.java
-│   │   │   │   ├── PlaylistScheduleRepository.java
 │   │   │   │   ├── PlaylistRepository.java
+│   │   │   │   ├── ScheduleRepository.java
 │   │   │   │   └── UserRepository.java
 │   │   │   └── service/
 │   │   │       ├── AuthService.java
-│   │   │       ├── PlaylistFileService.java
-│   │   │       ├── PlaylistScheduleService.java
 │   │   │       ├── PlaylistService.java
+│   │   │       ├── ScheduleService.java
 │   │   │       ├── JwtService.java
 │   │   │       └── UserService.java
 │   │   └── resources/
@@ -93,8 +86,7 @@ streamora/
 │           ├── controller/
 │           │   ├── AuthControllerTests.java
 │           │   ├── PlaylistControllerTests.java
-│           │   ├── PlaylistFileControllerTests.java
-│           │   ├── PlaylistScheduleControllerTests.java
+│           │   ├── ScheduleControllerTests.java
 │           │   └── UserControllerTests.java
 │           ├── config/
 │           │   ├── OpenApiDocumentationTests.java
@@ -104,15 +96,13 @@ streamora/
 │           ├── factory/
 │           │   ├── FactoriesTests.java
 │           │   ├── PlaylistFactory.java
-│           │   ├── PlaylistFileFactory.java
-│           │   ├── PlaylistScheduleFactory.java
+│           │   ├── ScheduleFactory.java
 │           │   └── UserFactory.java
 │           ├── migration/
 │           │   └── MigrationFilesTests.java
 │           ├── mapper/
-│           │   ├── PlaylistFileMapperTests.java
-│           │   ├── PlaylistScheduleMapperTests.java
 │           │   ├── PlaylistMapperTests.java
+│           │   ├── ScheduleMapperTests.java
 │           │   └── UserMapperTests.java
 │           ├── infrastructure/
 │           │   └── pureFtpd/
@@ -123,9 +113,8 @@ streamora/
 │           │   └── RepositoryStructureTests.java
 │           └── service/
 │               ├── AuthServiceTests.java
-│               ├── PlaylistFileServiceTests.java
-│               ├── PlaylistScheduleServiceTests.java
 │               ├── PlaylistServiceTests.java
+│               ├── ScheduleServiceTests.java
 │               ├── JwtServiceTests.java
 │               └── UserServiceTests.java
 ├── .env.example
