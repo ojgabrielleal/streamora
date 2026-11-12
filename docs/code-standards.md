@@ -81,7 +81,7 @@ Correto:
 private static final Map<Class<?>, Class<?>> REPOSITORIES = Map.of(
 		UserRepository.class, User.class,
 		PlaylistRepository.class, Playlist.class,
-		PlaylistFileRepository.class, PlaylistFile.class
+		ScheduleRepository.class, Schedule.class
 );
 ```
 
@@ -91,7 +91,7 @@ Evite:
 private static final Map<Class<?>, Class<?>> REPOSITORIES = Map.of(
 	UserRepository.class, User.class,
 	PlaylistRepository.class, Playlist.class,
-	PlaylistFileRepository.class, PlaylistFile.class);
+	ScheduleRepository.class, Schedule.class);
 ```
 
 ### Chave em declarações de métodos com parâmetros em múltiplas linhas
@@ -143,7 +143,7 @@ Correto:
 	description = "Horários encontrados",
 	content = @Content(
 		array = @ArraySchema(
-			schema = @Schema(implementation = PlaylistScheduleResponseDTO.class)
+			schema = @Schema(implementation = ScheduleResponseDTO.class)
 		)
 	)
 )
@@ -197,19 +197,19 @@ documentação em linhas próprias, mantenha toda a assinatura na mesma linha.
 Correto:
 
 ```java
-public PlaylistFileResponseDTO addToPlaylist(@PathVariable String fileUuid, @PathVariable String playlistUuid) {
-	return playlistFileService.addToPlaylist(fileUuid, playlistUuid);
+public ScheduleResponseDTO update(@PathVariable String uuid, @RequestBody ScheduleRequestDTO request) {
+	return scheduleService.update(uuid, request);
 }
 ```
 
 Evite:
 
 ```java
-public PlaylistFileResponseDTO addToPlaylist(
-	@PathVariable String fileUuid,
-	@PathVariable String playlistUuid
+public ScheduleResponseDTO update(
+	@PathVariable String uuid,
+	@RequestBody ScheduleRequestDTO request
 ) {
-	return playlistFileService.addToPlaylist(fileUuid, playlistUuid);
+	return scheduleService.update(uuid, request);
 }
 ```
 
@@ -271,6 +271,24 @@ dados-base, a preparação específica do cenário e a configuração de mocks. 
 use linhas em branco entre instruções que pertençam ao mesmo bloco e não deixe
 espaços ou tabulações em linhas vazias.
 
+Dentro de cada teste, agrupe as instruções por finalidade e separe cada grupo
+com uma linha em branco: primeiro os dados do cenário, depois todas as
+configurações `when`, em seguida a execução e as asserções `assertThat` e, por
+último, todas as verificações `verify`. Não insira linhas em branco entre
+instruções consecutivas do mesmo grupo.
+
+Nas asserções com `isSameAs(...)` ou `containsExactly(...)`, mantenha
+`assertThat(...)` em uma linha e inicie a operação de verificação na linha
+seguinte, com um nível adicional de recuo.
+
+```java
+assertThat(scheduleController.show(uuid))
+	.isSameAs(response);
+
+assertThat(scheduleController.index())
+	.containsExactly(response);
+```
+
 Nos testes de controllers, mantenha os DTOs individuais juntos e separe por
 uma linha em branco a coleção derivada deles. Separe também uma chamada sem
 retorno, como `delete`, das asserções de retorno executadas antes dela. As
@@ -290,21 +308,22 @@ Correto:
 
 ```java
 @Test
-void updatesNameAndPreservesIdentityAndFiles() {
+void updatesNameAndM3uFileNameAndPreservesIdentity() {
 	Playlist storedPlaylist = PlaylistFactory.toEntity();
-	PlaylistFile file = PlaylistFileFactory.toEntity();
 
 	PlaylistRequestDTO changes = PlaylistFactory.toCreate(2).getLast();
 	Long originalId = storedPlaylist.getId();
-	storedPlaylist.getFiles().add(file);
 
-	when(playlistRepository.findByUuid(storedPlaylist.getUuid())).thenReturn(Optional.of(storedPlaylist));
-	when(playlistRepository.save(storedPlaylist)).thenReturn(storedPlaylist);
+	when(playlistRepository.findByUuid(storedPlaylist.getUuid()))
+		.thenReturn(Optional.of(storedPlaylist));
+	when(playlistRepository.save(storedPlaylist))
+		.thenReturn(storedPlaylist);
 
 	PlaylistResponseDTO updatedPlaylist = playlistService.update(storedPlaylist.getUuid(), changes);
 
 	assertThat(updatedPlaylist.uuid()).isEqualTo(storedPlaylist.getUuid());
 	assertThat(updatedPlaylist.name()).isEqualTo(changes.name());
+	assertThat(updatedPlaylist.m3uFileName()).isEqualTo(changes.m3uFileName());
 }
 ```
 
@@ -327,14 +346,14 @@ private PlaylistService playlistService;
 Nas configurações de mocks, mantenha `when(...)` em uma linha e inicie
 `thenReturn(...)`, `thenAnswer(...)` ou outra operação equivalente na linha
 seguinte, com um nível adicional de recuo. Quando houver mais de uma
-configuração, separe cada conjunto `when`/`then` por uma linha em branco.
+configuração, mantenha todos os conjuntos `when`/`then` no mesmo bloco, sem
+linhas em branco entre eles.
 
 Correto:
 
 ```java
 when(playlistRepository.findByUuid(playlist.getUuid()))
 	.thenReturn(Optional.of(playlist));
-
 when(playlistRepository.save(playlist))
 	.thenReturn(playlist);
 ```

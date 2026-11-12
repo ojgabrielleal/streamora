@@ -47,11 +47,15 @@ class AuthServiceTests {
 			"refreshToken", "refresh-token"
 		);
 
-		when(userRepository.findByUsername(authRequest.username())).thenReturn(Optional.of(storedUser));
-		when(passwordEncoder.matches(authRequest.password(), storedUser.getPassword())).thenReturn(true);
-		when(jwtService.generateTokens(storedUser.getUsername())).thenReturn(generatedTokens);
+		when(userRepository.findByUsername(authRequest.username()))
+			.thenReturn(Optional.of(storedUser));
+		when(passwordEncoder.matches(authRequest.password(), storedUser.getPassword()))
+			.thenReturn(true);
+		when(jwtService.generateTokens(storedUser.getUsername()))
+			.thenReturn(generatedTokens);
 
-		assertThat(authService.auth(authRequest)).isSameAs(generatedTokens);
+		assertThat(authService.auth(authRequest))
+			.isSameAs(generatedTokens);
 
 		verify(jwtService).generateTokens(storedUser.getUsername());
 	}
@@ -60,7 +64,8 @@ class AuthServiceTests {
 	void rejectsUnknownUsername() {
 		AuthRequestDTO authRequest = new AuthRequestDTO("unknown", "password");
 
-		when(userRepository.findByUsername(authRequest.username())).thenReturn(Optional.empty());
+		when(userRepository.findByUsername(authRequest.username()))
+			.thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> authService.auth(authRequest))
 			.isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
@@ -76,8 +81,10 @@ class AuthServiceTests {
 		AuthRequestDTO authRequest = new AuthRequestDTO("username1", "incorrect-password");
 		User storedUser = UserFactory.toEntity();
 
-		when(userRepository.findByUsername(authRequest.username())).thenReturn(Optional.of(storedUser));
-		when(passwordEncoder.matches(authRequest.password(), storedUser.getPassword())).thenReturn(false);
+		when(userRepository.findByUsername(authRequest.username()))
+			.thenReturn(Optional.of(storedUser));
+		when(passwordEncoder.matches(authRequest.password(), storedUser.getPassword()))
+			.thenReturn(false);
 
 		assertThatThrownBy(() -> authService.auth(authRequest))
 			.isInstanceOfSatisfying(ResponseStatusException.class, exception ->

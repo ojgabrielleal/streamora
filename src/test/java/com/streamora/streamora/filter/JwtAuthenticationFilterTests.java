@@ -42,7 +42,8 @@ class JwtAuthenticationFilterTests {
 
 	@Test
 	void rejectsInvalidAccessToken() throws ServletException, IOException {
-		when(jwtService.validateAccessToken("invalid-token")).thenReturn(false);
+		when(jwtService.validateAccessToken("invalid-token"))
+			.thenReturn(false);
 
 		MockHttpServletResponse response = performRequest("Bearer invalid-token", "/user");
 
@@ -52,7 +53,8 @@ class JwtAuthenticationFilterTests {
 
 	@Test
 	void authenticatesRequestWithValidAccessToken() throws ServletException, IOException {
-		when(jwtService.validateAccessToken("valid-token")).thenReturn(true);
+		when(jwtService.validateAccessToken("valid-token"))
+			.thenReturn(true);
 
 		MockHttpServletRequest request = request("/user");
 		MockHttpServletResponse response = new MockHttpServletResponse();

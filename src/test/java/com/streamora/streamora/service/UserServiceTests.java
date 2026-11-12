@@ -70,7 +70,6 @@ class UserServiceTests {
 
 		when(passwordEncoder.encode(userCreateRequest.password()))
 			.thenReturn(hashedPassword);
-
 		when(userRepository.saveAndFlush(org.mockito.ArgumentMatchers.any(User.class)))
 			.thenAnswer(invocation -> {
 				User userToPersist = invocation.getArgument(0);
@@ -84,6 +83,7 @@ class UserServiceTests {
 
 		assertThat(createdUser.uuid()).isEqualTo("generated-by-persistence");
 		assertThat(createdUser.fullname()).isEqualTo(userCreateRequest.fullname());
+
 		verify(pureFtpd).createFtpdUser(userCreateRequest.username(), userCreateRequest.password());
 	}
 
@@ -101,10 +101,8 @@ class UserServiceTests {
 
 		when(passwordEncoder.encode(userUpdateRequest.password()))
 			.thenReturn(hashedPassword);
-
 		when(userRepository.findByUuid(storedUser.getUuid()))
 			.thenReturn(Optional.of(storedUser));
-
 		when(userRepository.saveAndFlush(storedUser))
 			.thenReturn(storedUser);
 
@@ -116,6 +114,7 @@ class UserServiceTests {
 		assertThat(updatedUser.username()).isEqualTo(userUpdateRequest.username());
 		assertThat(storedUser.getId()).isEqualTo(originalId);
 		assertThat(storedUser.getPassword()).isEqualTo(hashedPassword);
+
 		verify(pureFtpd).updateFtpdPassword("username1", userUpdateRequest.password());
 	}
 

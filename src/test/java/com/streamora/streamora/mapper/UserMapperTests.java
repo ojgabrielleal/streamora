@@ -51,7 +51,8 @@ class UserMapperTests {
 
 		User mappedUser = UserMapper.toEntity(request, user);
 
-		assertThat(mappedUser).isSameAs(user);
+		assertThat(mappedUser)
+			.isSameAs(user);
 		assertThat(mappedUser.getId()).isEqualTo(originalId);
 		assertThat(mappedUser.getUuid()).isEqualTo(originalUuid);
 		assertThat(mappedUser.getFullname()).isEqualTo(request.fullname());

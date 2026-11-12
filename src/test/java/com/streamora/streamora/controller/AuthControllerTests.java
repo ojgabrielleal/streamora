@@ -31,7 +31,8 @@ class AuthControllerTests {
 			.getMethod("auth", AuthRequestDTO.class)
 			.getAnnotation(PostMapping.class);
 
-		assertThat(postMapping.value()).containsExactly("/login");
+		assertThat(postMapping.value())
+			.containsExactly("/login");
 	}
 
 	@Test
@@ -42,9 +43,11 @@ class AuthControllerTests {
 			"refreshToken", "refresh-token"
 		);
 
-		when(authService.auth(authRequest)).thenReturn(generatedTokens);
+		when(authService.auth(authRequest))
+			.thenReturn(generatedTokens);
 
-		assertThat(authController.auth(authRequest)).isSameAs(generatedTokens);
+		assertThat(authController.auth(authRequest))
+			.isSameAs(generatedTokens);
 
 		verify(authService).auth(authRequest);
 	}
