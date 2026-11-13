@@ -24,8 +24,8 @@ public class LocalFtpFileStorage implements FtpFileStorage {
 
 	private static final LinkOption[] NO_FOLLOW_LINKS = { LinkOption.NOFOLLOW_LINKS };
 	private static final Comparator<FtpFileEntry> ENTRY_ORDER = Comparator
-		.comparing(FtpFileEntry::type)
-		.thenComparing(FtpFileEntry::name);
+		.comparing((FtpFileEntry entry) -> entry.type())
+		.thenComparing(entry -> entry.name());
 
 	private final Path root;
 
@@ -66,7 +66,8 @@ public class LocalFtpFileStorage implements FtpFileStorage {
 	@Override
 	public void createDirectory(String path) {
 		Path directory = resolve(path, false);
-		Path parent = requireDirectory(directory.getParent());
+		requireDirectory(directory.getParent());
+
 		requireAvailable(directory);
 
 		try {
