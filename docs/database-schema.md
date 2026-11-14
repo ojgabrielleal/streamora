@@ -24,6 +24,8 @@ erDiagram
         CHAR uuid UK
         VARCHAR name
         VARCHAR m3u_file_name
+        BOOLEAN is_base
+        INT weight
     }
 
     schedules {
@@ -45,6 +47,10 @@ erDiagram
 - Os campos textuais obrigatórios são `VARCHAR(255)`.
 - `playlists.m3u_file_name` é um `VARCHAR(255)` opcional e armazena somente o
   nome do arquivo M3U, sem caminho de diretório.
+- `playlists.is_base` é obrigatório, aceita várias playlists base e usa
+  `FALSE` como valor padrão.
+- `playlists.weight` é um inteiro positivo obrigatório, usa `1` como valor
+  padrão e representa a proporção da playlist em uma combinação.
 - `schedules.day_of_week` aceita os valores `MONDAY`, `TUESDAY`,
   `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY` ou `SUNDAY`.
 - `schedules.start_time` e `schedules.end_time` armazenam o

@@ -14,6 +14,10 @@ public record PlaylistResponseDTO(
 	String name,
 	@Schema(description = "Nome do arquivo M3U associado, sem caminho", example = "programacao-manha.m3u", nullable = true)
 	String m3uFileName,
+	@Schema(description = "Indica se a playlist participa do fallback base", example = "true")
+	boolean isBase,
+	@Schema(description = "Peso positivo da playlist nas combinações", example = "2", minimum = "1")
+	int weight,
 	@Schema(description = "Horários vinculados à playlist")
 	Set<ScheduleSummaryDTO> schedules
 ) {}

@@ -22,6 +22,8 @@ class PlaylistMapperTests {
 		assertThat(playlistResponse.uuid()).isEqualTo(playlist.getUuid());
 		assertThat(playlistResponse.name()).isEqualTo(playlist.getName());
 		assertThat(playlistResponse.m3uFileName()).isEqualTo(playlist.getM3uFileName());
+		assertThat(playlistResponse.isBase()).isEqualTo(playlist.isBase());
+		assertThat(playlistResponse.weight()).isEqualTo(playlist.getWeight());
 		assertThat(PlaylistResponseDTO.class.getRecordComponents())
 			.extracting(component -> component.getName())
 			.doesNotContain("id");
@@ -52,6 +54,8 @@ class PlaylistMapperTests {
 		assertThat(playlist.getUuid()).isNull();
 		assertThat(playlist.getName()).isEqualTo(playlistCreateRequest.name());
 		assertThat(playlist.getM3uFileName()).isEqualTo(playlistCreateRequest.m3uFileName());
+		assertThat(playlist.isBase()).isEqualTo(playlistCreateRequest.isBase());
+		assertThat(playlist.getWeight()).isEqualTo(playlistCreateRequest.weight());
 	}
 
 	@Test
@@ -70,21 +74,42 @@ class PlaylistMapperTests {
 		assertThat(mappedPlaylist.getUuid()).isEqualTo(originalUuid);
 		assertThat(mappedPlaylist.getName()).isEqualTo(playlistUpdateRequest.name());
 		assertThat(mappedPlaylist.getM3uFileName()).isEqualTo(playlistUpdateRequest.m3uFileName());
+		assertThat(mappedPlaylist.isBase()).isEqualTo(playlistUpdateRequest.isBase());
+		assertThat(mappedPlaylist.getWeight()).isEqualTo(playlistUpdateRequest.weight());
 	}
 
 	@Test
 	void allowsM3uFileNameToRemainEmpty() {
-		Playlist playlist = PlaylistMapper.toEntity(new PlaylistRequestDTO("Playlist", null));
+		Playlist playlist = PlaylistMapper.toEntity(new PlaylistRequestDTO("Playlist", null, false, 1));
 
 		assertThat(playlist.getM3uFileName()).isNull();
 	}
 
 	@Test
 	void rejectsM3uFileNameWithWindowsDirectoryPath() {
-		PlaylistRequestDTO invalidPlaylistRequest = new PlaylistRequestDTO("Playlist", "directory\\playlist.m3u");
+		PlaylistRequestDTO invalidPlaylistRequest = new PlaylistRequestDTO(
+			"Playlist",
+			"directory\\playlist.m3u",
+			false,
+			1
+		);
 
 		org.assertj.core.api.Assertions.assertThatThrownBy(() -> PlaylistMapper.toEntity(invalidPlaylistRequest))
 			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("M3U file name must not contain a directory path");
+			.hasMessage("M3U file name must be a simple .m3u file name");
+	}
+
+	@Test
+	void rejectsNonPositiveWeight() {
+		PlaylistRequestDTO invalidPlaylistRequest = new PlaylistRequestDTO(
+			"Playlist",
+			"playlist.m3u",
+			false,
+			0
+		);
+
+		org.assertj.core.api.Assertions.assertThatThrownBy(() -> PlaylistMapper.toEntity(invalidPlaylistRequest))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessage("Playlist weight must be greater than zero");
 	}
 }

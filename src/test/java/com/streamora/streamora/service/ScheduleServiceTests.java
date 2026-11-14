@@ -105,4 +105,22 @@ class ScheduleServiceTests {
 
 		verify(scheduleRepository).delete(schedule);
 	}
+
+	@Test
+	void findsSchedulesActiveAtStartAndBeforeEnd() {
+		Schedule activeSchedule = ScheduleFactory.toEntity();
+		activeSchedule.setDayOfWeek(WeekDay.MONDAY);
+		activeSchedule.setStartTime(LocalTime.of(8, 0));
+		activeSchedule.setEndTime(LocalTime.of(10, 0));
+		Schedule futureSchedule = ScheduleFactory.toEntity();
+		futureSchedule.setDayOfWeek(WeekDay.MONDAY);
+		futureSchedule.setStartTime(LocalTime.of(10, 0));
+		futureSchedule.setEndTime(LocalTime.of(12, 0));
+		when(scheduleRepository.findAll()).thenReturn(List.of(activeSchedule, futureSchedule));
+
+		assertThat(scheduleService.findActiveSchedules(WeekDay.MONDAY, LocalTime.of(8, 0)))
+			.containsExactly(activeSchedule);
+		assertThat(scheduleService.findActiveSchedules(WeekDay.MONDAY, LocalTime.of(10, 0)))
+			.containsExactly(futureSchedule);
+	}
 }

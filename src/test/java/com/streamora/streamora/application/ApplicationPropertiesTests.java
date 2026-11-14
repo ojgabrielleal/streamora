@@ -40,4 +40,21 @@ class ApplicationPropertiesTests {
 			.containsEntry("spring.flyway.enabled", "true")
 			.doesNotContainKey("spring.flyway.locations");
 	}
+
+	@Test
+	void configuresLiquidsoapSharedDirectories() {
+		assertThat(PROPERTIES)
+			.containsEntry(
+				"liquidsoap.media-directory",
+				"${LIQUIDSOAP_MEDIA_DIRECTORY:/pure-ftpd/uploads}"
+			)
+			.containsEntry(
+				"liquidsoap.m3u-directory",
+				"${LIQUIDSOAP_M3U_DIRECTORY:/liquidsoap/m3u}"
+			)
+			.containsEntry(
+				"liquidsoap.config-directory",
+				"${LIQUIDSOAP_CONFIG_DIRECTORY:/liquidsoap/config}"
+			);
+	}
 }

@@ -5,9 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import com.streamora.streamora.infrastructure.pureFtpd.user.records.PureFtpdProperties;
+import com.streamora.streamora.infrastructure.liquidsoap.records.LiquidsoapProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties(PureFtpdProperties.class)
+@EnableConfigurationProperties({PureFtpdProperties.class, LiquidsoapProperties.class})
 public class StreamoraApplication {
 
 	public static void main(String[] args) {

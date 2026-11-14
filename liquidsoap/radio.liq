@@ -1,7 +1,7 @@
 settings.log.stdout.set(true)
 
-media = playlist(mode="randomize", reload=60, "/liquidsoap/m3u")
-radio = fallback(track_sensitive=false, [media, blank()])
+%include "generated-sources.liq"
+%include "generated-schedule.liq"
 
 output.icecast(
   %mp3,

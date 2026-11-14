@@ -36,6 +36,12 @@ public class Playlist {
 	@Column(name = "m3u_file_name")
 	private String m3uFileName;
 
+	@Column(name = "is_base", nullable = false)
+	private boolean base;
+
+	@Column(nullable = false)
+	private int weight = 1;
+
 	@OneToMany(mappedBy = "playlist")
 	private Set<Schedule> schedules = new HashSet<>();
 

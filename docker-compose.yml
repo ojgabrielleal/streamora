@@ -15,6 +15,9 @@ services:
       PUREFTPD_UID: ${PUREFTPD_UID:-1000}
       PUREFTPD_GID: ${PUREFTPD_GID:-1000}
       PUREFTPD_HOME_DIRECTORY: /pure-ftpd/uploads
+      LIQUIDSOAP_MEDIA_DIRECTORY: /pure-ftpd/uploads
+      LIQUIDSOAP_M3U_DIRECTORY: /liquidsoap/m3u
+      LIQUIDSOAP_CONFIG_DIRECTORY: /liquidsoap/config
     ports:
       - "${APPLICATION_PORT:-8080}:8080"
     volumes:

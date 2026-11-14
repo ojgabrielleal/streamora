@@ -1,6 +1,6 @@
 # Spec 022 - Configurando integração com Liquidsoap
 
-**Status:** Planejada
+**Status:** Concluída
 
 ## Objetivo
 
@@ -172,38 +172,38 @@ playlists base quando não houver uma programação válida em execução.
 
 ## Critérios de aceite
 
-- [ ] Os componentes Java da integração estão organizados em
+- [x] Os componentes Java da integração estão organizados em
   `infrastructure/liquidsoap`.
-- [ ] Geração de M3U, seleção de playlists, aplicação de pesos, geração da grade,
+- [x] Geração de M3U, seleção de playlists, aplicação de pesos, geração da grade,
   persistência e escrita física são executadas por métodos distintos e
   testáveis.
-- [ ] Um M3U pode ser gerado a partir de uma mídia, de uma lista de mídias ou de
+- [x] Um M3U pode ser gerado a partir de uma mídia, de uma lista de mídias ou de
   um diretório.
-- [ ] Um M3U pode referenciar mídias de formatos diferentes sem que a aplicação
+- [x] Um M3U pode referenciar mídias de formatos diferentes sem que a aplicação
   copie ou converta os arquivos.
-- [ ] Os M3U são gravados em `/liquidsoap/m3u` e podem ser lidos pelo container
+- [x] Os M3U são gravados em `/liquidsoap/m3u` e podem ser lidos pelo container
   do Liquidsoap.
-- [ ] A playlist armazena em `m3u_file_name` somente o nome do M3U gerado.
-- [ ] Várias playlists podem ser marcadas com `is_base` e cada playlist possui
+- [x] A playlist armazena em `m3u_file_name` somente o nome do M3U gerado.
+- [x] Várias playlists podem ser marcadas com `is_base` e cada playlist possui
   um `weight` inteiro positivo.
-- [ ] Sem agendamento ativo, todas as playlists base válidas são combinadas de
+- [x] Sem agendamento ativo, todas as playlists base válidas são combinadas de
   acordo com seus pesos.
-- [ ] Durante um intervalo com agendamentos ativos, as playlists base param e
+- [x] Durante um intervalo com agendamentos ativos, as playlists base param e
   somente as playlists agendadas válidas são combinadas.
-- [ ] Ao terminar o intervalo agendado, a reprodução retorna às playlists base.
-- [ ] Playlists com agendamentos simultâneos participam da mesma combinação
+- [x] Ao terminar o intervalo agendado, a reprodução retorna às playlists base.
+- [x] Playlists com agendamentos simultâneos participam da mesma combinação
   conforme seus pesos.
-- [ ] Agendamentos sobrepostos da mesma playlist não duplicam sua participação
+- [x] Agendamentos sobrepostos da mesma playlist não duplicam sua participação
   na combinação.
-- [ ] Uma playlist indisponível é ignorada sem interromper outras fontes
+- [x] Uma playlist indisponível é ignorada sem interromper outras fontes
   válidas.
-- [ ] Quando nenhuma playlist agendada puder ser reproduzida, as playlists
+- [x] Quando nenhuma playlist agendada puder ser reproduzida, as playlists
   base válidas são usadas como fallback.
-- [ ] A grade e as combinações ponderadas são geradas em arquivos `.liq`
+- [x] A grade e as combinações ponderadas são geradas em arquivos `.liq`
   separados e referenciadas pelo `radio.liq`.
-- [ ] Os arquivos gerados não expõem credenciais ou outros dados sensíveis.
-- [ ] As migrations e os documentos de estrutura e banco refletem os novos
+- [x] Os arquivos gerados não expõem credenciais ou outros dados sensíveis.
+- [x] As migrations e os documentos de estrutura e banco refletem os novos
   campos e componentes.
-- [ ] Os testes usam diretórios temporários e não dependem dos volumes Docker
+- [x] Os testes usam diretórios temporários e não dependem dos volumes Docker
   reais nem de um processo Liquidsoap em execução.
-- [ ] O projeto compila e todos os testes passam.
+- [x] O projeto compila e todos os testes passam.

@@ -50,6 +50,26 @@ public class PlaylistService {
 		playlistRepository.delete(findByUuid(uuid));
 	}
 
+	@Transactional(readOnly = true)
+	public List<Playlist> findBasePlaylists() {
+		return playlistRepository.findAll().stream()
+			.filter(Playlist::isBase)
+			.toList();
+	}
+
+	public Playlist associateM3uFileName(String uuid, String m3uFileName) {
+		Playlist storedPlaylist = findByUuid(uuid);
+		PlaylistMapper.validateM3uFileName(m3uFileName);
+		storedPlaylist.setM3uFileName(m3uFileName);
+
+		return playlistRepository.save(storedPlaylist);
+	}
+
+	@Transactional(readOnly = true)
+	public Playlist findPlaylist(String uuid) {
+		return findByUuid(uuid);
+	}
+
 	private Playlist findByUuid(String uuid) {
 		return playlistRepository.findByUuid(uuid)
 			.orElseThrow(() -> new ResourceNotFoundException("Playlist", uuid));

@@ -102,10 +102,17 @@ class PlaylistControllerTests {
 	}
 
 	private PlaylistRequestDTO playlistRequest() {
-		return new PlaylistRequestDTO("Playlist", "playlist.m3u");
+		return new PlaylistRequestDTO("Playlist", "playlist.m3u", true, 2);
 	}
 
 	private PlaylistResponseDTO playlistResponse() {
-		return new PlaylistResponseDTO("playlist-uuid", "Playlist", "playlist.m3u", java.util.Set.of());
+		return new PlaylistResponseDTO(
+			"playlist-uuid",
+			"Playlist",
+			"playlist.m3u",
+			true,
+			2,
+			java.util.Set.of()
+		);
 	}
 }

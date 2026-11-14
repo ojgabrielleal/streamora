@@ -1,5 +1,6 @@
 package com.streamora.streamora.service;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import com.streamora.streamora.dto.schedules.ScheduleRequestDTO;
 import com.streamora.streamora.dto.schedules.ScheduleResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
+import com.streamora.streamora.entity.type.WeekDay;
 import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.mapper.ScheduleMapper;
 import com.streamora.streamora.repository.PlaylistRepository;
@@ -59,6 +61,20 @@ public class ScheduleService {
 
 	public void delete(String uuid) {
 		scheduleRepository.delete(findScheduleByUuid(uuid));
+	}
+
+	@Transactional(readOnly = true)
+	public List<Schedule> findAllSchedules() {
+		return scheduleRepository.findAll();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Schedule> findActiveSchedules(WeekDay dayOfWeek, LocalTime time) {
+		return scheduleRepository.findAll().stream()
+			.filter(schedule -> schedule.getDayOfWeek() == dayOfWeek)
+			.filter(schedule -> !time.isBefore(schedule.getStartTime()))
+			.filter(schedule -> time.isBefore(schedule.getEndTime()))
+			.toList();
 	}
 
 	private void validateInterval(ScheduleRequestDTO scheduleRequest) {

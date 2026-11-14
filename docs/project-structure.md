@@ -64,6 +64,9 @@ streamora/
 │   │   │   │   ├── ScheduleMapper.java
 │   │   │   │   └── UserMapper.java
 │   │   │   ├── infrastructure/
+│   │   │   │   ├── liquidsoap/
+│   │   │   │   │   ├── exception/
+│   │   │   │   │   └── records/
 │   │   │   │   └── pureFtpd/
 │   │   │   │       ├── storage/
 │   │   │   │       │   ├── LocalFtpFileStorage.java
@@ -94,6 +97,7 @@ streamora/
 │   │   │   └── service/
 │   │   │       ├── AuthService.java
 │   │   │       ├── FtpFileService.java
+│   │   │       ├── LiquidsoapService.java
 │   │   │       ├── PlaylistService.java
 │   │   │       ├── ScheduleService.java
 │   │   │       ├── JwtService.java
@@ -130,6 +134,7 @@ streamora/
 │           │   ├── ScheduleMapperTests.java
 │           │   └── UserMapperTests.java
 │           ├── infrastructure/
+│           │   ├── liquidsoap/
 │           │   └── pureFtpd/
 │           │       ├── storage/
 │           │       │   └── LocalFtpFileStorageTests.java
@@ -174,6 +179,9 @@ devem continuar fora do controle de versão.
   interna do storage FTP para seu DTO de resposta HTTP.
 - `infrastructure`: encapsula a integração da aplicação com serviços e
   utilitários externos.
+- `infrastructure/liquidsoap`: valida os caminhos do storage compartilhado,
+  gera conteúdos M3U e LIQ, seleciona fontes reproduzíveis, combina playlists
+  por peso e grava os arquivos usados pelo Liquidsoap.
 - `infrastructure/pureFtpd/user`: concentra a configuração, a validação de
   credenciais e a execução dos comandos de gerenciamento de usuários do
   Pure-FTPd.
@@ -185,9 +193,14 @@ devem continuar fora do controle de versão.
 - `exception`: reúne exceções próprias da aplicação.
 - `repository`: define as interfaces de acesso aos dados das entities.
 - `service`: concentra operações de negócio e coordena o acesso às repositories
-  e aos contratos de infraestrutura, como `FtpFileStorage`.
+  e aos contratos de infraestrutura, como `FtpFileStorage`. O
+  `LiquidsoapService` orquestra `PlaylistService`, `ScheduleService` e os
+  componentes da integração, sem expor controller próprio.
 - `resources/db/migration`: mantém o histórico executável do banco com Flyway.
 - `liquidsoap`: contém a configuração versionada do serviço Liquidsoap.
+  `radio.liq` inclui os arquivos separados de fontes e grade gerados pela
+  aplicação. Alterações em M3Us são recarregadas periodicamente; alterações em
+  `.liq` exigem reload ou reinício externo do Liquidsoap, fora da Spec 022.
 - `specs`: registra requisitos, planejamento, tarefas e revisões de cada mudança.
 - `docs`: mantém visões consolidadas da arquitetura e do banco de dados.
 
@@ -214,7 +227,9 @@ Os testes espelham a responsabilidade que validam no código principal:
 - `infrastructure`: comportamento das integrações externas com seus executores
   isolados, sem exigir que os serviços reais estejam em execução. Os testes de
   usuários e armazenamento do Pure-FTPd espelham os subpacotes `user` e
-  `storage`; os testes de armazenamento usam diretórios temporários.
+  `storage`; os testes de armazenamento usam diretórios temporários. Os testes
+  do Liquidsoap também usam diretórios temporários para validar M3U, escrita,
+  seleção, pesos, sobreposições e fallback sem acessar os volumes reais.
 - `filter`: validação isolada dos filtros HTTP, incluindo rejeição e
   autenticação das requisições.
 - `migration`: convenções globais dos arquivos de migration.

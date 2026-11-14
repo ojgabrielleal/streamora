@@ -16,7 +16,12 @@ public final class ScheduleMapper {
 
 		return new ScheduleResponseDTO(
 			schedule.getUuid(),
-			new PlaylistSummaryDTO(playlist.getUuid(), playlist.getName()),
+			new PlaylistSummaryDTO(
+				playlist.getUuid(),
+				playlist.getName(),
+				playlist.isBase(),
+				playlist.getWeight()
+			),
 			schedule.getDayOfWeek(),
 			schedule.getStartTime(),
 			schedule.getEndTime()
