@@ -2,9 +2,9 @@ package com.streamora.streamora.mapper;
 
 import java.util.stream.Collectors;
 
-import com.streamora.streamora.dto.PlaylistRequestDTO;
-import com.streamora.streamora.dto.PlaylistResponseDTO;
-import com.streamora.streamora.dto.ScheduleSummaryDTO;
+import com.streamora.streamora.dto.playlists.PlaylistRequestDTO;
+import com.streamora.streamora.dto.playlists.PlaylistResponseDTO;
+import com.streamora.streamora.dto.schedules.ScheduleSummaryDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
 

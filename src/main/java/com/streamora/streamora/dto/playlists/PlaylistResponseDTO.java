@@ -1,6 +1,8 @@
-package com.streamora.streamora.dto;
+package com.streamora.streamora.dto.playlists;
 
 import java.util.Set;
+
+import com.streamora.streamora.dto.schedules.ScheduleSummaryDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

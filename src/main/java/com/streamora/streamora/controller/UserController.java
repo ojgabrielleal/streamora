@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.streamora.streamora.dto.UserRequestDTO;
-import com.streamora.streamora.dto.UserResponseDTO;
+import com.streamora.streamora.dto.users.UserRequestDTO;
+import com.streamora.streamora.dto.users.UserResponseDTO;
 import com.streamora.streamora.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;

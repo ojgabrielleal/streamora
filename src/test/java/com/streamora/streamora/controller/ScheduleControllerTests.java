@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.streamora.streamora.dto.ScheduleRequestDTO;
-import com.streamora.streamora.dto.ScheduleResponseDTO;
+import com.streamora.streamora.dto.schedules.ScheduleRequestDTO;
+import com.streamora.streamora.dto.schedules.ScheduleResponseDTO;
 import com.streamora.streamora.factory.ScheduleFactory;
 import com.streamora.streamora.mapper.ScheduleMapper;
 import com.streamora.streamora.service.ScheduleService;

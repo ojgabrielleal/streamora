@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.streamora.streamora.dto.AuthRequestDTO;
+import com.streamora.streamora.dto.auth.AuthRequestDTO;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.repository.UserRepository;
 

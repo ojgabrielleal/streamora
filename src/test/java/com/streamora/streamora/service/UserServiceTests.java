@@ -18,8 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.streamora.streamora.dto.UserRequestDTO;
-import com.streamora.streamora.dto.UserResponseDTO;
+import com.streamora.streamora.dto.users.UserRequestDTO;
+import com.streamora.streamora.dto.users.UserResponseDTO;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.factory.UserFactory;

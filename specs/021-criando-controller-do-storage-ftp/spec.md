@@ -1,6 +1,6 @@
 # Spec 021 - Criando controller do storage FTP
 
-**Status:** Pendente
+**Status:** Concluída
 
 ## Objetivo
 
@@ -28,8 +28,9 @@ Swagger/OpenAPI.
   movimentação.
 - Os DTOs devem usar nomes de campos alinhados ao domínio:
   `path`, `newName` e `targetDirectory`.
-- Reutilizar `FtpFileEntry` como representação da árvore retornada pela
-  listagem, incluindo `name`, `type` e `children` na documentação OpenAPI.
+- Criar um DTO de resposta próprio para a árvore retornada pela listagem, com
+  `name`, `type` e `children`, convertendo recursivamente `FtpFileEntry` por um
+  mapper e mantendo o modelo de infraestrutura fora do contrato HTTP.
 - Retornar HTTP `200 OK` na listagem.
 - Retornar HTTP `204 No Content` nas operações de criação, exclusão,
   renomeação e movimentação concluídas com sucesso.
@@ -104,20 +105,20 @@ Swagger/OpenAPI.
 
 ## Critérios de aceite
 
-- [ ] `GET /storage` retorna a árvore fornecida por `FtpFileService`.
-- [ ] Arquivos podem ser excluídos, renomeados e movidos pelos endpoints
+- [x] `GET /storage` retorna a árvore fornecida por `FtpFileService`.
+- [x] Arquivos podem ser excluídos, renomeados e movidos pelos endpoints
   definidos.
-- [ ] Diretórios podem ser criados, renomeados e excluídos quando vazios pelos
+- [x] Diretórios podem ser criados, renomeados e excluídos quando vazios pelos
   endpoints definidos.
-- [ ] As operações sem corpo de resposta retornam `204 No Content`.
-- [ ] Falhas de validação ou manipulação do storage retornam `400 Bad Request`
+- [x] As operações sem corpo de resposta retornam `204 No Content`.
+- [x] Falhas de validação ou manipulação do storage retornam `400 Bad Request`
   sem expor detalhes internos.
-- [ ] Requisições anônimas aos endpoints de `/storage` retornam `401
+- [x] Requisições anônimas aos endpoints de `/storage` retornam `401
   Unauthorized`.
-- [ ] Todos os endpoints, parâmetros, request bodies, schemas e respostas estão
+- [x] Todos os endpoints, parâmetros, request bodies, schemas e respostas estão
   disponíveis no Swagger/OpenAPI.
-- [ ] O controller depende somente de `FtpFileService`.
-- [ ] Os testes do controller comprovam a delegação e os status HTTP.
-- [ ] Os testes de documentação comprovam a presença dos novos contratos.
-- [ ] `docs/project-structure.md` descreve os novos componentes.
-- [ ] O projeto compila e todos os testes passam.
+- [x] O controller depende somente de `FtpFileService`.
+- [x] Os testes do controller comprovam a delegação e os status HTTP.
+- [x] Os testes de documentação comprovam a presença dos novos contratos.
+- [x] `docs/project-structure.md` descreve os novos componentes.
+- [x] O projeto compila e todos os testes passam.

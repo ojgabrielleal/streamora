@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import com.streamora.streamora.dto.PlaylistRequestDTO;
-import com.streamora.streamora.dto.PlaylistResponseDTO;
+import com.streamora.streamora.dto.playlists.PlaylistRequestDTO;
+import com.streamora.streamora.dto.playlists.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
 import com.streamora.streamora.factory.PlaylistFactory;

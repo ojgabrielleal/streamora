@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.streamora.streamora.dto.ScheduleRequestDTO;
-import com.streamora.streamora.dto.ScheduleResponseDTO;
+import com.streamora.streamora.dto.schedules.ScheduleRequestDTO;
+import com.streamora.streamora.dto.schedules.ScheduleResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
 import com.streamora.streamora.exception.ResourceNotFoundException;

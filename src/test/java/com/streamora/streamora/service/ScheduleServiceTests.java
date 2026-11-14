@@ -16,8 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.streamora.streamora.dto.ScheduleRequestDTO;
-import com.streamora.streamora.dto.ScheduleResponseDTO;
+import com.streamora.streamora.dto.schedules.ScheduleRequestDTO;
+import com.streamora.streamora.dto.schedules.ScheduleResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
 import com.streamora.streamora.entity.type.WeekDay;

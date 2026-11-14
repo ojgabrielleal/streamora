@@ -3,8 +3,8 @@ package com.streamora.streamora.factory;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import com.streamora.streamora.dto.UserRequestDTO;
-import com.streamora.streamora.dto.UserResponseDTO;
+import com.streamora.streamora.dto.users.UserRequestDTO;
+import com.streamora.streamora.dto.users.UserResponseDTO;
 import com.streamora.streamora.entity.User;
 
 public final class UserFactory {

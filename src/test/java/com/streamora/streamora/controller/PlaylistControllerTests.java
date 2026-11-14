@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.streamora.streamora.dto.PlaylistRequestDTO;
-import com.streamora.streamora.dto.PlaylistResponseDTO;
+import com.streamora.streamora.dto.playlists.PlaylistRequestDTO;
+import com.streamora.streamora.dto.playlists.PlaylistResponseDTO;
 import com.streamora.streamora.service.PlaylistService;
 
 @ExtendWith(MockitoExtension.class)

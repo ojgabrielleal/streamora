@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.streamora.streamora.dto.ScheduleRequestDTO;
-import com.streamora.streamora.dto.ScheduleResponseDTO;
+import com.streamora.streamora.dto.schedules.ScheduleRequestDTO;
+import com.streamora.streamora.dto.schedules.ScheduleResponseDTO;
 import com.streamora.streamora.service.ScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;

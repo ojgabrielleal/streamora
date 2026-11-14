@@ -1,4 +1,4 @@
-package com.streamora.streamora.dto;
+package com.streamora.streamora.dto.playlists;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

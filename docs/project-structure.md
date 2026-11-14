@@ -29,6 +29,7 @@ streamora/
 │   │   │   │   └── SecurityConfig.java
 │   │   │   ├── controller/
 │   │   │   │   ├── AuthController.java
+│   │   │   │   ├── FtpFileController.java
 │   │   │   │   ├── PlaylistController.java
 │   │   │   │   ├── ScheduleController.java
 │   │   │   │   └── UserController.java
@@ -38,16 +39,27 @@ streamora/
 │   │   │   │   ├── Schedule.java
 │   │   │   │   └── User.java
 │   │   │   ├── dto/
-│   │   │   │   ├── AuthRequestDTO.java
-│   │   │   │   ├── PlaylistSummaryDTO.java
-│   │   │   │   ├── PlaylistRequestDTO.java
-│   │   │   │   ├── PlaylistResponseDTO.java
-│   │   │   │   ├── ScheduleRequestDTO.java
-│   │   │   │   ├── ScheduleResponseDTO.java
-│   │   │   │   ├── ScheduleSummaryDTO.java
-│   │   │   │   ├── UserRequestDTO.java
-│   │   │   │   └── UserResponseDTO.java
+│   │   │   │   ├── auth/
+│   │   │   │   │   └── AuthRequestDTO.java
+│   │   │   │   ├── ftp/
+│   │   │   │   │   ├── FtpDirectoryCreateRequestDTO.java
+│   │   │   │   │   ├── FtpFileEntryResponseDTO.java
+│   │   │   │   │   ├── FtpMoveRequestDTO.java
+│   │   │   │   │   ├── FtpRenameRequestDTO.java
+│   │   │   │   │   └── FtpStorageErrorDTO.java
+│   │   │   │   ├── playlists/
+│   │   │   │   │   ├── PlaylistRequestDTO.java
+│   │   │   │   │   ├── PlaylistResponseDTO.java
+│   │   │   │   │   └── PlaylistSummaryDTO.java
+│   │   │   │   ├── schedules/
+│   │   │   │   │   ├── ScheduleRequestDTO.java
+│   │   │   │   │   ├── ScheduleResponseDTO.java
+│   │   │   │   │   └── ScheduleSummaryDTO.java
+│   │   │   │   └── users/
+│   │   │   │       ├── UserRequestDTO.java
+│   │   │   │       └── UserResponseDTO.java
 │   │   │   ├── mapper/
+│   │   │   │   ├── FtpFileEntryMapper.java
 │   │   │   │   ├── PlaylistMapper.java
 │   │   │   │   ├── ScheduleMapper.java
 │   │   │   │   └── UserMapper.java
@@ -96,6 +108,7 @@ streamora/
 │           │   └── StreamoraApplicationTests.java
 │           ├── controller/
 │           │   ├── AuthControllerTests.java
+│           │   ├── FtpFileControllerTests.java
 │           │   ├── PlaylistControllerTests.java
 │           │   ├── ScheduleControllerTests.java
 │           │   └── UserControllerTests.java
@@ -112,6 +125,7 @@ streamora/
 │           ├── migration/
 │           │   └── MigrationFilesTests.java
 │           ├── mapper/
+│           │   ├── FtpFileEntryMapperTests.java
 │           │   ├── PlaylistMapperTests.java
 │           │   ├── ScheduleMapperTests.java
 │           │   └── UserMapperTests.java
@@ -148,11 +162,16 @@ devem continuar fora do controle de versão.
 - `config`: centraliza configurações da aplicação, como a cadeia de filtros
   do Spring Security e os metadados da documentação OpenAPI.
 - `controller`: expõe os endpoints HTTP e delega cada operação diretamente ao
-  service correspondente, sem tratar ou manipular dados.
+  service correspondente, sem tratar ou manipular dados. O controller do
+  storage FTP também traduz as exceções próprias dessa integração para o
+  contrato HTTP seguro, sem acessar o volume local.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.
-- `dto`: define os contratos imutáveis de entrada e saída da aplicação.
+- `dto`: define os contratos imutáveis de entrada e saída da aplicação,
+  organizados por domínio nos subpacotes `auth`, `ftp`, `playlists`,
+  `schedules` e `users`.
 - `mapper`: converte entities em DTOs de resposta e aplica DTOs de entrada em
-  entities novas ou existentes.
+  entities novas ou existentes e também isola a conversão recursiva da árvore
+  interna do storage FTP para seu DTO de resposta HTTP.
 - `infrastructure`: encapsula a integração da aplicação com serviços e
   utilitários externos.
 - `infrastructure/pureFtpd/user`: concentra a configuração, a validação de
@@ -185,7 +204,8 @@ Os testes espelham a responsabilidade que validam no código principal:
 - `config`: comportamento das configurações e integração com o contexto da
   aplicação.
 - `controller`: contratos HTTP e delegação direta aos services isolados por
-  mocks.
+  mocks; os testes do storage também validam os status HTTP e a resposta segura
+  para falhas da integração FTP.
 - `entity`: convenções e mapeamentos comuns das entities.
 - `factory`: centraliza a criação de DTOs e entities fictícios reutilizados
   pelos testes.

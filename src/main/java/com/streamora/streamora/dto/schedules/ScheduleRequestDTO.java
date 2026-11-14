@@ -1,4 +1,4 @@
-package com.streamora.streamora.dto;
+package com.streamora.streamora.dto.schedules;
 
 import java.time.LocalTime;
 

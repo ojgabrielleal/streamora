@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.streamora.streamora.dto.PlaylistRequestDTO;
-import com.streamora.streamora.dto.PlaylistResponseDTO;
+import com.streamora.streamora.dto.playlists.PlaylistRequestDTO;
+import com.streamora.streamora.dto.playlists.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.exception.ResourceNotFoundException;
 import com.streamora.streamora.mapper.PlaylistMapper;

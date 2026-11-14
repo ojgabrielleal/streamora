@@ -1,8 +1,8 @@
 package com.streamora.streamora.mapper;
 
-import com.streamora.streamora.dto.ScheduleRequestDTO;
-import com.streamora.streamora.dto.ScheduleResponseDTO;
-import com.streamora.streamora.dto.PlaylistSummaryDTO;
+import com.streamora.streamora.dto.schedules.ScheduleRequestDTO;
+import com.streamora.streamora.dto.schedules.ScheduleResponseDTO;
+import com.streamora.streamora.dto.playlists.PlaylistSummaryDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
 

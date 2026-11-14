@@ -69,7 +69,19 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.paths['/schedules'].post.requestBody.required").value(true))
 			.andExpect(jsonPath("$.paths['/schedules/{uuid}'].get").exists())
 			.andExpect(jsonPath("$.paths['/schedules/{uuid}'].put").exists())
-			.andExpect(jsonPath("$.paths['/schedules/{uuid}'].delete").exists());
+			.andExpect(jsonPath("$.paths['/schedules/{uuid}'].delete").exists())
+			.andExpect(jsonPath("$.paths['/storage'].get.tags[0]").value("Storage FTP"))
+			.andExpect(jsonPath("$.paths['/storage'].get.responses['200']").exists())
+			.andExpect(jsonPath("$.paths['/storage'].get.responses['400']").exists())
+			.andExpect(jsonPath("$.paths['/storage'].get.responses['401']").exists())
+			.andExpect(jsonPath("$.paths['/storage/files'].delete.parameters[0].name").value("path"))
+			.andExpect(jsonPath("$.paths['/storage/files'].delete.responses['204']").exists())
+			.andExpect(jsonPath("$.paths['/storage/files/rename'].put.requestBody.required").value(true))
+			.andExpect(jsonPath("$.paths['/storage/files/rename'].put.responses['204']").exists())
+			.andExpect(jsonPath("$.paths['/storage/files/move'].put.requestBody.required").value(true))
+			.andExpect(jsonPath("$.paths['/storage/directories'].post.requestBody.required").value(true))
+			.andExpect(jsonPath("$.paths['/storage/directories'].delete.parameters[0].name").value("path"))
+			.andExpect(jsonPath("$.paths['/storage/directories/rename'].put.requestBody.required").value(true));
 	}
 
 	@Test
@@ -87,7 +99,16 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.components.schemas.PlaylistResponseDTO").exists())
 			.andExpect(jsonPath("$.components.schemas.PlaylistResponseDTO.properties.m3uFileName").exists())
 			.andExpect(jsonPath("$.components.schemas.ScheduleRequestDTO").exists())
-			.andExpect(jsonPath("$.components.schemas.ScheduleResponseDTO").exists());
+			.andExpect(jsonPath("$.components.schemas.ScheduleResponseDTO").exists())
+			.andExpect(jsonPath("$.components.schemas.FtpDirectoryCreateRequestDTO.required[0]").value("path"))
+			.andExpect(jsonPath("$.components.schemas.FtpRenameRequestDTO.required").value(org.hamcrest.Matchers.containsInAnyOrder("path", "newName")))
+			.andExpect(jsonPath("$.components.schemas.FtpMoveRequestDTO.required").value(org.hamcrest.Matchers.containsInAnyOrder("path", "targetDirectory")))
+			.andExpect(jsonPath("$.components.schemas.FtpStorageErrorDTO.properties.message").exists())
+			.andExpect(jsonPath("$.components.schemas.FtpFileEntryResponseDTO.properties.name").exists())
+			.andExpect(jsonPath("$.components.schemas.FtpFileEntryResponseDTO.properties.type").exists())
+			.andExpect(jsonPath("$.components.schemas.FtpFileEntryResponseDTO.properties.children.items['$ref']")
+				.value("#/components/schemas/FtpFileEntryResponseDTO"))
+			.andExpect(jsonPath("$.components.schemas.FtpFileEntry").doesNotExist());
 	}
 
 	@Test

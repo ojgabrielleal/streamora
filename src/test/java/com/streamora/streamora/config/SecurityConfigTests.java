@@ -22,13 +22,15 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.streamora.streamora.controller.AuthController;
+import com.streamora.streamora.controller.FtpFileController;
 import com.streamora.streamora.controller.UserController;
 import com.streamora.streamora.filter.JwtAuthenticationFilter;
 import com.streamora.streamora.service.AuthService;
+import com.streamora.streamora.service.FtpFileService;
 import com.streamora.streamora.service.JwtService;
 import com.streamora.streamora.service.UserService;
 
-@WebMvcTest({AuthController.class, UserController.class})
+@WebMvcTest({AuthController.class, FtpFileController.class, UserController.class})
 @Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 class SecurityConfigTests {
 
@@ -43,6 +45,9 @@ class SecurityConfigTests {
 
 	@MockitoBean
 	private AuthService authService;
+
+	@MockitoBean
+	private FtpFileService ftpFileService;
 
 	@MockitoBean
 	private JwtService jwtService;
@@ -62,6 +67,12 @@ class SecurityConfigTests {
 			get("/user")
 		)
 		.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void protectsStorageEndpointsFromAnonymousRequests() throws Exception {
+		mockMvc.perform(get("/storage"))
+			.andExpect(status().isUnauthorized());
 	}
 
 	@Test

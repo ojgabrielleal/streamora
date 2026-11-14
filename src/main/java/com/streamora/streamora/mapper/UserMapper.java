@@ -1,7 +1,7 @@
 package com.streamora.streamora.mapper;
 
-import com.streamora.streamora.dto.UserRequestDTO;
-import com.streamora.streamora.dto.UserResponseDTO;
+import com.streamora.streamora.dto.users.UserRequestDTO;
+import com.streamora.streamora.dto.users.UserResponseDTO;
 import com.streamora.streamora.entity.User;
 
 public final class UserMapper {

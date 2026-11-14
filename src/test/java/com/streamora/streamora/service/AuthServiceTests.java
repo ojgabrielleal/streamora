@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.streamora.streamora.dto.AuthRequestDTO;
+import com.streamora.streamora.dto.auth.AuthRequestDTO;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.factory.UserFactory;
 import com.streamora.streamora.repository.UserRepository;

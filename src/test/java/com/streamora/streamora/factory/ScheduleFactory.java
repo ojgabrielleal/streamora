@@ -2,7 +2,7 @@ package com.streamora.streamora.factory;
 
 import java.time.LocalTime;
 
-import com.streamora.streamora.dto.ScheduleRequestDTO;
+import com.streamora.streamora.dto.schedules.ScheduleRequestDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
 import com.streamora.streamora.entity.type.WeekDay;

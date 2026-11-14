@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import com.streamora.streamora.dto.PlaylistRequestDTO;
-import com.streamora.streamora.dto.PlaylistResponseDTO;
+import com.streamora.streamora.dto.playlists.PlaylistRequestDTO;
+import com.streamora.streamora.dto.playlists.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 
 public final class PlaylistFactory {
