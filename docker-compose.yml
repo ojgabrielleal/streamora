@@ -25,6 +25,7 @@ services:
       - liquidsoap_m3u:/liquidsoap/m3u
       - pureftpd_uploads:/pure-ftpd/uploads
       - pureftpd_passwords:/etc/pure-ftpd/passwd
+      - liquidsoap_runtime:/run/liquidsoap
     depends_on:
       mysql:
         condition: service_healthy
@@ -89,7 +90,7 @@ services:
   liquidsoap:
     image: savonet/liquidsoap:v2.3.3
     container_name: streamora-liquidsoap
-    command: ["liquidsoap", "/etc/liquidsoap/radio.liq"]
+    command: ["/etc/liquidsoap/radio.liq"]
     environment:
       ICECAST_SOURCE_PASSWORD: ${ICECAST_SOURCE_PASSWORD}
       ICECAST_MOUNT: ${ICECAST_MOUNT:-/stream.mp3}
@@ -97,11 +98,25 @@ services:
       - ./liquidsoap:/etc/liquidsoap:ro
       - liquidsoap_m3u:/liquidsoap/m3u:ro
       - pureftpd_uploads:/pure-ftpd/uploads:ro
+      - liquidsoap_runtime:/run/liquidsoap
     depends_on:
-      - icecast
+      icecast:
+        condition: service_started
+      liquidsoap-runtime-init:
+        condition: service_completed_successfully
     restart: unless-stopped
     networks:
       - streamora
+
+  liquidsoap-runtime-init:
+    image: savonet/liquidsoap:v2.3.3
+    user: root
+    entrypoint: ["sh", "-c"]
+    command: ["chown 100:101 /run/liquidsoap"]
+    volumes:
+      - liquidsoap_runtime:/run/liquidsoap
+    restart: "no"
+    network_mode: none
 
   pureftpd:
     image: stilliard/pure-ftpd:trixie-latest
@@ -137,6 +152,7 @@ volumes:
   liquidsoap_m3u:
   pureftpd_uploads:
   pureftpd_passwords:
+  liquidsoap_runtime:
 
 networks:
   streamora:

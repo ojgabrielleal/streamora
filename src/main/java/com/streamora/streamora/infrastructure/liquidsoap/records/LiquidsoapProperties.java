@@ -6,5 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record LiquidsoapProperties(
 	String mediaDirectory,
 	String m3uDirectory,
-	String configDirectory
+	String configDirectory,
+	String controlSocketPath,
+	int controlConnectionTimeoutMillis,
+	int controlRecoveryTimeoutMillis,
+	int controlRetryIntervalMillis
 ) {}

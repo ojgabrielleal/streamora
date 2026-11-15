@@ -1,7 +1,21 @@
 settings.log.stdout.set(true)
+settings.server.socket := true
+settings.server.socket.path := "/run/liquidsoap/control.sock"
 
-%include "generated-sources.liq"
-%include "generated-schedule.liq"
+def restart_streamora(_) =
+  restart()
+  "Restarting"
+end
+
+server.register(
+  namespace="streamora",
+  description="Restart Streamora configuration",
+  "restart",
+  restart_streamora
+)
+
+%include "sources.liq"
+%include "schedule.liq"
 
 output.icecast(
   %mp3,

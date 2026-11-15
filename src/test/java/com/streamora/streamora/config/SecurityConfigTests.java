@@ -23,14 +23,16 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.streamora.streamora.controller.AuthController;
 import com.streamora.streamora.controller.FtpFileController;
+import com.streamora.streamora.controller.LiquidsoapController;
 import com.streamora.streamora.controller.UserController;
 import com.streamora.streamora.filter.JwtAuthenticationFilter;
 import com.streamora.streamora.service.AuthService;
 import com.streamora.streamora.service.FtpFileService;
 import com.streamora.streamora.service.JwtService;
+import com.streamora.streamora.service.LiquidsoapService;
 import com.streamora.streamora.service.UserService;
 
-@WebMvcTest({AuthController.class, FtpFileController.class, UserController.class})
+@WebMvcTest({AuthController.class, FtpFileController.class, LiquidsoapController.class, UserController.class})
 @Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 class SecurityConfigTests {
 
@@ -48,6 +50,9 @@ class SecurityConfigTests {
 
 	@MockitoBean
 	private FtpFileService ftpFileService;
+
+	@MockitoBean
+	private LiquidsoapService liquidsoapService;
 
 	@MockitoBean
 	private JwtService jwtService;
@@ -72,6 +77,12 @@ class SecurityConfigTests {
 	@Test
 	void protectsStorageEndpointsFromAnonymousRequests() throws Exception {
 		mockMvc.perform(get("/storage"))
+			.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void protectsLiquidsoapApplyEndpointFromAnonymousRequests() throws Exception {
+		mockMvc.perform(post("/liquidsoap/apply"))
 			.andExpect(status().isUnauthorized());
 	}
 

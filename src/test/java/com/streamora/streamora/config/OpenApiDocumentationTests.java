@@ -81,7 +81,13 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.paths['/storage/files/move'].put.requestBody.required").value(true))
 			.andExpect(jsonPath("$.paths['/storage/directories'].post.requestBody.required").value(true))
 			.andExpect(jsonPath("$.paths['/storage/directories'].delete.parameters[0].name").value("path"))
-			.andExpect(jsonPath("$.paths['/storage/directories/rename'].put.requestBody.required").value(true));
+			.andExpect(jsonPath("$.paths['/storage/directories/rename'].put.requestBody.required").value(true))
+			.andExpect(jsonPath("$.paths['/liquidsoap/apply'].post.tags[0]").value("Liquidsoap"))
+			.andExpect(jsonPath("$.paths['/liquidsoap/apply'].post.requestBody").doesNotExist())
+			.andExpect(jsonPath("$.paths['/liquidsoap/apply'].post.responses['204']").exists())
+			.andExpect(jsonPath("$.paths['/liquidsoap/apply'].post.responses['401']").exists())
+			.andExpect(jsonPath("$.paths['/liquidsoap/apply'].post.responses['409']").exists())
+			.andExpect(jsonPath("$.paths['/liquidsoap/apply'].post.responses['503']").exists());
 	}
 
 	@Test
@@ -112,7 +118,8 @@ class OpenApiDocumentationTests {
 			.andExpect(jsonPath("$.components.schemas.FtpFileEntryResponseDTO.properties.type").exists())
 			.andExpect(jsonPath("$.components.schemas.FtpFileEntryResponseDTO.properties.children.items['$ref']")
 				.value("#/components/schemas/FtpFileEntryResponseDTO"))
-			.andExpect(jsonPath("$.components.schemas.FtpFileEntry").doesNotExist());
+			.andExpect(jsonPath("$.components.schemas.FtpFileEntry").doesNotExist())
+			.andExpect(jsonPath("$.components.schemas.LiquidsoapErrorDTO.properties.message").exists());
 	}
 
 	@Test

@@ -29,7 +29,11 @@ class M3uContentGeneratorTests {
 		LiquidsoapProperties properties = new LiquidsoapProperties(
 			mediaDirectory.toString(),
 			temporaryDirectory.resolve("m3u").toString(),
-			temporaryDirectory.resolve("config").toString()
+			temporaryDirectory.resolve("config").toString(),
+			temporaryDirectory.resolve("control.sock").toString(),
+			100,
+			500,
+			10
 		);
 		generator = new M3uContentGenerator(new LiquidsoapPathValidator(properties));
 	}

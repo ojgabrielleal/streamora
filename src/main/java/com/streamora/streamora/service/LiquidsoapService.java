@@ -1,6 +1,7 @@
 package com.streamora.streamora.service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,9 @@ import com.streamora.streamora.infrastructure.liquidsoap.LiquidsoapPlaylistSelec
 import com.streamora.streamora.infrastructure.liquidsoap.LiquidsoapScheduleGenerator;
 import com.streamora.streamora.infrastructure.liquidsoap.LiquidsoapSourceGenerator;
 import com.streamora.streamora.infrastructure.liquidsoap.M3uContentGenerator;
+import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapApplyInProgressException;
 import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapFileException;
+import com.streamora.streamora.infrastructure.liquidsoap.interfaces.LiquidsoapProcessControl;
 import com.streamora.streamora.infrastructure.liquidsoap.records.LiquidsoapSelection;
 
 import lombok.RequiredArgsConstructor;
@@ -19,8 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LiquidsoapService {
 
-	public static final String SOURCES_FILE_NAME = "generated-sources.liq";
-	public static final String SCHEDULE_FILE_NAME = "generated-schedule.liq";
+	public static final String SOURCES_FILE_NAME = "sources.liq";
+	public static final String SCHEDULE_FILE_NAME = "schedule.liq";
 
 	private final PlaylistService playlistService;
 	private final ScheduleService scheduleService;
@@ -29,6 +32,8 @@ public class LiquidsoapService {
 	private final LiquidsoapPlaylistSelector playlistSelector;
 	private final LiquidsoapSourceGenerator sourceGenerator;
 	private final LiquidsoapScheduleGenerator scheduleGenerator;
+	private final LiquidsoapProcessControl processControl;
+	private final AtomicBoolean applyingConfiguration = new AtomicBoolean();
 
 	public Playlist generateM3uFromMedia(
 		String playlistUuid,
@@ -87,6 +92,19 @@ public class LiquidsoapService {
 
 		fileWriter.writeConfiguration(SOURCES_FILE_NAME, sourcesContent);
 		fileWriter.writeConfiguration(SCHEDULE_FILE_NAME, scheduleContent);
+	}
+
+	public void applyConfiguration() {
+		if (!applyingConfiguration.compareAndSet(false, true)) {
+			throw new LiquidsoapApplyInProgressException();
+		}
+
+		try {
+			generateConfiguration();
+			processControl.restartAndAwaitRecovery();
+		} finally {
+			applyingConfiguration.set(false);
+		}
 	}
 
 	private Playlist writeAndAssociate(

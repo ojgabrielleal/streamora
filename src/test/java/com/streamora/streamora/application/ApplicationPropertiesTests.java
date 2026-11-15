@@ -57,4 +57,13 @@ class ApplicationPropertiesTests {
 				"${LIQUIDSOAP_CONFIG_DIRECTORY:/liquidsoap/config}"
 			);
 	}
+
+	@Test
+	void configuresLiquidsoapControlWithInternalTechnicalValues() {
+		assertThat(PROPERTIES)
+			.containsEntry("liquidsoap.control-socket-path", "/run/liquidsoap/control.sock")
+			.containsEntry("liquidsoap.control-connection-timeout-millis", "1000")
+			.containsEntry("liquidsoap.control-recovery-timeout-millis", "30000")
+			.containsEntry("liquidsoap.control-retry-interval-millis", "250");
+	}
 }

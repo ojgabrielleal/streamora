@@ -31,7 +31,11 @@ class LiquidsoapPlaylistSelectorTests {
 		LiquidsoapProperties properties = new LiquidsoapProperties(
 			temporaryDirectory.resolve("media").toString(),
 			m3uDirectory.toString(),
-			temporaryDirectory.resolve("config").toString()
+			temporaryDirectory.resolve("config").toString(),
+			temporaryDirectory.resolve("control.sock").toString(),
+			100,
+			500,
+			10
 		);
 		selector = new LiquidsoapPlaylistSelector(new PlaylistAvailabilityChecker(properties));
 	}

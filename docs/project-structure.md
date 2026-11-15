@@ -12,7 +12,9 @@ streamora/
 │   ├── database-schema.md
 │   └── project-structure.md
 ├── liquidsoap/
-│   └── radio.liq
+│   ├── radio.liq
+│   ├── schedule.liq
+│   └── sources.liq
 ├── specs/
 │   └── XXX-nome-da-spec/
 │       ├── spec.md
@@ -30,6 +32,7 @@ streamora/
 │   │   │   ├── controller/
 │   │   │   │   ├── AuthController.java
 │   │   │   │   ├── FtpFileController.java
+│   │   │   │   ├── LiquidsoapController.java
 │   │   │   │   ├── PlaylistController.java
 │   │   │   │   ├── ScheduleController.java
 │   │   │   │   └── UserController.java
@@ -47,6 +50,8 @@ streamora/
 │   │   │   │   │   ├── FtpMoveRequestDTO.java
 │   │   │   │   │   ├── FtpRenameRequestDTO.java
 │   │   │   │   │   └── FtpStorageErrorDTO.java
+│   │   │   │   ├── liquidsoap/
+│   │   │   │   │   └── LiquidsoapErrorDTO.java
 │   │   │   │   ├── playlists/
 │   │   │   │   │   ├── PlaylistRequestDTO.java
 │   │   │   │   │   ├── PlaylistResponseDTO.java
@@ -65,7 +70,9 @@ streamora/
 │   │   │   │   └── UserMapper.java
 │   │   │   ├── infrastructure/
 │   │   │   │   ├── liquidsoap/
+│   │   │   │   │   ├── UnixSocketLiquidsoapProcessControl.java
 │   │   │   │   │   ├── exception/
+│   │   │   │   │   ├── interfaces/
 │   │   │   │   │   └── records/
 │   │   │   │   └── pureFtpd/
 │   │   │   │       ├── storage/
@@ -113,6 +120,7 @@ streamora/
 │           ├── controller/
 │           │   ├── AuthControllerTests.java
 │           │   ├── FtpFileControllerTests.java
+│           │   ├── LiquidsoapControllerTests.java
 │           │   ├── PlaylistControllerTests.java
 │           │   ├── ScheduleControllerTests.java
 │           │   └── UserControllerTests.java
@@ -135,6 +143,7 @@ streamora/
 │           │   └── UserMapperTests.java
 │           ├── infrastructure/
 │           │   ├── liquidsoap/
+│           │   │   └── UnixSocketLiquidsoapProcessControlTests.java
 │           │   └── pureFtpd/
 │           │       ├── storage/
 │           │       │   └── LocalFtpFileStorageTests.java
@@ -172,8 +181,8 @@ devem continuar fora do controle de versão.
   contrato HTTP seguro, sem acessar o volume local.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.
 - `dto`: define os contratos imutáveis de entrada e saída da aplicação,
-  organizados por domínio nos subpacotes `auth`, `ftp`, `playlists`,
-  `schedules` e `users`.
+  organizados por domínio nos subpacotes `auth`, `ftp`, `liquidsoap`,
+  `playlists`, `schedules` e `users`.
 - `mapper`: converte entities em DTOs de resposta e aplica DTOs de entrada em
   entities novas ou existentes e também isola a conversão recursiva da árvore
   interna do storage FTP para seu DTO de resposta HTTP.
@@ -181,7 +190,8 @@ devem continuar fora do controle de versão.
   utilitários externos.
 - `infrastructure/liquidsoap`: valida os caminhos do storage compartilhado,
   gera conteúdos M3U e LIQ, seleciona fontes reproduzíveis, combina playlists
-  por peso e grava os arquivos usados pelo Liquidsoap.
+  por peso, grava os arquivos usados pelo Liquidsoap e controla o reinício por
+  um socket Unix privado compartilhado entre os containers.
 - `infrastructure/pureFtpd/user`: concentra a configuração, a validação de
   credenciais e a execução dos comandos de gerenciamento de usuários do
   Pure-FTPd.
@@ -195,12 +205,14 @@ devem continuar fora do controle de versão.
 - `service`: concentra operações de negócio e coordena o acesso às repositories
   e aos contratos de infraestrutura, como `FtpFileStorage`. O
   `LiquidsoapService` orquestra `PlaylistService`, `ScheduleService` e os
-  componentes da integração, sem expor controller próprio.
+  componentes da integração, serializa a aplicação da configuração e solicita
+  o reinício controlado do Liquidsoap.
 - `resources/db/migration`: mantém o histórico executável do banco com Flyway.
 - `liquidsoap`: contém a configuração versionada do serviço Liquidsoap.
-  `radio.liq` inclui os arquivos separados de fontes e grade gerados pela
-  aplicação. Alterações em M3Us são recarregadas periodicamente; alterações em
-  `.liq` exigem reload ou reinício externo do Liquidsoap, fora da Spec 022.
+  `radio.liq` inclui `sources.liq` e `schedule.liq`, habilita o socket Unix e
+  registra somente o comando restrito de reinício. Alterações em M3Us são
+  recarregadas periodicamente; alterações estruturais são aplicadas por
+  `POST /liquidsoap/apply`.
 - `specs`: registra requisitos, planejamento, tarefas e revisões de cada mudança.
 - `docs`: mantém visões consolidadas da arquitetura e do banco de dados.
 
