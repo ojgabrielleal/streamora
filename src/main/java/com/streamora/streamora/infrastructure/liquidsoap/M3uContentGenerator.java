@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.springframework.stereotype.Component;
 
@@ -25,12 +26,24 @@ public class M3uContentGenerator {
 	}
 
 	public String fromMediaPaths(List<String> mediaPaths) {
+		return fromMediaPaths(mediaPaths, pathValidator::validateMediaFile);
+	}
+
+	public String fromRelativeMediaPaths(List<String> mediaPaths) {
+		return fromMediaPaths(mediaPaths, pathValidator::validateRelativeMediaFile);
+	}
+
+	private String fromMediaPaths(
+		List<String> mediaPaths,
+		Function<String, Path> pathValidation
+	)
+	{
 		if (mediaPaths == null || mediaPaths.isEmpty()) {
 			throw new LiquidsoapFileException("At least one media path is required");
 		}
 
 		List<Path> normalizedPaths = mediaPaths.stream()
-			.map(pathValidator::validateMediaFile)
+			.map(pathValidation)
 			.toList();
 
 		return content(normalizedPaths);

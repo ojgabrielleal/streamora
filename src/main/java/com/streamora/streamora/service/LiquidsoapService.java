@@ -5,16 +5,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.stereotype.Service;
 
+import com.streamora.streamora.dto.playlists.PlaylistDetailsResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.infrastructure.liquidsoap.LiquidsoapFileWriter;
 import com.streamora.streamora.infrastructure.liquidsoap.LiquidsoapPlaylistSelector;
 import com.streamora.streamora.infrastructure.liquidsoap.LiquidsoapScheduleGenerator;
 import com.streamora.streamora.infrastructure.liquidsoap.LiquidsoapSourceGenerator;
 import com.streamora.streamora.infrastructure.liquidsoap.M3uContentGenerator;
+import com.streamora.streamora.infrastructure.liquidsoap.M3uContentReader;
 import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapApplyInProgressException;
 import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapFileException;
 import com.streamora.streamora.infrastructure.liquidsoap.interfaces.LiquidsoapProcessControl;
 import com.streamora.streamora.infrastructure.liquidsoap.records.LiquidsoapSelection;
+import com.streamora.streamora.mapper.PlaylistMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +31,7 @@ public class LiquidsoapService {
 	private final PlaylistService playlistService;
 	private final ScheduleService scheduleService;
 	private final M3uContentGenerator m3uContentGenerator;
+	private final M3uContentReader m3uContentReader;
 	private final LiquidsoapFileWriter fileWriter;
 	private final LiquidsoapPlaylistSelector playlistSelector;
 	private final LiquidsoapSourceGenerator sourceGenerator;
@@ -80,6 +84,34 @@ public class LiquidsoapService {
 		fileWriter.writeM3u(m3uFileName, content);
 
 		return playlist;
+	}
+
+	public PlaylistDetailsResponseDTO showPlaylistDetails(String playlistUuid) {
+		Playlist playlist = playlistService.findPlaylist(playlistUuid);
+		List<String> tracks = playlist.getM3uFileName() == null
+			? List.of()
+			: m3uContentReader.read(playlist.getM3uFileName());
+
+		return PlaylistMapper.toDetails(playlist, tracks);
+	}
+
+	public PlaylistDetailsResponseDTO setPlaylistTracks(
+		String playlistUuid,
+		List<String> mediaPaths
+	)
+	{
+		Playlist playlist = playlistService.findPlaylist(playlistUuid);
+		String m3uFileName = playlist.getUuid() + ".m3u";
+		String content = m3uContentGenerator.fromRelativeMediaPaths(mediaPaths);
+
+		fileWriter.writeM3u(m3uFileName, content);
+		List<String> tracks = m3uContentReader.read(m3uFileName);
+		Playlist updatedPlaylist = playlistService.associateM3uFileName(
+			playlistUuid,
+			m3uFileName
+		);
+
+		return PlaylistMapper.toDetails(updatedPlaylist, tracks);
 	}
 
 	public void generateConfiguration() {

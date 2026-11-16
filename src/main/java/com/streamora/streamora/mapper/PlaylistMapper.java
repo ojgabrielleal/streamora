@@ -1,7 +1,10 @@
 package com.streamora.streamora.mapper;
 
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.streamora.streamora.dto.playlists.PlaylistDetailsResponseDTO;
 import com.streamora.streamora.dto.playlists.PlaylistRequestDTO;
 import com.streamora.streamora.dto.playlists.PlaylistResponseDTO;
 import com.streamora.streamora.dto.schedules.ScheduleSummaryDTO;
@@ -20,9 +23,19 @@ public final class PlaylistMapper {
 			playlist.getM3uFileName(),
 			playlist.isBase(),
 			playlist.getWeight(),
-			playlist.getSchedules().stream()
-				.map(PlaylistMapper::toScheduleSummary)
-				.collect(Collectors.toUnmodifiableSet())
+			scheduleSummaries(playlist)
+		);
+	}
+
+	public static PlaylistDetailsResponseDTO toDetails(Playlist playlist, List<String> tracks) {
+		return new PlaylistDetailsResponseDTO(
+			playlist.getUuid(),
+			playlist.getName(),
+			playlist.getM3uFileName(),
+			playlist.isBase(),
+			playlist.getWeight(),
+			scheduleSummaries(playlist),
+			List.copyOf(tracks)
 		);
 	}
 
@@ -61,5 +74,11 @@ public final class PlaylistMapper {
 			schedule.getStartTime(),
 			schedule.getEndTime()
 		);
+	}
+
+	private static Set<ScheduleSummaryDTO> scheduleSummaries(Playlist playlist) {
+		return playlist.getSchedules().stream()
+			.map(PlaylistMapper::toScheduleSummary)
+			.collect(Collectors.toUnmodifiableSet());
 	}
 }

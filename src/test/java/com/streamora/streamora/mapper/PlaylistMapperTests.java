@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 import com.streamora.streamora.dto.playlists.PlaylistRequestDTO;
+import com.streamora.streamora.dto.playlists.PlaylistDetailsResponseDTO;
 import com.streamora.streamora.dto.playlists.PlaylistResponseDTO;
 import com.streamora.streamora.entity.Playlist;
 import com.streamora.streamora.entity.Schedule;
@@ -12,6 +13,21 @@ import com.streamora.streamora.factory.PlaylistFactory;
 import com.streamora.streamora.factory.ScheduleFactory;
 
 class PlaylistMapperTests {
+
+	@Test
+	void mapsEntityAndTracksToDetailedResponse() {
+		Playlist playlist = PlaylistFactory.toEntity();
+
+		PlaylistDetailsResponseDTO playlistDetails = PlaylistMapper.toDetails(
+			playlist,
+			java.util.List.of("rock/first.mp3", "rock/second.flac")
+		);
+
+		assertThat(playlistDetails.uuid()).isEqualTo(playlist.getUuid());
+		assertThat(playlistDetails.m3uFileName()).isEqualTo(playlist.getM3uFileName());
+		assertThat(playlistDetails.tracks())
+			.containsExactly("rock/first.mp3", "rock/second.flac");
+	}
 
 	@Test
 	void mapsEntityToResponseWithM3uFileName() {

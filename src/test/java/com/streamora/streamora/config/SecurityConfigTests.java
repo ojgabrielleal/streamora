@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,15 +25,23 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.streamora.streamora.controller.AuthController;
 import com.streamora.streamora.controller.FtpFileController;
 import com.streamora.streamora.controller.LiquidsoapController;
+import com.streamora.streamora.controller.PlaylistController;
 import com.streamora.streamora.controller.UserController;
 import com.streamora.streamora.filter.JwtAuthenticationFilter;
 import com.streamora.streamora.service.AuthService;
 import com.streamora.streamora.service.FtpFileService;
 import com.streamora.streamora.service.JwtService;
 import com.streamora.streamora.service.LiquidsoapService;
+import com.streamora.streamora.service.PlaylistService;
 import com.streamora.streamora.service.UserService;
 
-@WebMvcTest({AuthController.class, FtpFileController.class, LiquidsoapController.class, UserController.class})
+@WebMvcTest({
+	AuthController.class,
+	FtpFileController.class,
+	LiquidsoapController.class,
+	PlaylistController.class,
+	UserController.class
+})
 @Import({SecurityConfig.class, JwtAuthenticationFilter.class})
 class SecurityConfigTests {
 
@@ -53,6 +62,9 @@ class SecurityConfigTests {
 
 	@MockitoBean
 	private LiquidsoapService liquidsoapService;
+
+	@MockitoBean
+	private PlaylistService playlistService;
 
 	@MockitoBean
 	private JwtService jwtService;
@@ -84,6 +96,18 @@ class SecurityConfigTests {
 	void protectsLiquidsoapApplyEndpointFromAnonymousRequests() throws Exception {
 		mockMvc.perform(post("/liquidsoap/apply"))
 			.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	void protectsPlaylistTrackReplacementFromAnonymousRequests() throws Exception {
+		mockMvc.perform(
+			put("/playlist/playlist-uuid/tracks")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{"paths":["rock/first.mp3"]}
+					""")
+		)
+		.andExpect(status().isUnauthorized());
 	}
 
 	@Test

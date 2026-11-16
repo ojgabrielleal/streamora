@@ -11,10 +11,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.streamora.streamora.dto.playlists.PlaylistDetailsResponseDTO;
+import com.streamora.streamora.dto.playlists.PlaylistErrorDTO;
 import com.streamora.streamora.dto.playlists.PlaylistRequestDTO;
 import com.streamora.streamora.dto.playlists.PlaylistResponseDTO;
+import com.streamora.streamora.dto.playlists.PlaylistTracksRequestDTO;
+import com.streamora.streamora.exception.ResourceNotFoundException;
+import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapFileException;
+import com.streamora.streamora.infrastructure.liquidsoap.exception.M3uReadException;
+import com.streamora.streamora.service.LiquidsoapService;
 import com.streamora.streamora.service.PlaylistService;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,6 +30,9 @@ class PlaylistControllerTests {
 
 	@Mock
 	private PlaylistService playlistService;
+
+	@Mock
+	private LiquidsoapService liquidsoapService;
 
 	@InjectMocks
 	private PlaylistController playlistController;
@@ -49,17 +60,42 @@ class PlaylistControllerTests {
 
 	@Test
 	void delegatesShowToService() {
-		PlaylistResponseDTO playlistResponse = playlistResponse();
+		PlaylistDetailsResponseDTO playlistDetails = playlistDetails();
 
-		when(playlistService.show("playlist-uuid"))
-			.thenReturn(playlistResponse);
+		when(liquidsoapService.showPlaylistDetails("playlist-uuid"))
+			.thenReturn(playlistDetails);
 
-		PlaylistResponseDTO returnedPlaylist = playlistController.show("playlist-uuid");
+		PlaylistDetailsResponseDTO returnedPlaylist = playlistController.show("playlist-uuid");
 
 		assertThat(returnedPlaylist)
-			.isSameAs(playlistResponse);
+			.isSameAs(playlistDetails);
 
-		verify(playlistService).show("playlist-uuid");
+		verify(liquidsoapService).showPlaylistDetails("playlist-uuid");
+	}
+
+	@Test
+	void delegatesTrackReplacementToLiquidsoapService() {
+		PlaylistTracksRequestDTO playlistTracksRequest = new PlaylistTracksRequestDTO(
+			List.of("rock/first.mp3")
+		);
+		PlaylistDetailsResponseDTO playlistDetails = playlistDetails();
+		when(liquidsoapService.setPlaylistTracks(
+			"playlist-uuid",
+			playlistTracksRequest.paths()
+		))
+			.thenReturn(playlistDetails);
+
+		PlaylistDetailsResponseDTO updatedPlaylist = playlistController.setTracks(
+			"playlist-uuid",
+			playlistTracksRequest
+		);
+
+		assertThat(updatedPlaylist)
+			.isSameAs(playlistDetails);
+		verify(liquidsoapService).setPlaylistTracks(
+			"playlist-uuid",
+			playlistTracksRequest.paths()
+		);
 	}
 
 	@Test
@@ -101,6 +137,39 @@ class PlaylistControllerTests {
 		verify(playlistService).delete("playlist-uuid");
 	}
 
+	@Test
+	void translatesInvalidTrackToBadRequest() {
+		ResponseEntity<PlaylistErrorDTO> response = playlistController.handleInvalidTracks(
+			new LiquidsoapFileException("At least one media path is required")
+		);
+
+		assertThat(response.getStatusCode().value()).isEqualTo(400);
+		assertThat(response.getBody())
+			.isEqualTo(new PlaylistErrorDTO("At least one media path is required"));
+	}
+
+	@Test
+	void translatesMissingPlaylistToNotFound() {
+		ResponseEntity<PlaylistErrorDTO> response = playlistController.handleNotFound(
+			new ResourceNotFoundException("Playlist", "playlist-uuid")
+		);
+
+		assertThat(response.getStatusCode().value()).isEqualTo(404);
+		assertThat(response.getBody())
+			.isEqualTo(new PlaylistErrorDTO("Playlist not found with uuid: playlist-uuid"));
+	}
+
+	@Test
+	void translatesInvalidAssociatedM3uToConflict() {
+		ResponseEntity<PlaylistErrorDTO> response = playlistController.handleM3uReadFailure(
+			new M3uReadException("Associated M3U file is unavailable")
+		);
+
+		assertThat(response.getStatusCode().value()).isEqualTo(409);
+		assertThat(response.getBody())
+			.isEqualTo(new PlaylistErrorDTO("Associated M3U file is unavailable"));
+	}
+
 	private PlaylistRequestDTO playlistRequest() {
 		return new PlaylistRequestDTO("Playlist", "playlist.m3u", true, 2);
 	}
@@ -113,6 +182,18 @@ class PlaylistControllerTests {
 			true,
 			2,
 			java.util.Set.of()
+		);
+	}
+
+	private PlaylistDetailsResponseDTO playlistDetails() {
+		return new PlaylistDetailsResponseDTO(
+			"playlist-uuid",
+			"Playlist",
+			"playlist-uuid.m3u",
+			true,
+			2,
+			java.util.Set.of(),
+			List.of("rock/first.mp3")
 		);
 	}
 }

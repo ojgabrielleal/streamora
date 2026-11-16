@@ -32,6 +32,22 @@ public class LiquidsoapPathValidator {
 		return normalizedPath;
 	}
 
+	public Path validateRelativeMediaFile(String mediaPath) {
+		if (mediaPath == null || mediaPath.isBlank()) {
+			return validateMediaFile(mediaPath);
+		}
+
+		try {
+			if (Path.of(mediaPath).isAbsolute()) {
+				throw new LiquidsoapFileException("Media path must be relative to the shared storage");
+			}
+		} catch (InvalidPathException exception) {
+			throw new LiquidsoapFileException("Invalid media path", exception);
+		}
+
+		return validateMediaFile(mediaPath);
+	}
+
 	public Path validateMediaDirectory(String directoryPath) {
 		Path normalizedPath = resolve(directoryPath);
 		validateWithinMediaDirectory(normalizedPath);

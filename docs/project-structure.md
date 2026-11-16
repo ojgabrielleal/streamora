@@ -53,9 +53,12 @@ streamora/
 │   │   │   │   ├── liquidsoap/
 │   │   │   │   │   └── LiquidsoapErrorDTO.java
 │   │   │   │   ├── playlists/
+│   │   │   │   │   ├── PlaylistDetailsResponseDTO.java
+│   │   │   │   │   ├── PlaylistErrorDTO.java
 │   │   │   │   │   ├── PlaylistRequestDTO.java
 │   │   │   │   │   ├── PlaylistResponseDTO.java
-│   │   │   │   │   └── PlaylistSummaryDTO.java
+│   │   │   │   │   ├── PlaylistSummaryDTO.java
+│   │   │   │   │   └── PlaylistTracksRequestDTO.java
 │   │   │   │   ├── schedules/
 │   │   │   │   │   ├── ScheduleRequestDTO.java
 │   │   │   │   │   ├── ScheduleResponseDTO.java
@@ -70,6 +73,7 @@ streamora/
 │   │   │   │   └── UserMapper.java
 │   │   │   ├── infrastructure/
 │   │   │   │   ├── liquidsoap/
+│   │   │   │   │   ├── M3uContentReader.java
 │   │   │   │   │   ├── UnixSocketLiquidsoapProcessControl.java
 │   │   │   │   │   ├── exception/
 │   │   │   │   │   ├── interfaces/
@@ -143,6 +147,7 @@ streamora/
 │           │   └── UserMapperTests.java
 │           ├── infrastructure/
 │           │   ├── liquidsoap/
+│           │   │   ├── M3uContentReaderTests.java
 │           │   │   └── UnixSocketLiquidsoapProcessControlTests.java
 │           │   └── pureFtpd/
 │           │       ├── storage/
@@ -190,8 +195,8 @@ devem continuar fora do controle de versão.
   utilitários externos.
 - `infrastructure/liquidsoap`: valida os caminhos do storage compartilhado,
   gera conteúdos M3U e LIQ, seleciona fontes reproduzíveis, combina playlists
-  por peso, grava os arquivos usados pelo Liquidsoap e controla o reinício por
-  um socket Unix privado compartilhado entre os containers.
+  por peso, lê e grava os arquivos usados pelo Liquidsoap e controla o reinício
+  por um socket Unix privado compartilhado entre os containers.
 - `infrastructure/pureFtpd/user`: concentra a configuração, a validação de
   credenciais e a execução dos comandos de gerenciamento de usuários do
   Pure-FTPd.

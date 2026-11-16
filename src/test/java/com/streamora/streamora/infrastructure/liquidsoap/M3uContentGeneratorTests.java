@@ -76,4 +76,72 @@ class M3uContentGeneratorTests {
 			.isInstanceOf(LiquidsoapFileException.class)
 			.hasMessage("Media path must remain inside the shared storage");
 	}
+
+	@Test
+	void generatesM3uFromRelativeMediaPaths() throws IOException {
+		Path firstMedia = Files.writeString(mediaDirectory.resolve("first.mp3"), "audio");
+		Path secondMedia = Files.writeString(mediaDirectory.resolve("second.flac"), "audio");
+
+		String content = generator.fromRelativeMediaPaths(List.of("first.mp3", "second.flac"));
+
+		assertThat(content).isEqualTo(
+			"#EXTM3U\n" + firstMedia + "\n" + secondMedia + "\n"
+		);
+	}
+
+	@Test
+	void rejectsAbsolutePathForRelativeMediaGeneration() throws IOException {
+		Path mediaPath = Files.writeString(mediaDirectory.resolve("track.mp3"), "audio");
+
+		assertThatThrownBy(() -> generator.fromRelativeMediaPaths(List.of(mediaPath.toString())))
+			.isInstanceOf(LiquidsoapFileException.class)
+			.hasMessage("Media path must be relative to the shared storage");
+	}
+
+	@Test
+	void rejectsEmptyRelativeMediaList() {
+		assertThatThrownBy(() -> generator.fromRelativeMediaPaths(List.of()))
+			.isInstanceOf(LiquidsoapFileException.class)
+			.hasMessage("At least one media path is required");
+	}
+
+	@Test
+	void rejectsNullRelativeMediaList() {
+		assertThatThrownBy(() -> generator.fromRelativeMediaPaths(null))
+			.isInstanceOf(LiquidsoapFileException.class)
+			.hasMessage("At least one media path is required");
+	}
+
+	@Test
+	void rejectsNullRelativeMediaItem() {
+		assertThatThrownBy(() -> generator.fromRelativeMediaPaths(java.util.Arrays.asList((String) null)))
+			.isInstanceOf(LiquidsoapFileException.class)
+			.hasMessage("Media path must not be blank or contain line breaks");
+	}
+
+	@Test
+	void rejectsBlankRelativeMediaItem() {
+		assertThatThrownBy(() -> generator.fromRelativeMediaPaths(List.of(" ")))
+			.isInstanceOf(LiquidsoapFileException.class)
+			.hasMessage("Media path must not be blank or contain line breaks");
+	}
+
+	@Test
+	void rejectsDirectoryAsRelativeMediaItem() throws IOException {
+		Files.createDirectory(mediaDirectory.resolve("rock"));
+
+		assertThatThrownBy(() -> generator.fromRelativeMediaPaths(List.of("rock")))
+			.isInstanceOf(LiquidsoapFileException.class)
+			.hasMessage("Media path must be a readable regular file");
+	}
+
+	@Test
+	void rejectsSymbolicLinkAsRelativeMediaItem() throws IOException {
+		Path mediaPath = Files.writeString(mediaDirectory.resolve("track.mp3"), "audio");
+		Files.createSymbolicLink(mediaDirectory.resolve("link.mp3"), mediaPath);
+
+		assertThatThrownBy(() -> generator.fromRelativeMediaPaths(List.of("link.mp3")))
+			.isInstanceOf(LiquidsoapFileException.class)
+			.hasMessage("Symbolic links are not allowed in media paths");
+	}
 }
