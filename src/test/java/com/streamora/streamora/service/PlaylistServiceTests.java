@@ -123,7 +123,7 @@ class PlaylistServiceTests {
 		when(playlistRepository.findAll()).thenReturn(playlists);
 
 		assertThat(playlistService.findBasePlaylists())
-			.extracting(Playlist::getUuid)
+			.extracting(playlist -> playlist.getUuid())
 			.containsExactly(playlists.getLast().getUuid());
 	}
 

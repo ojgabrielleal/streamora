@@ -55,7 +55,7 @@ public class M3uContentGenerator {
 		try (var mediaPaths = Files.walk(normalizedDirectory)) {
 			List<Path> normalizedPaths = mediaPaths
 				.filter(path -> Files.isRegularFile(path))
-				.sorted(Comparator.comparing(Path::toString))
+				.sorted(Comparator.comparing(path -> path.toString()))
 				.map(path -> pathValidator.validateMediaFile(path.toString()))
 				.toList();
 
@@ -73,7 +73,7 @@ public class M3uContentGenerator {
 		return HEADER + System.lineSeparator()
 			+ String.join(
 				System.lineSeparator(),
-				mediaPaths.stream().map(Path::toString).toList()
+				mediaPaths.stream().map(path -> path.toString()).toList()
 			)
 			+ System.lineSeparator();
 	}

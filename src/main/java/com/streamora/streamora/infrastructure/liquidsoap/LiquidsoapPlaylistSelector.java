@@ -87,7 +87,7 @@ public class LiquidsoapPlaylistSelector {
 		List<Playlist> activePlaylists = schedules.stream()
 			.filter(schedule -> !time.isBefore(schedule.getStartTime()))
 			.filter(schedule -> time.isBefore(schedule.getEndTime()))
-			.map(Schedule::getPlaylist)
+			.map(schedule -> schedule.getPlaylist())
 			.toList();
 
 		return uniqueAvailable(activePlaylists);

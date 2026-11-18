@@ -53,7 +53,7 @@ public class PlaylistService {
 	@Transactional(readOnly = true)
 	public List<Playlist> findBasePlaylists() {
 		return playlistRepository.findAll().stream()
-			.filter(Playlist::isBase)
+			.filter(playlist -> playlist.isBase())
 			.toList();
 	}
 

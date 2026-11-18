@@ -37,7 +37,7 @@ public class PlaylistAvailabilityChecker {
 
 		try (var lines = Files.lines(m3uPath)) {
 			return lines
-				.map(String::trim)
+				.map(line -> line.trim())
 				.anyMatch(line -> !line.isEmpty() && !line.startsWith("#"));
 		} catch (IOException | SecurityException exception) {
 			return false;

@@ -40,7 +40,7 @@ public class M3uContentReader {
 
 		validateHeader(lines);
 		List<String> tracks = lines.stream()
-			.map(String::trim)
+			.map(line -> line.trim())
 			.filter(line -> !line.isEmpty())
 			.filter(line -> !line.startsWith("#"))
 			.map(this::relativeMediaPath)
@@ -87,7 +87,7 @@ public class M3uContentReader {
 
 	private void validateHeader(List<String> lines) {
 		String firstContentLine = lines.stream()
-			.map(String::trim)
+			.map(line -> line.trim())
 			.filter(line -> !line.isEmpty())
 			.findFirst()
 			.orElseThrow(() -> new M3uReadException("Associated M3U file is empty"));

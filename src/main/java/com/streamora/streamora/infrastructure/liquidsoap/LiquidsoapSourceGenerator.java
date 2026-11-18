@@ -68,7 +68,7 @@ public class LiquidsoapSourceGenerator {
 			.map(playlist -> Integer.toString(playlist.weight()))
 			.collect(Collectors.joining(", "));
 		String sources = playlists.stream()
-			.map(WeightedPlaylist::sourceName)
+			.map(playlist -> playlist.sourceName())
 			.collect(Collectors.joining(", "));
 
 		content.append(sourceName)
