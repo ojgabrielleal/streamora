@@ -21,12 +21,17 @@ streamora/
 │   │   ├── logo.png
 │   │   └── vertical-logo.png
 │   ├── src/
+│   │   ├── api/
+│   │   │   ├── auth/
+│   │   │   └── playlists/
 │   │   ├── app/
-│   │   │   └── providers.tsx
+│   │   │   ├── providers.tsx
+│   │   │   └── query-client.ts
 │   │   ├── components/ui/
 │   │   │   └── button.tsx
 │   │   ├── lib/
-│   │   │   ├── api.ts
+│   │   │   ├── access-token.ts
+│   │   │   ├── api-client.ts
 │   │   │   └── utils.ts
 │   │   ├── routes/
 │   │   │   ├── index.tsx
@@ -38,7 +43,8 @@ streamora/
 │   ├── components.json
 │   ├── package.json
 │   ├── package-lock.json
-│   └── vite.config.ts
+│   ├── vite.config.ts
+│   └── vitest.config.ts
 ├── specs/
 │   └── XXX-nome-da-spec/
 │       ├── spec.md
@@ -50,6 +56,7 @@ streamora/
 │   │   ├── java/com/streamora/streamora/
 │   │   │   ├── StreamoraApplication.java
 │   │   │   ├── config/
+│   │   │   │   ├── CorsConfig.java
 │   │   │   │   ├── JwtConfig.java
 │   │   │   │   ├── OpenApiConfig.java
 │   │   │   │   └── SecurityConfig.java
@@ -244,12 +251,14 @@ devem continuar fora do controle de versão.
   `POST /liquidsoap/apply`.
 - `front-end`: contém a aplicação web independente em React e TypeScript. O
   diretório `public/images/brand` mantém as logomarcas e o favicon; o
-  diretório `app` centraliza providers compartilhados; `routes` define a árvore
-  do TanStack Router; `components/ui` mantém os componentes do shadcn/ui;
-  `lib` concentra utilitários e o acesso à API; e `index.css` reúne a base do
-  Tailwind CSS e os tokens visuais iniciais. O frontend lê a URL pública da API
-  de `VITE_API_URL` e é executado pelo serviço `node` no ambiente de
-  desenvolvimento.
+  diretório `app` centraliza providers e a configuração global do TanStack
+  Query; `api` organiza contratos, queries e mutations por domínio; `routes`
+  define a árvore do TanStack Router; `components/ui` mantém os componentes do
+  shadcn/ui; `lib` concentra o cliente HTTP, o access token volátil e outros
+  utilitários compartilhados; e `index.css` reúne a base do Tailwind CSS e os
+  tokens visuais iniciais. O frontend lê a URL pública da API de
+  `VITE_API_URL`, usa Vitest nos testes automatizados e é executado pelo serviço
+  `node` no ambiente de desenvolvimento.
 - `specs`: registra requisitos, planejamento, tarefas e revisões de cada mudança.
 - `docs`: mantém visões consolidadas da arquitetura e do banco de dados.
 

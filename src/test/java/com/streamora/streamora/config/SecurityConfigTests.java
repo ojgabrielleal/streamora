@@ -3,9 +3,11 @@ package com.streamora.streamora.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -42,7 +45,7 @@ import com.streamora.streamora.service.UserService;
 	PlaylistController.class,
 	UserController.class
 })
-@Import({SecurityConfig.class, JwtAuthenticationFilter.class})
+@Import({CorsConfig.class, SecurityConfig.class, JwtAuthenticationFilter.class})
 class SecurityConfigTests {
 
 	@Autowired
@@ -148,6 +151,39 @@ class SecurityConfigTests {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.accessToken").value("access-token"))
 			.andExpect(jsonPath("$.refreshToken").value("refresh-token"));
+	}
+
+	@Test
+	void allowsCorsPreflightFromConfiguredFrontendOrigin() throws Exception {
+		mockMvc.perform(
+			options("/playlist")
+				.header(HttpHeaders.ORIGIN, "http://localhost:5173")
+				.header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, HttpMethod.GET.name())
+				.header(
+					HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS,
+					HttpHeaders.AUTHORIZATION
+				)
+		)
+		.andExpect(status().isOk())
+		.andExpect(header().string(
+			HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+			"http://localhost:5173"
+		))
+		.andExpect(header().string(
+			HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+			HttpHeaders.AUTHORIZATION
+		));
+	}
+
+	@Test
+	void rejectsCorsPreflightFromUnconfiguredOrigin() throws Exception {
+		mockMvc.perform(
+			options("/playlist")
+				.header(HttpHeaders.ORIGIN, "https://untrusted.example")
+				.header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, HttpMethod.GET.name())
+		)
+		.andExpect(status().isForbidden())
+		.andExpect(header().doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN));
 	}
 }
 
