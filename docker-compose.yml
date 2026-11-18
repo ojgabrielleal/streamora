@@ -139,10 +139,15 @@ services:
   node:
     image: node:26-bookworm-slim
     container_name: streamora-node
-    working_dir: /workspace
-    command: ["tail", "-f", "/dev/null"]
+    working_dir: /workspace/front-end
+    command: ["sh", "-c", "npm ci && npm run dev -- --host 0.0.0.0"]
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
     volumes:
-      - .:/workspace
+      - ./front-end:/workspace/front-end
+      - node_modules:/workspace/front-end/node_modules
     restart: unless-stopped
     networks:
       - streamora
@@ -153,6 +158,7 @@ volumes:
   pureftpd_uploads:
   pureftpd_passwords:
   liquidsoap_runtime:
+  node_modules:
 
 networks:
   streamora:

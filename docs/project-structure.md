@@ -15,6 +15,30 @@ streamora/
 │   ├── radio.liq
 │   ├── schedule.liq
 │   └── sources.liq
+├── front-end/
+│   ├── public/images/brand/
+│   │   ├── favicon.ico
+│   │   ├── logo.png
+│   │   └── vertical-logo.png
+│   ├── src/
+│   │   ├── app/
+│   │   │   └── providers.tsx
+│   │   ├── components/ui/
+│   │   │   └── button.tsx
+│   │   ├── lib/
+│   │   │   ├── api.ts
+│   │   │   └── utils.ts
+│   │   ├── routes/
+│   │   │   ├── index.tsx
+│   │   │   └── root.tsx
+│   │   ├── index.css
+│   │   ├── main.tsx
+│   │   └── router.tsx
+│   ├── .env.example
+│   ├── components.json
+│   ├── package.json
+│   ├── package-lock.json
+│   └── vite.config.ts
 ├── specs/
 │   └── XXX-nome-da-spec/
 │       ├── spec.md
@@ -218,6 +242,14 @@ devem continuar fora do controle de versão.
   registra somente o comando restrito de reinício. Alterações em M3Us são
   recarregadas periodicamente; alterações estruturais são aplicadas por
   `POST /liquidsoap/apply`.
+- `front-end`: contém a aplicação web independente em React e TypeScript. O
+  diretório `public/images/brand` mantém as logomarcas e o favicon; o
+  diretório `app` centraliza providers compartilhados; `routes` define a árvore
+  do TanStack Router; `components/ui` mantém os componentes do shadcn/ui;
+  `lib` concentra utilitários e o acesso à API; e `index.css` reúne a base do
+  Tailwind CSS e os tokens visuais iniciais. O frontend lê a URL pública da API
+  de `VITE_API_URL` e é executado pelo serviço `node` no ambiente de
+  desenvolvimento.
 - `specs`: registra requisitos, planejamento, tarefas e revisões de cada mudança.
 - `docs`: mantém visões consolidadas da arquitetura e do banco de dados.
 
