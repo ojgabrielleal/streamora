@@ -7,13 +7,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.streamora.streamora.dto.auth.AuthTokens;
 
 class JwtServiceTests {
 
@@ -24,17 +24,17 @@ class JwtServiceTests {
 
 	@Test
 	void generatesAccessAndRefreshTokens() {
-		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
+		AuthTokens tokens = jwtService.generateTokens(USERNAME);
 
-		assertThat(tokens).containsOnlyKeys("accessToken", "refreshToken");
-		assertThat(tokens.values()).allSatisfy(token -> assertThat(token).isNotBlank());
+		assertThat(tokens.accessToken()).isNotBlank();
+		assertThat(tokens.refreshToken()).isNotBlank();
 	}
 
 	@Test
 	void storesUsernameAndImmutableUniqueIdentifiers() {
-		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
-		DecodedJWT accessToken = JWT.decode(tokens.get("accessToken"));
-		DecodedJWT refreshToken = JWT.decode(tokens.get("refreshToken"));
+		AuthTokens tokens = jwtService.generateTokens(USERNAME);
+		DecodedJWT accessToken = JWT.decode(tokens.accessToken());
+		DecodedJWT refreshToken = JWT.decode(tokens.refreshToken());
 
 		assertThat(accessToken.getSubject()).isEqualTo(USERNAME);
 		assertThat(refreshToken.getSubject()).isEqualTo(USERNAME);
@@ -44,9 +44,9 @@ class JwtServiceTests {
 
 	@Test
 	void usesExpectedExpirationForEachTokenType() {
-		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
-		DecodedJWT accessToken = JWT.decode(tokens.get("accessToken"));
-		DecodedJWT refreshToken = JWT.decode(tokens.get("refreshToken"));
+		AuthTokens tokens = jwtService.generateTokens(USERNAME);
+		DecodedJWT accessToken = JWT.decode(tokens.accessToken());
+		DecodedJWT refreshToken = JWT.decode(tokens.refreshToken());
 
 		assertThat(Duration.between(accessToken.getIssuedAtAsInstant(), accessToken.getExpiresAtAsInstant()))
 			.isEqualTo(Duration.ofMinutes(5));
@@ -67,10 +67,10 @@ class JwtServiceTests {
 
 	@Test
 	void validatesOnlyAccessTokenAsAccessToken() {
-		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
+		AuthTokens tokens = jwtService.generateTokens(USERNAME);
 
-		boolean validAccessToken = jwtService.validateAccessToken(tokens.get("accessToken"));
-		boolean invalidRefreshToken = jwtService.validateAccessToken(tokens.get("refreshToken"));
+		boolean validAccessToken = jwtService.validateAccessToken(tokens.accessToken());
+		boolean invalidRefreshToken = jwtService.validateAccessToken(tokens.refreshToken());
 
 		assertThat(validAccessToken).isTrue();
 		assertThat(invalidRefreshToken).isFalse();
@@ -78,10 +78,10 @@ class JwtServiceTests {
 
 	@Test
 	void validatesOnlyRefreshTokenAsRefreshToken() {
-		Map<String, String> tokens = jwtService.generateTokens(USERNAME);
+		AuthTokens tokens = jwtService.generateTokens(USERNAME);
 
-		boolean validRefreshToken = jwtService.validateRefreshToken(tokens.get("refreshToken"));
-		boolean invalidAccessToken = jwtService.validateRefreshToken(tokens.get("accessToken"));
+		boolean validRefreshToken = jwtService.validateRefreshToken(tokens.refreshToken());
+		boolean invalidAccessToken = jwtService.validateRefreshToken(tokens.accessToken());
 
 		assertThat(validRefreshToken).isTrue();
 		assertThat(invalidAccessToken).isFalse();
@@ -91,11 +91,23 @@ class JwtServiceTests {
 	void rejectsTokensSignedWithAnotherKey() {
 		String token = new JwtService(Algorithm.HMAC256("another-test-secret-for-hmac-signing"))
 			.generateTokens(USERNAME)
-			.get("accessToken");
+			.accessToken();
 
 		boolean validToken = jwtService.validateAccessToken(token);
 
 		assertThat(validToken).isFalse();
+	}
+
+	@Test
+	void readsSubjectOnlyFromValidRefreshToken() {
+		AuthTokens tokens = jwtService.generateTokens(USERNAME);
+
+		assertThat(jwtService.getRefreshTokenSubject(tokens.refreshToken()))
+			.contains(USERNAME);
+		assertThat(jwtService.getRefreshTokenSubject(tokens.accessToken()))
+			.isEmpty();
+		assertThat(jwtService.getRefreshTokenSubject("invalid"))
+			.isEmpty();
 	}
 
 	@Test

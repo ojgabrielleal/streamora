@@ -26,7 +26,8 @@ streamora/
 │   │   │   └── playlists/
 │   │   ├── app/
 │   │   │   ├── providers.tsx
-│   │   │   └── query-client.ts
+│   │   │   ├── query-client.ts
+│   │   │   └── session-bootstrap.tsx
 │   │   ├── components/
 │   │   │   ├── auth/
 │   │   │   │   ├── login-form.test.tsx
@@ -71,6 +72,7 @@ streamora/
 │   │   ├── java/com/streamora/streamora/
 │   │   │   ├── StreamoraApplication.java
 │   │   │   ├── config/
+│   │   │   │   ├── AuthCookieProperties.java
 │   │   │   │   ├── CorsConfig.java
 │   │   │   │   ├── JwtConfig.java
 │   │   │   │   ├── OpenApiConfig.java
@@ -91,7 +93,9 @@ streamora/
 │   │   │   │   └── User.java
 │   │   │   ├── dto/
 │   │   │   │   ├── auth/
-│   │   │   │   │   └── AuthRequestDTO.java
+│   │   │   │   │   ├── AccessTokenResponseDTO.java
+│   │   │   │   │   ├── AuthRequestDTO.java
+│   │   │   │   │   └── AuthTokens.java
 │   │   │   │   ├── ftp/
 │   │   │   │   │   ├── FtpDirectoryCreateRequestDTO.java
 │   │   │   │   │   ├── FtpFileEntryResponseDTO.java
@@ -179,6 +183,7 @@ streamora/
 │           ├── development/
 │           │   └── DevelopmentAdminInitializerTests.java
 │           ├── config/
+│           │   ├── AuthCookiePropertiesTests.java
 │           │   ├── OpenApiDocumentationTests.java
 │           │   └── SecurityConfigTests.java
 │           ├── entity/
@@ -229,7 +234,8 @@ devem continuar fora do controle de versão.
 
 - `entity`: representa o modelo persistido e seus relacionamentos JPA.
 - `config`: centraliza configurações da aplicação, como a cadeia de filtros
-  do Spring Security e os metadados da documentação OpenAPI.
+  do Spring Security, os atributos do cookie de renovação e os metadados da
+  documentação OpenAPI.
 - `controller`: expõe os endpoints HTTP e delega cada operação diretamente ao
   service correspondente, sem tratar ou manipular dados. O controller do
   storage FTP também traduz as exceções próprias dessa integração para o
@@ -258,6 +264,11 @@ devem continuar fora do controle de versão.
   compartilhado com o Pure-FTPd.
 - `filter`: intercepta requisições HTTP para autenticar access tokens antes
   que elas alcancem os controllers protegidos.
+- `front-end/src/app/session-bootstrap.tsx`: restaura o access token antes da
+  montagem do roteador, evitando redirecionamentos prematuros ao recarregar
+  uma rota protegida.
+- `front-end/src/lib/api-client.ts`: centraliza chamadas HTTP autenticadas,
+  incluindo renovação compartilhada da sessão e repetição única após `401`.
 - `exception`: reúne exceções próprias da aplicação.
 - `repository`: define as interfaces de acesso aos dados das entities.
 - `service`: concentra operações de negócio e coordena o acesso às repositories

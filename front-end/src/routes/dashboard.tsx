@@ -4,6 +4,7 @@ import { Menu } from 'lucide-react'
 import { useState } from 'react'
 
 import { playlistsQueryOptions } from '@/api/playlists/playlist-queries'
+import { logout as requestLogout } from '@/api/auth/auth-api'
 import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar'
 import { ScheduleOverview } from '@/components/dashboard/playlist-overview'
 import { RadioOverview } from '@/components/dashboard/radio-overview'
@@ -16,16 +17,20 @@ export function DashboardPage() {
   const navigate = useNavigate()
   const playlistsQuery = useQuery(playlistsQueryOptions())
 
-  function logout() {
-    clearAccessToken()
-    setIsMenuOpen(false)
-    void navigate({ to: '/' })
+  async function logout() {
+    try {
+      await requestLogout()
+    } finally {
+      clearAccessToken()
+      setIsMenuOpen(false)
+      await navigate({ to: '/' })
+    }
   }
 
   return (
     <div className="min-h-svh bg-violet-50/50 lg:flex">
       <div className="hidden h-svh shrink-0 lg:sticky lg:top-0 lg:block">
-        <DashboardSidebar onLogout={logout} />
+        <DashboardSidebar onLogout={() => void logout()} />
       </div>
 
       {isMenuOpen && (
@@ -40,7 +45,7 @@ export function DashboardPage() {
             <DashboardSidebar
               mobile
               onClose={() => setIsMenuOpen(false)}
-              onLogout={logout}
+              onLogout={() => void logout()}
             />
           </div>
         </div>

@@ -2,7 +2,7 @@ package com.streamora.streamora.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +12,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.streamora.streamora.dto.auth.AuthTokens;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,14 +27,14 @@ public class JwtService {
 
 	private final Algorithm algorithm;
 
-	public Map<String, String> generateTokens(String username) {
+	public AuthTokens generateTokens(String username) {
 		if (username == null || username.isBlank()) {
 			throw new IllegalArgumentException("Username must not be blank");
 		}
 
-		return Map.of(
-			"accessToken", generateAccessToken(username),
-			"refreshToken", generateRefreshToken(username)
+		return new AuthTokens(
+			generateAccessToken(username),
+			generateRefreshToken(username)
 		);
 	}
 
@@ -51,6 +52,11 @@ public class JwtService {
 		}
 
 		return validateTokens(token, REFRESH_TOKEN_TYPE);
+	}
+
+	public Optional<String> getRefreshTokenSubject(String token) {
+		return decodeToken(token, REFRESH_TOKEN_TYPE)
+			.map(DecodedJWT::getSubject);
 	}
 
 	private String generateAccessToken(String username) {
@@ -80,6 +86,14 @@ public class JwtService {
 	}
 
 	private boolean validateTokens(String token, String tokenType) {
+		return decodeToken(token, tokenType).isPresent();
+	}
+
+	private Optional<DecodedJWT> decodeToken(String token, String tokenType) {
+		if (token == null || token.isBlank()) {
+			return Optional.empty();
+		}
+
 		try {
 			JWTVerifier verifier = JWT.require(algorithm)
 				.withClaim("token_type", tokenType)
@@ -87,12 +101,14 @@ public class JwtService {
 
 			DecodedJWT decodedToken = verifier.verify(token);
 
-			return decodedToken.getSubject() != null
+			boolean validClaims = decodedToken.getSubject() != null
 				&& !decodedToken.getSubject().isBlank()
 				&& decodedToken.getId() != null
 				&& !decodedToken.getId().isBlank();
+
+			return validClaims ? Optional.of(decodedToken) : Optional.empty();
 		} catch (JWTVerificationException exception) {
-			return false;
+			return Optional.empty();
 		}
 	}
 

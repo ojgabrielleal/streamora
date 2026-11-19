@@ -1,7 +1,5 @@
 package com.streamora.streamora.service;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.streamora.streamora.dto.auth.AuthRequestDTO;
+import com.streamora.streamora.dto.auth.AuthTokens;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.repository.UserRepository;
 
@@ -25,7 +24,7 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
 
-	public Map<String, String> auth(AuthRequestDTO authRequest) {
+	public AuthTokens auth(AuthRequestDTO authRequest) {
 		if (authRequest.username() == null || authRequest.username().isBlank()
 			|| authRequest.password() == null || authRequest.password().isBlank()
 		) {
@@ -42,7 +41,18 @@ public class AuthService {
 		return jwtService.generateTokens(storedUser.getUsername());
 	}
 
+	public AuthTokens refresh(String refreshToken) {
+		String username = jwtService.getRefreshTokenSubject(refreshToken)
+			.orElseThrow(this::invalidRefreshToken);
+
+		return jwtService.generateTokens(username);
+	}
+
 	private ResponseStatusException invalidCredentials() {
 		return new ResponseStatusException(HttpStatus.UNAUTHORIZED, INVALID_CREDENTIALS_MESSAGE);
+	}
+
+	private ResponseStatusException invalidRefreshToken() {
+		return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
 	}
 }

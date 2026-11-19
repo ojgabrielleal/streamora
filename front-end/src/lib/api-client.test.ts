@@ -53,24 +53,90 @@ describe('apiRequest', () => {
     await expect(apiRequest('/playlist/item', { method: 'DELETE' })).resolves.toBeUndefined()
   })
 
-  it('sends the access token and clears it after an authenticated 401', async () => {
+  it('sends the access token and clears it when refresh returns 401', async () => {
     setAccessToken('access-token')
-    const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify({ message: 'Unauthorized' }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 401,
-      }),
-    )
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ message: 'Unauthorized' }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 401,
+        }),
+      )
+      .mockResolvedValueOnce(new Response(null, { status: 401 }))
 
     await expect(apiRequest('/playlist')).rejects.toMatchObject({
-      body: { message: 'Unauthorized' },
       status: 401,
     })
 
     const headers = new Headers(fetchMock.mock.calls[0][1]?.headers)
 
     expect(headers.get('Authorization')).toBe('Bearer access-token')
+    expect(fetchMock.mock.calls[1][0].toString()).toBe(
+      'http://localhost:8080/auth/refresh',
+    )
+    expect(fetchMock.mock.calls[1][1]?.credentials).toBe('include')
     expect(getAccessToken()).toBeNull()
+  })
+
+  it('renews the token and repeats an authenticated request once', async () => {
+    setAccessToken('expired-access-token')
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(null, { status: 401 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ accessToken: 'new-access-token' }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200,
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ name: 'Playlist' }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200,
+        }),
+      )
+
+    await expect(apiRequest('/playlist')).resolves.toEqual({ name: 'Playlist' })
+
+    const retryHeaders = new Headers(fetchMock.mock.calls[2][1]?.headers)
+
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(retryHeaders.get('Authorization')).toBe('Bearer new-access-token')
+    expect(getAccessToken()).toBe('new-access-token')
+  })
+
+  it('shares one refresh between concurrent unauthorized requests', async () => {
+    setAccessToken('expired-access-token')
+    let refreshCalls = 0
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, request) => {
+      const path = new URL(url.toString()).pathname
+
+      if (path === '/auth/refresh') {
+        refreshCalls += 1
+        return new Response(JSON.stringify({ accessToken: 'new-access-token' }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200,
+        })
+      }
+
+      const authorization = new Headers(request?.headers).get('Authorization')
+
+      if (authorization === 'Bearer expired-access-token') {
+        return new Response(null, { status: 401 })
+      }
+
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    })
+
+    await expect(
+      Promise.all([apiRequest('/playlist'), apiRequest('/schedule')]),
+    ).resolves.toEqual([{ ok: true }, { ok: true }])
+
+    expect(refreshCalls).toBe(1)
   })
 
   it('exposes HTTP failures as ApiError', async () => {

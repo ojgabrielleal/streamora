@@ -1,4 +1,12 @@
-import { clearAccessToken, getAccessToken } from '@/lib/access-token'
+import {
+  clearAccessToken,
+  getAccessToken,
+  setAccessToken,
+} from '@/lib/access-token'
+
+type AccessTokenResponse = {
+  accessToken: string
+}
 
 export class ApiError extends Error {
   readonly status: number
@@ -16,6 +24,8 @@ type ApiRequestOptions = Omit<RequestInit, 'body'> & {
   authenticated?: boolean
   json?: unknown
 }
+
+let refreshPromise: Promise<void> | null = null
 
 function getApiUrl() {
   const apiUrl = import.meta.env.VITE_API_URL
@@ -47,6 +57,24 @@ export async function apiRequest<T>(
   path: string,
   options: ApiRequestOptions = {},
 ): Promise<T> {
+  return executeRequest<T>(path, options, true)
+}
+
+export function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = requestNewAccessToken().finally(() => {
+      refreshPromise = null
+    })
+  }
+
+  return refreshPromise
+}
+
+async function executeRequest<T>(
+  path: string,
+  options: ApiRequestOptions,
+  allowRefresh: boolean,
+): Promise<T> {
   const {
     authenticated = true,
     headers: requestHeaders,
@@ -72,6 +100,20 @@ export async function apiRequest<T>(
   const responseBody = await parseResponse(response)
 
   if (!response.ok) {
+    if (authenticated && response.status === 401 && allowRefresh) {
+      try {
+        await refreshAccessToken()
+
+        return executeRequest<T>(path, options, false)
+      } catch (refreshError) {
+        if (refreshError instanceof ApiError && refreshError.status === 401) {
+          clearAccessToken()
+        }
+
+        throw refreshError
+      }
+    }
+
     if (authenticated && response.status === 401) {
       clearAccessToken()
     }
@@ -80,4 +122,24 @@ export async function apiRequest<T>(
   }
 
   return responseBody as T
+}
+
+async function requestNewAccessToken() {
+  const response = await fetch(new URL('/auth/refresh', getApiUrl()), {
+    credentials: 'include',
+    method: 'POST',
+  })
+  const responseBody = await parseResponse(response)
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      clearAccessToken()
+    }
+
+    throw new ApiError(response.status, responseBody)
+  }
+
+  const tokenResponse = responseBody as AccessTokenResponse
+
+  setAccessToken(tokenResponse.accessToken)
 }

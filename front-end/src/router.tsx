@@ -17,8 +17,15 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
+  beforeLoad: redirectAuthenticatedUser,
   component: HomePage,
 })
+
+export function redirectAuthenticatedUser() {
+  if (getAccessToken()) {
+    throw redirect({ to: '/dashboard' })
+  }
+}
 
 export function requireAccessToken() {
   if (!getAccessToken()) {

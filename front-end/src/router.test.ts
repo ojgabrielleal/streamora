@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { clearAccessToken, setAccessToken } from '@/lib/access-token'
-import { requireAccessToken } from '@/router'
+import { redirectAuthenticatedUser, requireAccessToken } from '@/router'
 
 describe('dashboard route guard', () => {
   beforeEach(() => clearAccessToken())
@@ -14,5 +14,15 @@ describe('dashboard route guard', () => {
     setAccessToken('access-token')
 
     expect(requireAccessToken).not.toThrow()
+  })
+
+  it('redirects an authenticated user away from the login route', () => {
+    setAccessToken('access-token')
+
+    expect(redirectAuthenticatedUser).toThrow()
+  })
+
+  it('allows the login route without an authenticated session', () => {
+    expect(redirectAuthenticatedUser).not.toThrow()
   })
 })

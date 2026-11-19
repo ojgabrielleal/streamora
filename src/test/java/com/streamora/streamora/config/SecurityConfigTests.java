@@ -11,8 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -22,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -45,7 +44,12 @@ import com.streamora.streamora.service.UserService;
 	PlaylistController.class,
 	UserController.class
 })
-@Import({CorsConfig.class, SecurityConfig.class, JwtAuthenticationFilter.class})
+@Import({
+	AuthCookieProperties.class,
+	CorsConfig.class,
+	SecurityConfig.class,
+	JwtAuthenticationFilter.class
+})
 class SecurityConfigTests {
 
 	@Autowired
@@ -136,9 +140,9 @@ class SecurityConfigTests {
 	@Test
 	void allowsLoginWithoutAccessToken() throws Exception {
 		when(authService.auth(org.mockito.ArgumentMatchers.any()))
-			.thenReturn(Map.of(
-				"accessToken", "access-token",
-				"refreshToken", "refresh-token"
+			.thenReturn(new com.streamora.streamora.dto.auth.AuthTokens(
+				"access-token",
+				"refresh-token"
 			));
 
 		mockMvc.perform(
@@ -150,7 +154,53 @@ class SecurityConfigTests {
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.accessToken").value("access-token"))
-			.andExpect(jsonPath("$.refreshToken").value("refresh-token"));
+			.andExpect(jsonPath("$.refreshToken").doesNotExist())
+			.andExpect(header().string(HttpHeaders.SET_COOKIE, org.hamcrest.Matchers.containsString(
+				"HttpOnly"
+			)));
+	}
+
+	@Test
+	void allowsRefreshWithoutAccessToken() throws Exception {
+		when(authService.refresh("refresh-token"))
+			.thenReturn(new com.streamora.streamora.dto.auth.AuthTokens(
+				"new-access-token",
+				"new-refresh-token"
+			));
+
+		mockMvc.perform(
+			post("/auth/refresh")
+				.cookie(new jakarta.servlet.http.Cookie(
+					"streamora_refresh_token",
+					"refresh-token"
+				))
+		)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.accessToken").value("new-access-token"))
+			.andExpect(jsonPath("$.refreshToken").doesNotExist());
+	}
+
+	@Test
+	void expiresCookieAfterInvalidRefresh() throws Exception {
+		when(authService.refresh(null))
+			.thenThrow(new ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED));
+
+		mockMvc.perform(post("/auth/refresh"))
+			.andExpect(status().isUnauthorized())
+			.andExpect(header().string(
+				HttpHeaders.SET_COOKIE,
+				org.hamcrest.Matchers.containsString("Max-Age=0")
+			));
+	}
+
+	@Test
+	void allowsIdempotentLogoutWithoutAccessToken() throws Exception {
+		mockMvc.perform(post("/auth/logout"))
+			.andExpect(status().isNoContent())
+			.andExpect(header().string(
+				HttpHeaders.SET_COOKIE,
+				org.hamcrest.Matchers.containsString("Max-Age=0")
+			));
 	}
 
 	@Test
@@ -184,6 +234,33 @@ class SecurityConfigTests {
 		)
 		.andExpect(status().isForbidden())
 		.andExpect(header().doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN));
+	}
+
+	@Test
+	void rejectsCookieAuthenticationFromUnconfiguredOrigin() throws Exception {
+		mockMvc.perform(
+			post("/auth/logout")
+				.header(HttpHeaders.ORIGIN, "https://untrusted.example")
+		)
+			.andExpect(status().isForbidden())
+			.andExpect(header().doesNotExist(HttpHeaders.SET_COOKIE));
+	}
+
+	@Test
+	void allowsCookieAuthenticationFromConfiguredOrigin() throws Exception {
+		mockMvc.perform(
+			post("/auth/logout")
+				.header(HttpHeaders.ORIGIN, "http://localhost:5173")
+		)
+			.andExpect(status().isNoContent())
+			.andExpect(header().string(
+				HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+				"http://localhost:5173"
+			))
+			.andExpect(header().string(
+				HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS,
+				"true"
+			));
 	}
 }
 

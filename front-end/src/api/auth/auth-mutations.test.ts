@@ -19,7 +19,6 @@ describe('loginMutationOptions', () => {
       new Response(
         JSON.stringify({
           accessToken: 'access-token',
-          refreshToken: 'refresh-token',
         }),
         {
           headers: { 'Content-Type': 'application/json' },
@@ -36,10 +35,10 @@ describe('loginMutationOptions', () => {
     const headers = new Headers(fetchMock.mock.calls[0][1]?.headers)
 
     expect(headers.has('Authorization')).toBe(false)
+    expect(fetchMock.mock.calls[0][1]?.credentials).toBe('include')
     expect(getAccessToken()).toBe('access-token')
     expect(tokens).toEqual({
       accessToken: 'access-token',
-      refreshToken: 'refresh-token',
     })
   })
 })

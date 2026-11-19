@@ -47,7 +47,7 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(HttpMethod.GET, PUBLIC_DOCUMENTATION_PATHS).permitAll()
-				.requestMatchers(HttpMethod.POST, "/login").permitAll()
+				.requestMatchers(HttpMethod.POST, "/login", "/auth/refresh", "/auth/logout").permitAll()
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(

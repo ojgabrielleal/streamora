@@ -3,7 +3,6 @@ export type AuthRequest = {
   password: string
 }
 
-export type AuthTokens = {
+export type AccessTokenResponse = {
   accessToken: string
-  refreshToken: string
 }

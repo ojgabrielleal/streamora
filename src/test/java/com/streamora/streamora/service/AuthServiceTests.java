@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -19,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.streamora.streamora.dto.auth.AuthRequestDTO;
+import com.streamora.streamora.dto.auth.AuthTokens;
 import com.streamora.streamora.entity.User;
 import com.streamora.streamora.factory.UserFactory;
 import com.streamora.streamora.repository.UserRepository;
@@ -42,10 +42,7 @@ class AuthServiceTests {
 	void authenticatesValidCredentialsAndGeneratesTokens() {
 		AuthRequestDTO authRequest = new AuthRequestDTO("username1", "plain-password");
 		User storedUser = UserFactory.toEntity();
-		Map<String, String> generatedTokens = Map.of(
-			"accessToken", "access-token",
-			"refreshToken", "refresh-token"
-		);
+		AuthTokens generatedTokens = new AuthTokens("access-token", "refresh-token");
 
 		when(userRepository.findByUsername(authRequest.username()))
 			.thenReturn(Optional.of(storedUser));
@@ -54,12 +51,36 @@ class AuthServiceTests {
 		when(jwtService.generateTokens(storedUser.getUsername()))
 			.thenReturn(generatedTokens);
 
-		Map<String, String> returnedTokens = authService.auth(authRequest);
+		AuthTokens returnedTokens = authService.auth(authRequest);
 
 		assertThat(returnedTokens)
 			.isSameAs(generatedTokens);
 
 		verify(jwtService).generateTokens(storedUser.getUsername());
+	}
+
+	@Test
+	void renewsTokensFromValidRefreshToken() {
+		AuthTokens generatedTokens = new AuthTokens("new-access-token", "new-refresh-token");
+
+		when(jwtService.getRefreshTokenSubject("refresh-token"))
+			.thenReturn(Optional.of("username1"));
+		when(jwtService.generateTokens("username1"))
+			.thenReturn(generatedTokens);
+
+		assertThat(authService.refresh("refresh-token"))
+			.isSameAs(generatedTokens);
+	}
+
+	@Test
+	void rejectsInvalidRefreshToken() {
+		when(jwtService.getRefreshTokenSubject("invalid"))
+			.thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> authService.refresh("invalid"))
+			.isInstanceOfSatisfying(ResponseStatusException.class, exception ->
+				assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED)
+			);
 	}
 
 	@Test

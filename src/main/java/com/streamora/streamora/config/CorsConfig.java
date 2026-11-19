@@ -32,6 +32,7 @@ public class CorsConfig {
 			HttpHeaders.AUTHORIZATION,
 			HttpHeaders.CONTENT_TYPE
 		));
+		corsConfiguration.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource corsConfigurationSource =
 			new UrlBasedCorsConfigurationSource();
