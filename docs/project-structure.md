@@ -27,8 +27,13 @@ streamora/
 │   │   ├── app/
 │   │   │   ├── providers.tsx
 │   │   │   └── query-client.ts
-│   │   ├── components/ui/
-│   │   │   └── button.tsx
+│   │   ├── components/
+│   │   │   ├── auth/
+│   │   │   │   ├── login-form.test.tsx
+│   │   │   │   ├── login-form.tsx
+│   │   │   │   └── login-submit.ts
+│   │   │   └── ui/
+│   │   │       └── button.tsx
 │   │   ├── lib/
 │   │   │   ├── access-token.ts
 │   │   │   ├── api-client.ts
@@ -253,7 +258,8 @@ devem continuar fora do controle de versão.
   diretório `public/images/brand` mantém as logomarcas e o favicon; o
   diretório `app` centraliza providers e a configuração global do TanStack
   Query; `api` organiza contratos, queries e mutations por domínio; `routes`
-  define a árvore do TanStack Router; `components/ui` mantém os componentes do
+  define a árvore do TanStack Router; `components/auth` mantém os componentes
+  próprios do fluxo de autenticação; `components/ui` mantém os componentes do
   shadcn/ui; `lib` concentra o cliente HTTP, o access token volátil e outros
   utilitários compartilhados; e `index.css` reúne a base do Tailwind CSS e os
   tokens visuais iniciais. O frontend lê a URL pública da API de

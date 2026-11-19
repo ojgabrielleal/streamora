@@ -4,6 +4,21 @@ Este documento registra as convenções de escrita e formatação adotadas no
 Streamora. As novas implementações devem seguir estes padrões e preservar a
 consistência do código existente.
 
+## Frontend
+
+### Estados interativos de formulários
+
+Mantenha os estados de `hover` e foco de campos de formulário visualmente
+discretos. O `hover` deve indicar a interatividade sem competir com o conteúdo,
+e o foco deve usar uma borda ou halo suave, coerente com a identidade visual,
+sem se tornar mais proeminente que a ação principal do formulário.
+
+Nunca remova a indicação visual de foco. Ela deve continuar claramente
+perceptível para navegação por teclado e possuir contraste suficiente em
+relação ao fundo. Evite bordas muito saturadas, halos espessos ou sombras
+intensas em campos comuns; reserve maior destaque visual para ações primárias,
+erros e estados que realmente exijam atenção.
+
 ## Java
 
 ### Nomes de variáveis e parâmetros
