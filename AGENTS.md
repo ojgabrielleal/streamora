@@ -1,52 +1,13 @@
 # AGENTS.md
 
-## Projeto
-Streamora gerencia web-rádios e funciona como auto-DJ, mantendo o áudio contínuo
-mesmo sem transmissão ao vivo. Usa Java 25, Spring Boot, MySQL, Liquidsoap e
-Icecast.
-
-Consulte `docs/project-structure.md` para a estrutura e os testes. Atualize-o ao
-criar, mover ou remover componentes estruturais.
-
-## Fluxo
-1. Leia a spec e crie o plano.
-2. Aguarde a aprovação do plano.
-3. Crie as tarefas e os testes; implemente e valide.
-4. Pergunte se são necessárias correções.
-5. Após corrigi-las, peça autorização para finalizar a spec.
-
-## Regras de desenvolvimento
-- Siga os padrões existentes e limite as mudanças ao escopo solicitado.
-- Não remova funcionalidades nem altere versões sem autorização.
-- Não adicione dependências desnecessárias; pergunte diante de ambiguidade relevante.
-- Mantenha o código simples, legível, sem duplicação e com nomes claros.
-- Siga `docs/code-standards.md` em todo Java novo ou alterado. Corrija apenas as
-  inconsistências presentes no trecho modificado, sem refatorações fora do escopo.
-- Use Lombok quando reduzir repetição sem ocultar regras de negócio, conforme o
-  padrão do projeto.
-- Guarde tokens, senhas e demais dados sensíveis em `.env`, com modelo em
-  `.env.example`.
-
-## Validação e finalização
-- Antes de finalizar, execute os testes existentes, compile o projeto e confira
-  os critérios de aceite.
-- Informe o que foi feito, arquivos alterados, testes executados, erros,
-  limitações e pendências.
-- Crie um commit.
-
-## Migrations
-- Crie arquivos `src/main/resources/db/migration/V{versão}__{descrição}.sql`.
-- Cada migration deve alterar somente uma tabela; use arquivos separados para
-  tabelas diferentes.
-- Toda coluna `uuid` deve ter restrição de unicidade.
-- Ao alterar a estrutura do banco, atualize `docs/database-schema.md`.
-- Mantenha testes globais apenas para convenções comuns das tabelas principais:
-  verifique somente `id` e `uuid` nas migrations de criação, exclua tabelas
-  associativas e não teste detalhes específicos de migrations.
-
-## Specs
-- Local: `specs/XXX-nome-da-spec/`.
-- Ao criar ou alterar uma spec, siga exatamente o layout existente, preservando
-  estrutura, seções, ordem e formatação.
-- Arquivos possíveis: `spec.md` (requisitos), `plan.md` (plano), `tasks.md`
-  (tarefas) e `review.md` (revisão, quando necessária).
+## Instruções obrigatórias
+- Siga `docs/development-workflow.md` e limite as mudanças ao escopo solicitado.
+- Leia a spec, crie o plano e aguarde sua aprovação antes de implementar.
+- Siga `docs/code-standards.md` em todo Java novo ou alterado.
+- Siga `docs/database-standards.md`; atualize `docs/database-schema.md` ao
+  modificar o banco.
+- Siga `docs/spec-standards.md` e reproduza exatamente o layout existente das
+  specs.
+- Consulte `docs/project-structure.md` e atualize-o ao criar, mover ou remover
+  componentes estruturais.
+- Valide a implementação, informe resultados e pendências e crie um commit.

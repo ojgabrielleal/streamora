@@ -9,8 +9,11 @@ serem preservadas conforme o projeto crescer.
 streamora/
 ├── docs/
 │   ├── code-standards.md
+│   ├── database-standards.md
 │   ├── database-schema.md
-│   └── project-structure.md
+│   ├── development-workflow.md
+│   ├── project-structure.md
+│   └── spec-standards.md
 ├── liquidsoap/
 │   ├── radio.liq
 │   ├── schedule.liq
@@ -296,7 +299,8 @@ devem continuar fora do controle de versão.
   Icecast de `VITE_STREAM_URL`, usa Vitest nos testes automatizados e é
   executado pelo serviço `node` no ambiente de desenvolvimento.
 - `specs`: registra requisitos, planejamento, tarefas e revisões de cada mudança.
-- `docs`: mantém visões consolidadas da arquitetura e do banco de dados.
+- `docs`: mantém a arquitetura, o banco de dados e os padrões de desenvolvimento
+  e de especificações.
 
 Novas camadas devem ser criadas somente quando houver responsabilidade real
 para elas. Por exemplo, regras de negócio e coordenação de casos de uso devem
