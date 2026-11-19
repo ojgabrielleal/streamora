@@ -32,6 +32,13 @@ streamora/
 │   │   │   │   ├── login-form.test.tsx
 │   │   │   │   ├── login-form.tsx
 │   │   │   │   └── login-submit.ts
+│   │   │   ├── dashboard/
+│   │   │   │   ├── dashboard-sidebar.tsx
+│   │   │   │   ├── dashboard.test.tsx
+│   │   │   │   ├── playlist-overview.tsx
+│   │   │   │   ├── radio-overview.tsx
+│   │   │   │   ├── service-overview.tsx
+│   │   │   │   └── stream-overview.tsx
 │   │   │   └── ui/
 │   │   │       └── button.tsx
 │   │   ├── lib/
@@ -39,10 +46,13 @@ streamora/
 │   │   │   ├── api-client.ts
 │   │   │   └── utils.ts
 │   │   ├── routes/
+│   │   │   ├── dashboard.test.tsx
+│   │   │   ├── dashboard.tsx
 │   │   │   ├── index.tsx
 │   │   │   └── root.tsx
 │   │   ├── index.css
 │   │   ├── main.tsx
+│   │   ├── router.test.ts
 │   │   └── router.tsx
 │   ├── .env.example
 │   ├── components.json
@@ -266,12 +276,14 @@ devem continuar fora do controle de versão.
   diretório `app` centraliza providers e a configuração global do TanStack
   Query; `api` organiza contratos, queries e mutations por domínio; `routes`
   define a árvore do TanStack Router; `components/auth` mantém os componentes
-  próprios do fluxo de autenticação; `components/ui` mantém os componentes do
-  shadcn/ui; `lib` concentra o cliente HTTP, o access token volátil e outros
-  utilitários compartilhados; e `index.css` reúne a base do Tailwind CSS e os
-  tokens visuais iniciais. O frontend lê a URL pública da API de
-  `VITE_API_URL`, usa Vitest nos testes automatizados e é executado pelo serviço
-  `node` no ambiente de desenvolvimento.
+  próprios do fluxo de autenticação; `components/dashboard` reúne o menu
+  lateral responsivo e as visões resumidas da rádio e das playlists;
+  `components/ui` mantém os componentes do shadcn/ui; `lib` concentra o
+  cliente HTTP, o access token volátil e outros utilitários compartilhados; e
+  `index.css` reúne a base do Tailwind CSS e os tokens visuais iniciais. O
+  frontend lê a URL pública da API de `VITE_API_URL` e a transmissão pública do
+  Icecast de `VITE_STREAM_URL`, usa Vitest nos testes automatizados e é
+  executado pelo serviço `node` no ambiente de desenvolvimento.
 - `specs`: registra requisitos, planejamento, tarefas e revisões de cada mudança.
 - `docs`: mantém visões consolidadas da arquitetura e do banco de dados.
 

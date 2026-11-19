@@ -145,6 +145,7 @@ services:
     command: ["sh", "-c", "npm ci && npm run dev -- --host 0.0.0.0"]
     environment:
       VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+      VITE_STREAM_URL: ${VITE_STREAM_URL:-http://localhost:8000/stream.mp3}
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     volumes:

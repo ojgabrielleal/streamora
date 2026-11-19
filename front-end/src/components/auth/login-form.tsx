@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { loginMutationOptions } from '@/api/auth/auth-mutations'
@@ -9,20 +10,7 @@ export function LoginForm() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const loginMutation = useMutation(loginMutationOptions())
-
-  if (loginMutation.isSuccess) {
-    return (
-      <div
-        className="rounded-xl border border-violet-200 bg-violet-50 px-5 py-4 text-center text-violet-950"
-        role="status"
-      >
-        <p className="font-medium">Login realizado com sucesso.</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Sua sessão está pronta para continuar.
-        </p>
-      </div>
-    )
-  }
+  const navigate = useNavigate()
 
   const credentials = { password, username }
 
@@ -30,7 +18,11 @@ export function LoginForm() {
     <form
       aria-busy={loginMutation.isPending}
       className="space-y-5"
-      onSubmit={(event) => submitLogin(event, credentials, loginMutation)}
+      onSubmit={(event) =>
+        submitLogin(event, credentials, loginMutation, () =>
+          navigate({ to: '/dashboard' }),
+        )
+      }
     >
       <div className="space-y-2">
         <label className="text-sm font-medium" htmlFor="username">

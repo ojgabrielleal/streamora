@@ -4,7 +4,10 @@ import type { AuthRequest } from '@/api/auth/auth-types'
 
 type LoginSubmitter = {
   isPending: boolean
-  mutate: (credentials: AuthRequest) => void
+  mutate: (
+    credentials: AuthRequest,
+    options?: { onSuccess: () => void },
+  ) => void
   reset: () => void
 }
 
@@ -12,6 +15,7 @@ export function submitLogin(
   event: FormEvent<HTMLFormElement>,
   credentials: AuthRequest,
   loginSubmitter: LoginSubmitter,
+  onSuccess?: () => void,
 ) {
   event.preventDefault()
 
@@ -20,5 +24,11 @@ export function submitLogin(
   }
 
   loginSubmitter.reset()
+
+  if (onSuccess) {
+    loginSubmitter.mutate(credentials, { onSuccess })
+    return
+  }
+
   loginSubmitter.mutate(credentials)
 }

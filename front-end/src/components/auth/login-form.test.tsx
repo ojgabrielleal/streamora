@@ -14,9 +14,15 @@ const mutationState = vi.hoisted(() => ({
   reset: vi.fn(),
 }))
 
+const navigate = vi.hoisted(() => vi.fn())
+
 vi.mock('@tanstack/react-query', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@tanstack/react-query')>()),
   useMutation: () => mutationState,
+}))
+
+vi.mock('@tanstack/react-router', () => ({
+  useNavigate: () => navigate,
 }))
 
 describe('LoginForm', () => {
@@ -26,6 +32,7 @@ describe('LoginForm', () => {
     mutationState.isSuccess = false
     mutationState.mutate.mockReset()
     mutationState.reset.mockReset()
+    navigate.mockReset()
   })
 
   it('renders the brand and accessible authentication fields', () => {
@@ -78,13 +85,19 @@ describe('LoginForm', () => {
     )
   })
 
-  it('replaces the form with a confirmation after a successful login', () => {
-    mutationState.isSuccess = true
+  it('requests navigation to the dashboard after a successful login', () => {
+    mutationState.mutate.mockImplementation((_credentials, options) => {
+      options?.onSuccess()
+    })
+    const event = { preventDefault: vi.fn() } as unknown as FormEvent<HTMLFormElement>
 
-    const markup = renderToStaticMarkup(<LoginForm />)
+    submitLogin(
+      event,
+      { password: 'secret', username: 'streamora' },
+      mutationState,
+      () => navigate({ to: '/dashboard' }),
+    )
 
-    expect(markup).toContain('role="status"')
-    expect(markup).toContain('Login realizado com sucesso.')
-    expect(markup).not.toContain('<form')
+    expect(navigate).toHaveBeenCalledWith({ to: '/dashboard' })
   })
 })
