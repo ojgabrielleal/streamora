@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: streamora-application
     environment:
+      ENVIRONMENT: ${ENVIRONMENT:-}
       JAVA_TOOL_OPTIONS: ${JAVA_OPTS:-}
       JWT_SECRET: ${JWT_SECRET}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}

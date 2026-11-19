@@ -72,6 +72,8 @@ streamora/
 │   │   │   │   ├── PlaylistController.java
 │   │   │   │   ├── ScheduleController.java
 │   │   │   │   └── UserController.java
+│   │   │   ├── development/
+│   │   │   │   └── DevelopmentAdminInitializer.java
 │   │   │   ├── entity/
 │   │   │   │   ├── type/
 │   │   │   │   ├── Playlist.java
@@ -164,6 +166,8 @@ streamora/
 │           │   ├── PlaylistControllerTests.java
 │           │   ├── ScheduleControllerTests.java
 │           │   └── UserControllerTests.java
+│           ├── development/
+│           │   └── DevelopmentAdminInitializerTests.java
 │           ├── config/
 │           │   ├── OpenApiDocumentationTests.java
 │           │   └── SecurityConfigTests.java
@@ -220,6 +224,9 @@ devem continuar fora do controle de versão.
   service correspondente, sem tratar ou manipular dados. O controller do
   storage FTP também traduz as exceções próprias dessa integração para o
   contrato HTTP seguro, sem acessar o volume local.
+- `development`: contém inicializações exclusivas do ambiente identificado por
+  `ENVIRONMENT=dev`, como a conta `admin` usada para testar a autenticação da
+  aplicação e do Pure-FTPd.
 - `entity/type`: contém tipos próprios usados pelas entities, como enums.
 - `dto`: define os contratos imutáveis de entrada e saída da aplicação,
   organizados por domínio nos subpacotes `auth`, `ftp`, `liquidsoap`,
