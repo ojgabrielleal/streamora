@@ -1,13 +1,14 @@
 # AGENTS.md
 
-## Instruções obrigatórias
-- Siga `docs/development-workflow.md` e limite as mudanças ao escopo solicitado.
-- Leia a spec, crie o plano e aguarde sua aprovação antes de implementar.
-- Siga `docs/code-standards.md` em todo Java novo ou alterado.
-- Siga `docs/database-standards.md`; atualize `docs/database-schema.md` ao
-  modificar o banco.
-- Siga `docs/spec-standards.md` e reproduza exatamente o layout existente das
-  specs.
-- Consulte `docs/project-structure.md` e atualize-o ao criar, mover ou remover
-  componentes estruturais.
-- Valide a implementação, informe resultados e pendências e crie um commit.
+- Limite as mudanças ao escopo solicitado. Não remova funcionalidades, altere
+  versões ou adicione dependências sem autorização.
+- Mantenha segredos em `.env` e exemplos em `.env.example`.
+- Para trabalho baseado em spec: leia a spec, crie o plano e aguarde aprovação
+  antes de implementar.
+- Ao alterar Java, leia `docs/code-standards.md`.
+- Ao alterar banco ou migrations, leia `docs/database-standards.md` e atualize
+  `docs/database-schema.md`.
+- Ao criar ou alterar specs, leia `docs/spec-standards.md`.
+- Ao mudar a estrutura do projeto, leia e atualize `docs/project-structure.md`.
+- Antes de concluir, execute as validações aplicáveis, informe pendências e crie
+  um commit.

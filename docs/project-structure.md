@@ -8,10 +8,10 @@ serem preservadas conforme o projeto crescer.
 ```text
 streamora/
 ├── docs/
+│   ├── README.md
 │   ├── code-standards.md
 │   ├── database-standards.md
 │   ├── database-schema.md
-│   ├── development-workflow.md
 │   ├── project-structure.md
 │   └── spec-standards.md
 ├── liquidsoap/
