@@ -2,9 +2,9 @@
 
 - [ ] Definir os contratos de dados públicos da conexão FTP e dos itens do storage.
 - [ ] Configurar host e porta públicos do FTP sem expor segredos.
-- [ ] Isolar a raiz do storage pelo usuário obtido do contexto de autenticação.
-- [ ] Adaptar a listagem para o diretório solicitado e incluir caminho, tamanho e última alteração.
-- [ ] Adaptar criação, renomeação, movimentação e exclusão ao escopo do usuário autenticado.
+- [ ] Criar o endpoint autenticado de conexão com host, porta e username FTP, sem senha.
+- [ ] Preservar a árvore da listagem e incluir formato, tamanho e última alteração em cada item.
+- [ ] Preservar a raiz compartilhada nas operações de listagem, criação, renomeação, movimentação e exclusão.
 - [ ] Cobrir serviços, storage, contratos e endpoints do backend com testes.
 - [ ] Extrair o shell autenticado compartilhado sem alterar sessão e logout.
 - [ ] Registrar a rota protegida `/arquivos` e habilitar seu link na sidebar.

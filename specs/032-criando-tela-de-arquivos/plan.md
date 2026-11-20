@@ -2,15 +2,16 @@
 
 ## Objetivo
 
-Evoluir o backend para expor os dados públicos de conexão e operar o storage com isolamento por usuário, completar o contrato com metadados e construir a rota de Arquivos integrada ao layout e à sessão existentes.
+Evoluir o backend para expor os dados públicos de conexão e completar os itens do storage compartilhado com metadados, além de construir a rota de Arquivos integrada ao layout e à sessão existentes.
 
 ## Decisões de implementação
 
-- Obter o username exclusivamente do contexto de segurança para selecionar a pasta FTP e montar os dados de acesso.
-- Representar caminhos da API como caminhos relativos à raiz FTP do usuário autenticado.
+- Obter o username exclusivamente do contexto de segurança para montar os dados de acesso, sem alterar a raiz compartilhada do storage.
+- Representar caminhos da API como caminhos relativos à raiz FTP compartilhada.
 - Manter a senha fora dos contratos; a interface exibirá `Mesmo acesso do painel` no campo correspondente.
-- Fazer a API listar o diretório solicitado, em vez de transferir toda a árvore a cada navegação.
-- Acrescentar caminho relativo, tamanho e última alteração ao DTO de item para evitar inferências no frontend.
+- Preservar a resposta recursiva em árvore da listagem atual.
+- Acrescentar formato, tamanho e última alteração ao DTO de item.
+- Derivar formato da extensão do arquivo no backend e usar valor nulo para diretórios e arquivos sem extensão.
 - Separar consultas e mutações do frontend em módulos de API e React Query, invalidando apenas a listagem afetada.
 - Extrair o shell autenticado compartilhado pelo Dashboard e por Arquivos para que sidebar, menu móvel e logout não sejam duplicados.
 - Usar componentes focados para cartão de conexão, barra de ações, breadcrumbs, lista de itens e diálogos.
@@ -20,7 +21,7 @@ Evoluir o backend para expor os dados públicos de conexão e operar o storage c
 
 - Alterar as propriedades e a configuração do Pure-FTPd para disponibilizar host e porta públicos ao backend.
 - Criar DTO e endpoint autenticado para os dados públicos de conexão FTP.
-- Evoluir `FtpFileStorage`, `LocalFtpFileStorage`, `FtpFileService`, mapper, DTOs e controller para isolamento por usuário, listagem por diretório e metadados.
+- Evoluir `LocalFtpFileStorage`, os records, o mapper e o DTO de resposta com os novos metadados, preservando a árvore e o storage compartilhado.
 - Criar tipos, cliente, consultas e mutações de storage em `front-end/src/api/files/`.
 - Criar componentes da página em `front-end/src/components/files/`.
 - Criar a rota `front-end/src/routes/files.tsx` e registrá-la no router.
@@ -32,8 +33,8 @@ Evoluir o backend para expor os dados públicos de conexão e operar o storage c
 ## Etapas
 
 1. Definir os contratos de conexão e item e ajustar as propriedades públicas do FTP.
-2. Tornar a resolução do storage dependente do usuário autenticado e cobrir os limites de segurança com testes.
-3. Implementar listagem por diretório com metadados, preservando as mutações existentes.
+2. Implementar o endpoint autenticado que retorna host, porta e username FTP, sem senha.
+3. Enriquecer os itens da árvore com formato, tamanho e última alteração, preservando a raiz compartilhada e as mutações existentes.
 4. Extrair o shell autenticado e adaptar Dashboard e sidebar sem regressões de navegação ou logout.
 5. Criar a camada de API do frontend com chaves de consulta por diretório, mutações e invalidação de cache.
 6. Construir a página responsiva com cartão de conexão, breadcrumbs, filtro e listagem de itens.
@@ -43,8 +44,8 @@ Evoluir o backend para expor os dados públicos de conexão e operar o storage c
 
 ## Estratégia de testes
 
-- Testar a resolução da raiz por usuário, bloqueio de travessia, caminhos absolutos, links simbólicos e acesso cruzado.
-- Testar listagem e metadados de arquivos e diretórios, inclusive ordenação e diretórios vazios.
+- Testar a permanência na raiz compartilhada e o bloqueio de travessia, caminhos absolutos e links simbólicos.
+- Testar listagem e metadados de arquivos e diretórios, inclusive formato, tamanho, última alteração, ordenação e diretórios vazios.
 - Testar conflitos de nome, arquivos ausentes e falhas de I/O nas operações de organização.
 - Testar os endpoints de conexão e storage com usuário autenticado, não autenticado e respostas de erro.
 - Testar tipos, serialização, URLs e query params no cliente frontend.
@@ -58,15 +59,15 @@ Evoluir o backend para expor os dados públicos de conexão e operar o storage c
 - Executar `npm test` em `front-end/`.
 - Executar `npm run lint` em `front-end/`.
 - Executar `npm run build` em `front-end/`.
-- Verificar manualmente a navegação e as operações em larguras de desktop e mobile com dois usuários distintos.
+- Verificar manualmente a navegação e as operações em larguras de desktop e mobile, confirmando que usuários autenticados visualizam o mesmo storage.
 - Confirmar que nenhum contrato, log ou erro expõe senha ou hash.
 
 ## Riscos e cuidados
 
-- O storage atual parte de uma raiz compartilhada; a migração para raiz por usuário deve evitar regressões e jamais ampliar acesso entre usuários.
+- O storage deve continuar compartilhado; nenhuma alteração pode segmentar o conteúdo por usuário ou mudar os caminhos já utilizados.
 - O host visto pelo backend pode diferir do host público usado pelo navegador; a configuração deve representar explicitamente o endereço externo.
 - A extração do shell não deve alterar a renovação de token, o redirecionamento de usuários não autenticados ou o logout.
-- A navegação por diretórios e as mutações devem manter chaves de cache consistentes para não apresentar conteúdo desatualizado.
+- A navegação derivada da árvore e as mutações devem manter o cache consistente para não apresentar conteúdo desatualizado.
 
 ## Fora do escopo
 

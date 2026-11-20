@@ -2,11 +2,11 @@
 
 ## Objetivo
 
-Criar uma tela autenticada de Arquivos que apresente os dados de conexão FTP do usuário e permita gerenciar, pelo navegador, os arquivos e diretórios da sua própria área de armazenamento.
+Criar uma tela autenticada de Arquivos que apresente os dados de conexão FTP do usuário e permita gerenciar, pelo navegador, os arquivos e diretórios do storage compartilhado da rádio.
 
 ## Contexto
 
-O dashboard já apresenta Arquivos na navegação lateral, mas o item está desabilitado e marcado como futuro. O backend possui operações para listar, criar diretório, renomear, mover e excluir itens do storage FTP, porém o frontend ainda não oferece acesso a elas. Também faltam metadados úteis para a interface e o isolamento explícito das operações pelo usuário autenticado. As transferências de arquivos continuarão sendo realizadas por um cliente FTP.
+O dashboard já apresenta Arquivos na navegação lateral, mas o item está desabilitado e marcado como futuro. O backend possui operações para listar, criar diretório, renomear, mover e excluir itens do storage FTP compartilhado, porém o frontend ainda não oferece acesso a elas. Também faltam os dados públicos de conexão e metadados úteis para a interface. As transferências de arquivos continuarão sendo realizadas por um cliente FTP.
 
 ## Requisitos
 
@@ -30,15 +30,15 @@ O dashboard já apresenta Arquivos na navegação lateral, mas o item está desa
 
 ### Gerenciador de arquivos
 
-- Exibir somente o conteúdo da área FTP pertencente ao usuário autenticado.
+- Exibir o conteúdo do storage FTP compartilhado entre os usuários do painel.
 - Apresentar o diretório atual em uma trilha de navegação, permitindo voltar à raiz ou a qualquer diretório ancestral.
 - Listar diretórios antes de arquivos e ordenar cada grupo alfabeticamente.
-- Exibir nome, tipo, tamanho e data da última alteração de cada item.
+- Exibir nome, tipo, formato, tamanho e data da última alteração de cada item.
 - Permitir abrir diretórios sem recarregar a página.
 - Permitir filtrar os itens do diretório atual pelo nome.
 - Permitir criar diretórios dentro do diretório atual.
 - Permitir renomear arquivos e diretórios.
-- Permitir mover arquivos e diretórios para outro diretório da área do usuário, impedindo destinos inválidos, como mover um diretório para dentro dele mesmo.
+- Permitir mover arquivos e diretórios para outro diretório do storage, impedindo destinos inválidos, como mover um diretório para dentro dele mesmo.
 - Permitir excluir arquivos e diretórios vazios somente após confirmação que identifique claramente o item afetado.
 - Atualizar os dados exibidos após cada mutação concluída sem exigir recarregamento manual da página.
 - Desabilitar ações em andamento para evitar envios duplicados.
@@ -54,18 +54,22 @@ O dashboard já apresenta Arquivos na navegação lateral, mas o item está desa
 
 ### Backend e segurança
 
-- Identificar o usuário por meio da autenticação vigente, sem aceitar nome de usuário arbitrário enviado pelo frontend para definir a área de armazenamento.
-- Resolver todas as operações dentro da pasta FTP do usuário autenticado e rejeitar travessia de diretórios, caminhos absolutos e links simbólicos.
-- Impedir que listagem, criação, renomeação, movimentação ou exclusão alcance arquivos de outro usuário.
-- Disponibilizar host público, porta e usuário em um contrato autenticado específico para os dados de conexão FTP.
-- Ampliar o contrato dos itens do storage com caminho relativo, tamanho em bytes e data da última alteração; tamanho poderá ser nulo para diretórios.
+- Manter o storage compartilhado e preservar a raiz FTP única utilizada pelas operações existentes.
+- Identificar o usuário por meio da autenticação vigente somente para preencher o username retornado nos dados de conexão.
+- Disponibilizar host público, porta e username FTP em um endpoint autenticado específico, sem retornar senha ou hash de senha.
+- Usar no username FTP o mesmo username empregado pelo usuário para acessar o painel.
+- Preservar a listagem recursiva em árvore e ampliar o contrato dos itens do storage com formato, tamanho em bytes e data da última alteração.
+- Representar o formato pela extensão do arquivo sem o ponto; diretórios e arquivos sem extensão devem retornar formato nulo.
+- Retornar tamanho nulo para diretórios e tamanho em bytes para arquivos.
+- Retornar a última alteração em formato de data e hora não ambíguo, com fuso ou offset explícito.
+- Resolver todas as operações dentro da raiz compartilhada e rejeitar travessia de diretórios, caminhos absolutos e links simbólicos.
 - Preservar as validações atuais de nomes, destinos existentes e exclusão apenas de diretórios vazios.
 - Não incluir senha ou hash de senha em respostas, logs ou mensagens de erro.
 
 ## Regras
 
-- A raiz apresentada na tela corresponde à pasta FTP do usuário autenticado e não pode ser renomeada, movida ou excluída.
-- Caminhos enviados à API são sempre relativos à raiz do usuário autenticado.
+- A raiz compartilhada apresentada na tela não pode ser renomeada, movida ou excluída.
+- Caminhos enviados nas operações de gerenciamento são sempre relativos à raiz compartilhada do storage.
 - Nomes vazios, `.` e `..`, separadores de caminho e destinos fora da raiz são inválidos.
 - A interface deve preservar autenticação, renovação de sessão e logout já existentes.
 - A página deve utilizar as dependências já instaladas no projeto.
@@ -88,10 +92,10 @@ O dashboard já apresenta Arquivos na navegação lateral, mas o item está desa
 - [ ] A sidebar destaca corretamente Dashboard ou Arquivos conforme a rota ativa e mantém os demais itens futuros inalterados.
 - [ ] A página apresenta host, porta e usuário FTP obtidos da API e exibe `Mesmo acesso do painel` como senha, sem expor segredo.
 - [ ] Host, porta e usuário podem ser copiados com retorno visual e acessível.
-- [ ] A listagem apresenta somente a área do usuário autenticado, com navegação por diretórios, filtro, tipo, tamanho e última alteração.
+- [ ] A listagem apresenta o storage compartilhado, com navegação por diretórios, filtro, tipo, formato, tamanho e última alteração.
 - [ ] O usuário consegue criar diretórios e renomear, mover e excluir itens respeitando as validações definidas.
 - [ ] Operações concluídas atualizam a listagem e operações com falha exibem mensagem segura com possibilidade de nova tentativa.
 - [ ] Carregamento, diretório vazio, filtro sem resultado, erro e ações em andamento possuem estados distintos e acessíveis.
-- [ ] Tentativas de acessar caminhos absolutos, travessias, links simbólicos ou áreas de outro usuário são rejeitadas pelo backend.
+- [ ] Tentativas de acessar caminhos absolutos, travessias ou links simbólicos são rejeitadas pelo backend.
 - [ ] A página é utilizável por teclado e se adapta a desktop e dispositivos móveis.
-- [ ] Testes automatizados cobrem contratos, isolamento do storage, operações principais, navegação e estados relevantes da interface.
+- [ ] Testes automatizados cobrem contratos, limites da raiz compartilhada, operações principais, navegação e estados relevantes da interface.
