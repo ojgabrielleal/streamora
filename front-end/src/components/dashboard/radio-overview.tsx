@@ -77,7 +77,7 @@ export function RadioOverview() {
             <div className="min-w-0">
               <p className="font-medium text-white">Próxima faixa</p>
               <p className="mt-1 text-sm text-violet-300">
-                Será exibida após a integração com o Liquidsoap
+                Aguardando integração com a transmissão
               </p>
               <span className="mt-3 inline-flex rounded-md bg-white/10 px-2 py-1 text-xs font-medium text-violet-100">
                 Em breve
