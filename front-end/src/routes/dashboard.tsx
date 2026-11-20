@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { playlistsQueryOptions } from '@/api/playlists/playlist-queries'
 import { logout as requestLogout } from '@/api/auth/auth-api'
+import { serviceStatusesQueryOptions } from '@/api/services/service-status-queries'
 import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar'
 import { ScheduleOverview } from '@/components/dashboard/playlist-overview'
 import { RadioOverview } from '@/components/dashboard/radio-overview'
@@ -16,6 +17,7 @@ export function DashboardPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
   const playlistsQuery = useQuery(playlistsQueryOptions())
+  const serviceStatusesQuery = useQuery(serviceStatusesQueryOptions())
 
   async function logout() {
     try {
@@ -106,7 +108,11 @@ export function DashboardPage() {
           </div>
 
           <aside aria-label="Estado da rádio" className="min-w-0 space-y-8">
-            <ServiceOverview />
+            <ServiceOverview
+              isError={serviceStatusesQuery.isError}
+              isPending={serviceStatusesQuery.isPending}
+              statuses={serviceStatusesQuery.data}
+            />
           </aside>
         </div>
       </main>

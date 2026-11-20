@@ -1,19 +1,52 @@
 import { RadioTower, ServerCog } from 'lucide-react'
 
+import type {
+  ServiceAvailabilityStatus,
+  ServiceStatuses,
+} from '@/api/services/service-status-types'
+
 const services = [
   {
     description: 'Icecast',
     icon: RadioTower,
+    id: 'icecast',
     name: 'Serviço de Transmissão',
   },
   {
     description: 'Liquidsoap',
     icon: ServerCog,
+    id: 'liquidsoap',
     name: 'Serviço de Auto DJ',
   },
-]
+] as const
 
-export function ServiceOverview() {
+type ServiceOverviewProps = {
+  isError: boolean
+  isPending: boolean
+  statuses?: ServiceStatuses
+}
+
+function statusLabel(
+  status: ServiceAvailabilityStatus | undefined,
+  isPending: boolean,
+  isError: boolean,
+) {
+  if (isPending) {
+    return 'Verificando'
+  }
+
+  if (isError || !status) {
+    return 'Indisponível'
+  }
+
+  return status === 'ONLINE' ? 'Online' : 'Offline'
+}
+
+export function ServiceOverview({
+  isError,
+  isPending,
+  statuses,
+}: ServiceOverviewProps) {
   return (
     <section aria-labelledby="service-overview-title" className="space-y-4">
       <div>
@@ -26,7 +59,7 @@ export function ServiceOverview() {
       </div>
 
       <div className="grid gap-4">
-        {services.map(({ description, icon: Icon, name }) => (
+        {services.map(({ description, icon: Icon, id, name }) => (
           <article
             className="flex min-h-28 items-center justify-between gap-4 rounded-2xl bg-linear-to-r from-violet-700 to-fuchsia-600 px-5 py-5 text-white shadow-lg shadow-violet-950/15 sm:px-6"
             key={name}
@@ -43,8 +76,12 @@ export function ServiceOverview() {
               </div>
             </div>
 
-            <span className="shrink-0 rounded-full border border-white/25 bg-violet-950/35 px-3 py-1.5 text-xs font-semibold shadow-sm">
-              Não monitorado
+            <span
+              aria-label={`${name}: ${statusLabel(statuses?.[id], isPending, isError)}`}
+              className="shrink-0 rounded-full border border-white/25 bg-violet-950/35 px-3 py-1.5 text-xs font-semibold shadow-sm"
+              role="status"
+            >
+              {statusLabel(statuses?.[id], isPending, isError)}
             </span>
           </article>
         ))}

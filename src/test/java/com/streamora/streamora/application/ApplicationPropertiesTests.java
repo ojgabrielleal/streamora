@@ -59,6 +59,19 @@ class ApplicationPropertiesTests {
 	}
 
 	@Test
+	void configuresIcecastStatusMonitoring() {
+		assertThat(PROPERTIES)
+			.containsEntry(
+				"icecast.status-url",
+				"${ICECAST_STATUS_URL:http://icecast:8000/status-json.xsl}"
+			)
+			.containsEntry(
+				"icecast.status-timeout-millis",
+				"${ICECAST_STATUS_TIMEOUT_MILLIS:1000}"
+			);
+	}
+
+	@Test
 	void configuresLiquidsoapControlWithInternalTechnicalValues() {
 		assertThat(PROPERTIES)
 			.containsEntry("liquidsoap.control-socket-path", "/run/liquidsoap/control.sock")

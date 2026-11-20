@@ -47,6 +47,11 @@ public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessCont
 		awaitRecovery();
 	}
 
+	@Override
+	public boolean isAvailable() {
+		return isAvailableUntil(Instant.now().plus(connectionTimeout));
+	}
+
 	private void sendRestartCommand() {
 		try (SocketChannel channel = connect(connectionTimeout)) {
 			write(channel, RESTART_COMMAND, connectionTimeout);
@@ -65,7 +70,7 @@ public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessCont
 		pauseBeforeRetry(deadline);
 
 		while (Instant.now().isBefore(deadline)) {
-			if (isAvailable(deadline)) {
+			if (isAvailableUntil(deadline)) {
 				return;
 			}
 
@@ -75,7 +80,7 @@ public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessCont
 		throw new LiquidsoapControlException("Liquidsoap did not recover within the configured timeout");
 	}
 
-	private boolean isAvailable(Instant recoveryDeadline) {
+	private boolean isAvailableUntil(Instant recoveryDeadline) {
 		Duration attemptTimeout = shorterDuration(
 			connectionTimeout,
 			Duration.between(Instant.now(), recoveryDeadline)

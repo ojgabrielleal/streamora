@@ -26,6 +26,37 @@ class UnixSocketLiquidsoapProcessControlTests {
 	Path temporaryDirectory;
 
 	@Test
+	void reportsAvailableControlForCompleteHealthResponse() throws Exception {
+		Path socketPath = temporaryDirectory.resolve("control.sock");
+		AtomicReference<String> healthCommand = new AtomicReference<>();
+		ServerSocketChannel server = bind(socketPath);
+		Thread serverThread = Thread.ofVirtual().start(() -> {
+			try (server; SocketChannel connection = server.accept()) {
+				healthCommand.set(readCommand(connection));
+				connection.write(StandardCharsets.UTF_8.encode("2.3.3\nEND\n"));
+			} catch (IOException ignored) {
+			}
+		});
+		UnixSocketLiquidsoapProcessControl processControl = processControl(socketPath, 1000, 2000, 20);
+
+		boolean available = processControl.isAvailable();
+		serverThread.join();
+
+		assertThat(available).isTrue();
+		assertThat(healthCommand.get()).isEqualTo("version\n");
+	}
+
+	@Test
+	void reportsUnavailableControlForMissingSocket() {
+		Path socketPath = temporaryDirectory.resolve("missing.sock");
+		UnixSocketLiquidsoapProcessControl processControl = processControl(socketPath, 50, 100, 10);
+
+		boolean available = processControl.isAvailable();
+
+		assertThat(available).isFalse();
+	}
+
+	@Test
 	void sendsFixedRestartCommandAndWaitsForNewControlConnection() throws Exception {
 		Path socketPath = temporaryDirectory.resolve("control.sock");
 		AtomicReference<String> restartCommand = new AtomicReference<>();

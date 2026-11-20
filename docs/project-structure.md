@@ -33,7 +33,8 @@ O código Java fica em `src/main/java/com/streamora/streamora/`:
 - `entity`: modelo persistido e tipos relacionados.
 - `exception`: exceções próprias da aplicação.
 - `filter`: filtros HTTP, incluindo autenticação.
-- `infrastructure`: integrações com Liquidsoap, Pure-FTPd e armazenamento.
+- `infrastructure`: integrações com Icecast, Liquidsoap, Pure-FTPd e
+  armazenamento.
 - `mapper`: conversão entre entities, DTOs e modelos de infraestrutura.
 - `repository`: acesso aos dados.
 - `service`: regras de negócio e coordenação dos casos de uso.

@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Playlist } from '@/api/playlists/playlist-types'
+import type { ServiceStatuses } from '@/api/services/service-status-types'
 import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar'
 import { ScheduleOverview } from '@/components/dashboard/playlist-overview'
 import { RadioOverview } from '@/components/dashboard/radio-overview'
@@ -41,15 +42,38 @@ describe('dashboard components', () => {
     expect(markup).not.toContain('0 ouvintes')
   })
 
-  it('identifies radio services without claiming an unverified status', () => {
-    const markup = renderToStaticMarkup(<ServiceOverview />)
+  it('shows the initial service verification', () => {
+    const markup = renderToStaticMarkup(
+      <ServiceOverview isError={false} isPending />,
+    )
 
     expect(markup).toContain('Serviço de Transmissão')
     expect(markup).toContain('Icecast')
     expect(markup).toContain('Serviço de Auto DJ')
     expect(markup).toContain('Liquidsoap')
-    expect(markup.match(/Não monitorado/g)).toHaveLength(2)
-    expect(markup).not.toContain('Executando')
+    expect(markup.match(/Verificando/g)).toHaveLength(4)
+  })
+
+  it('shows independent service statuses', () => {
+    const statuses: ServiceStatuses = {
+      icecast: 'ONLINE',
+      liquidsoap: 'OFFLINE',
+    }
+    const markup = renderToStaticMarkup(
+      <ServiceOverview isError={false} isPending={false} statuses={statuses} />,
+    )
+
+    expect(markup).toContain('Online')
+    expect(markup).toContain('Offline')
+    expect(markup).toContain('role="status"')
+  })
+
+  it('shows unavailable services when the API fails', () => {
+    const markup = renderToStaticMarkup(
+      <ServiceOverview isError isPending={false} />,
+    )
+
+    expect(markup.match(/Indisponível/g)).toHaveLength(4)
   })
 
   it('renders the configured Icecast transmission', () => {
