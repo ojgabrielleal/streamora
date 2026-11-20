@@ -10,7 +10,7 @@ streamora/
 ├── docs/           # documentação técnica e padrões
 ├── front-end/      # aplicação React e TypeScript
 ├── liquidsoap/     # configuração do fluxo de áudio
-├── specs/          # requisitos, planos, tarefas e revisões
+├── specs/          # template e specs numeradas
 ├── src/main/       # backend Spring Boot e recursos
 ├── src/test/       # testes do backend
 ├── .env.example
@@ -68,3 +68,5 @@ Recursos ficam em `src/main/resources/`; migrations Flyway, em
 - Prefira classes pequenas e interfaces em fronteiras relevantes ou quando
   houver mais de uma implementação.
 - Evite pacotes vazios e abstrações para necessidades apenas futuras.
+- `specs/_template/` define o layout canônico das specs e deve permanecer
+  sincronizado com `docs/spec-standards.md`.
