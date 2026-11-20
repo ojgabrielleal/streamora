@@ -7,6 +7,7 @@ import {
 
 import { HomePage } from '@/routes/index'
 import { DashboardPage } from '@/routes/dashboard'
+import { FilesPage } from '@/routes/files'
 import { RootRoute } from '@/routes/root'
 import { getAccessToken } from '@/lib/access-token'
 
@@ -40,7 +41,14 @@ const dashboardRoute = createRoute({
   component: DashboardPage,
 })
 
-const routeTree = rootRoute.addChildren([indexRoute, dashboardRoute])
+const filesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/arquivos',
+  beforeLoad: requireAccessToken,
+  component: FilesPage,
+})
+
+const routeTree = rootRoute.addChildren([indexRoute, dashboardRoute, filesRoute])
 
 export const router = createRouter({ routeTree })
 

@@ -84,6 +84,18 @@ public class LocalFtpFileStorage implements FtpFileStorage {
 	}
 
 	@Override
+	public void moveDirectory(String path, String targetDirectory) {
+		Path directory = requireDirectory(resolve(path, false));
+		Path target = requireDirectory(resolve(targetDirectory, true));
+
+		if (target.equals(directory) || target.startsWith(directory)) {
+			throw new FtpFileStorageException("FTP directory cannot be moved into itself");
+		}
+
+		move(directory, target.resolve(directory.getFileName()), "Unable to move FTP directory");
+	}
+
+	@Override
 	public void deleteDirectory(String path) {
 		Path directory = requireDirectory(resolve(path, false));
 
@@ -114,19 +126,28 @@ public class LocalFtpFileStorage implements FtpFileStorage {
 
 	private FtpFileEntry readEntry(Path path) {
 		rejectSymbolicLink(path);
+		var lastModified = lastModified(path);
 
 		if (Files.isDirectory(path, NO_FOLLOW_LINKS)) {
 			return new FtpFileEntry(
 				path.getFileName().toString(),
 				FtpFileType.DIRECTORY,
+				null,
+				null,
+				lastModified,
 				readChildren(path)
 			);
 		}
 
 		if (Files.isRegularFile(path, NO_FOLLOW_LINKS)) {
+			String name = path.getFileName().toString();
+
 			return new FtpFileEntry(
-				path.getFileName().toString(),
+				name,
 				FtpFileType.FILE,
+				fileFormat(name),
+				fileSize(path),
+				lastModified,
 				List.of()
 			);
 		}
@@ -134,6 +155,32 @@ public class LocalFtpFileStorage implements FtpFileStorage {
 		throw new FtpFileStorageException(
 			"Unsupported item in FTP storage: " + path.getFileName()
 		);
+	}
+
+	private String fileFormat(String name) {
+		int extensionSeparator = name.lastIndexOf('.');
+
+		if (extensionSeparator <= 0 || extensionSeparator == name.length() - 1) {
+			return null;
+		}
+
+		return name.substring(extensionSeparator + 1).toLowerCase();
+	}
+
+	private long fileSize(Path path) {
+		try {
+			return Files.size(path);
+		} catch (IOException exception) {
+			throw new FtpFileStorageException("Unable to read FTP file size", exception);
+		}
+	}
+
+	private java.time.Instant lastModified(Path path) {
+		try {
+			return Files.getLastModifiedTime(path, NO_FOLLOW_LINKS).toInstant();
+		} catch (IOException exception) {
+			throw new FtpFileStorageException("Unable to read FTP item last modification", exception);
+		}
 	}
 
 	private Path resolve(String path, boolean allowRoot) {

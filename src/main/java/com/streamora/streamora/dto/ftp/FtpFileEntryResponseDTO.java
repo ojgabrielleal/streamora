@@ -1,5 +1,6 @@
 package com.streamora.streamora.dto.ftp;
 
+import java.time.Instant;
 import java.util.List;
 
 import com.streamora.streamora.infrastructure.pureFtpd.storage.records.FtpFileType;
@@ -17,6 +18,12 @@ public record FtpFileEntryResponseDTO(
 		allowableValues = {"DIRECTORY", "FILE"}
 	)
 	FtpFileType type,
+	@Schema(description = "Extensão do arquivo sem o ponto", example = "mp3", nullable = true)
+	String format,
+	@Schema(description = "Tamanho do arquivo em bytes", example = "5242880", nullable = true)
+	Long size,
+	@Schema(description = "Data e hora da última alteração", example = "2026-11-20T14:30:00Z")
+	Instant lastModified,
 	@ArraySchema(
 		arraySchema = @Schema(description = "Itens contidos no diretório"),
 		schema = @Schema(implementation = FtpFileEntryResponseDTO.class)

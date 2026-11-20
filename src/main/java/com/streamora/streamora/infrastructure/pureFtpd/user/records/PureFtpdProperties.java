@@ -8,6 +8,8 @@ public record PureFtpdProperties(
 	String passwordFile,
 	String databaseFile,
 	String homeDirectory,
+	String publicHost,
+	int port,
 	int uid,
 	int gid
 ) {}

@@ -39,6 +39,10 @@ public class FtpFileService {
 		fileStorage.renameDirectory(path, newName);
 	}
 
+	public void moveDirectory(String path, String targetDirectory) {
+		fileStorage.moveDirectory(path, targetDirectory);
+	}
+
 	public void deleteDirectory(String path) {
 		fileStorage.deleteDirectory(path);
 	}

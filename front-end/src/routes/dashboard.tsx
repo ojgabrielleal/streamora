@@ -1,81 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
-import { Menu } from 'lucide-react'
-import { useState } from 'react'
-
 import { playlistsQueryOptions } from '@/api/playlists/playlist-queries'
-import { logout as requestLogout } from '@/api/auth/auth-api'
 import { serviceStatusesQueryOptions } from '@/api/services/service-status-queries'
-import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar'
 import { ScheduleOverview } from '@/components/dashboard/playlist-overview'
 import { RadioOverview } from '@/components/dashboard/radio-overview'
 import { ServiceOverview } from '@/components/dashboard/service-overview'
 import { StreamOverview } from '@/components/dashboard/stream-overview'
-import { clearAccessToken } from '@/lib/access-token'
+import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
 
 export function DashboardPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const navigate = useNavigate()
   const playlistsQuery = useQuery(playlistsQueryOptions())
   const serviceStatusesQuery = useQuery(serviceStatusesQueryOptions())
 
-  async function logout() {
-    try {
-      await requestLogout()
-    } finally {
-      clearAccessToken()
-      setIsMenuOpen(false)
-      await navigate({ to: '/' })
-    }
-  }
-
   return (
-    <div className="min-h-svh bg-violet-50/50 lg:flex">
-      <div className="hidden h-svh shrink-0 lg:sticky lg:top-0 lg:block">
-        <DashboardSidebar onLogout={() => void logout()} />
-      </div>
-
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="presentation">
-          <button
-            aria-label="Fechar menu"
-            className="absolute inset-0 bg-violet-950/55 backdrop-blur-sm"
-            onClick={() => setIsMenuOpen(false)}
-            type="button"
-          />
-          <div className="relative h-full w-72" role="dialog" aria-modal="true">
-            <DashboardSidebar
-              mobile
-              onClose={() => setIsMenuOpen(false)}
-              onLogout={() => void logout()}
-            />
-          </div>
-        </div>
-      )}
-
-      <main className="min-w-0 flex-1" inert={isMenuOpen ? true : undefined}>
-        <header className="border-b border-violet-100 bg-white/85 backdrop-blur">
-          <div className="mx-auto flex h-24 w-full max-w-[96rem] items-center gap-4 px-4 sm:px-8 lg:px-12 xl:px-14">
-            <button
-              aria-expanded={isMenuOpen}
-              aria-label="Abrir menu"
-              className="rounded-xl border border-violet-100 bg-white p-2.5 text-violet-800 shadow-sm transition hover:bg-violet-50 focus-visible:ring-2 focus-visible:ring-violet-300 lg:hidden"
-              onClick={() => setIsMenuOpen(true)}
-              type="button"
-            >
-              <Menu aria-hidden="true" className="size-5" />
-            </button>
-            <div>
-              <h1 className="text-lg font-semibold tracking-tight text-violet-950 sm:text-xl">
-                Visão geral
-              </h1>
-              <p className="text-xs text-muted-foreground sm:text-sm">
-                Acompanhe a configuração da sua rádio.
-              </p>
-            </div>
-          </div>
-        </header>
-
+    <AuthenticatedLayout
+      activeDestination="dashboard"
+      description="Acompanhe a configuração da sua rádio."
+      title="Visão geral"
+    >
         <div className="mx-auto grid max-w-[96rem] items-start gap-8 px-4 py-8 sm:px-8 sm:py-10 lg:px-12 xl:grid-cols-[minmax(0,3fr)_minmax(22rem,2fr)] xl:px-14 xl:py-12">
           <div className="min-w-0 space-y-8">
             <RadioOverview />
@@ -115,7 +56,6 @@ export function DashboardPage() {
             />
           </aside>
         </div>
-      </main>
-    </div>
+    </AuthenticatedLayout>
   )
 }

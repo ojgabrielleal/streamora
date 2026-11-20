@@ -40,20 +40,45 @@ class LocalFtpFileStorageTests {
 
 		List<FtpFileEntry> fileTree = storage.list();
 
-		assertThat(fileTree).containsExactly(
-			new FtpFileEntry(
-				"alpha",
-				FtpFileType.DIRECTORY,
-				List.of(new FtpFileEntry("track.mp3", FtpFileType.FILE, List.of()))
-			),
-			new FtpFileEntry(
-				"zeta",
-				FtpFileType.DIRECTORY,
-				List.of(new FtpFileEntry("nested", FtpFileType.DIRECTORY, List.of()))
-			),
-			new FtpFileEntry("alpha.mp3", FtpFileType.FILE, List.of()),
-			new FtpFileEntry("zeta.mp3", FtpFileType.FILE, List.of())
-		);
+		assertThat(fileTree)
+			.extracting(FtpFileEntry::name)
+			.containsExactly("alpha", "zeta", "alpha.mp3", "zeta.mp3");
+		assertThat(fileTree.getFirst().children())
+			.extracting(FtpFileEntry::name)
+			.containsExactly("track.mp3");
+		assertThat(fileTree.get(1).children())
+			.extracting(FtpFileEntry::name)
+			.containsExactly("nested");
+	}
+
+	@Test
+	void includesFormatSizeAndLastModification() throws IOException {
+		Files.writeString(root.resolve("audio.MP3"), "audio");
+		Files.writeString(root.resolve("README"), "readme");
+		Files.createDirectory(root.resolve("programas"));
+
+		List<FtpFileEntry> fileTree = storage.list();
+
+		assertThat(fileTree)
+			.allSatisfy(entry -> assertThat(entry.lastModified()).isNotNull());
+		assertThat(fileTree)
+			.filteredOn(entry -> entry.name().equals("audio.MP3"))
+			.singleElement()
+			.satisfies(entry -> {
+				assertThat(entry.format()).isEqualTo("mp3");
+				assertThat(entry.size()).isEqualTo(5L);
+			});
+		assertThat(fileTree)
+			.filteredOn(entry -> entry.name().equals("README"))
+			.singleElement()
+			.satisfies(entry -> assertThat(entry.format()).isNull());
+		assertThat(fileTree)
+			.filteredOn(entry -> entry.type() == FtpFileType.DIRECTORY)
+			.singleElement()
+			.satisfies(entry -> {
+				assertThat(entry.format()).isNull();
+				assertThat(entry.size()).isNull();
+			});
 	}
 
 	@Test
@@ -110,6 +135,27 @@ class LocalFtpFileStorageTests {
 
 		assertThat(root.resolve("new-directory")).doesNotExist();
 		assertThat(root.resolve("renamed-directory")).isDirectory();
+	}
+
+	@Test
+	void movesDirectoryToExistingDirectory() throws IOException {
+		Path target = Files.createDirectory(root.resolve("target"));
+		Path directory = Files.createDirectory(root.resolve("directory"));
+		Files.writeString(directory.resolve("audio.mp3"), "content");
+
+		storage.moveDirectory("directory", "target");
+
+		assertThat(root.resolve("directory")).doesNotExist();
+		assertThat(target.resolve("directory/audio.mp3")).hasContent("content");
+	}
+
+	@Test
+	void rejectsMovingDirectoryIntoItself() throws IOException {
+		Files.createDirectories(root.resolve("directory/nested"));
+
+		assertThatThrownBy(() -> storage.moveDirectory("directory", "directory/nested"))
+			.isInstanceOf(FtpFileStorageException.class)
+			.hasMessage("FTP directory cannot be moved into itself");
 	}
 
 	@Test
@@ -252,6 +298,8 @@ class LocalFtpFileStorageTests {
 			"/credentials/pureftpd.passwd",
 			"/credentials/pureftpd.pdb",
 			homeDirectory.toString(),
+			"localhost",
+			21,
 			1000,
 			1001
 		);

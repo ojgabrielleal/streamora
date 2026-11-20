@@ -28,6 +28,7 @@ import com.streamora.streamora.filter.JwtAuthenticationFilter;
 import com.streamora.streamora.infrastructure.pureFtpd.storage.exception.FtpFileStorageException;
 import com.streamora.streamora.infrastructure.pureFtpd.storage.records.FtpFileEntry;
 import com.streamora.streamora.infrastructure.pureFtpd.storage.records.FtpFileType;
+import com.streamora.streamora.infrastructure.pureFtpd.user.records.PureFtpdProperties;
 import com.streamora.streamora.service.FtpFileService;
 import com.streamora.streamora.service.JwtService;
 
@@ -45,6 +46,9 @@ class FtpFileControllerTests {
 
 	@MockitoBean
 	private JwtService jwtService;
+
+	@MockitoBean
+	private PureFtpdProperties pureFtpdProperties;
 
 	@BeforeEach
 	void acceptAccessToken() {
@@ -73,6 +77,26 @@ class FtpFileControllerTests {
 		.andExpect(jsonPath("$[0].children[0].name").value("abertura.mp3"));
 
 		verify(ftpFileService).list();
+	}
+
+	@Test
+	void returnsPublicFtpConnectionForAuthenticatedUser() throws Exception {
+		when(jwtService.validateAccessTokenAndGetUsername(ACCESS_TOKEN))
+			.thenReturn(java.util.Optional.of("streamora-user"));
+		when(pureFtpdProperties.publicHost())
+			.thenReturn("ftp.streamora.example");
+		when(pureFtpdProperties.port())
+			.thenReturn(2121);
+
+		mockMvc.perform(
+			get("/storage/connection")
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + ACCESS_TOKEN)
+		)
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.host").value("ftp.streamora.example"))
+		.andExpect(jsonPath("$.port").value(2121))
+		.andExpect(jsonPath("$.username").value("streamora-user"))
+		.andExpect(jsonPath("$.password").doesNotExist());
 	}
 
 	@Test
@@ -150,6 +174,22 @@ class FtpFileControllerTests {
 		.andExpect(content().string(""));
 
 		verify(ftpFileService).renameDirectory("programas/jornal", "noticias");
+	}
+
+	@Test
+	void movesDirectory() throws Exception {
+		mockMvc.perform(
+			put("/storage/directories/move")
+				.header(HttpHeaders.AUTHORIZATION, "Bearer " + ACCESS_TOKEN)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{"path":"programas/jornal","targetDirectory":"arquivo"}
+					""")
+		)
+		.andExpect(status().isNoContent())
+		.andExpect(content().string(""));
+
+		verify(ftpFileService).moveDirectory("programas/jornal", "arquivo");
 	}
 
 	@Test

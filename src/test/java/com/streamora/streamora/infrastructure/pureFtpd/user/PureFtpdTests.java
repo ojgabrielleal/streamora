@@ -35,6 +35,8 @@ class PureFtpdTests {
 				PASSWORD_FILE,
 				DATABASE_FILE,
 				"/home/ftpusers",
+				"localhost",
+				21,
 				1000,
 				1001
 			)

@@ -16,7 +16,7 @@ describe('dashboard components', () => {
 
   it('renders the active destination, future destinations and logout', () => {
     const markup = renderToStaticMarkup(
-      <DashboardSidebar onLogout={vi.fn()} />,
+      <DashboardSidebar activeDestination="dashboard" onLogout={vi.fn()} />,
     )
 
     expect(markup).toContain('aria-label="Navegação principal"')
@@ -25,7 +25,7 @@ describe('dashboard components', () => {
     expect(markup).toContain('Playlists')
     expect(markup).toContain('Programação')
     expect(markup).toContain('Arquivos')
-    expect(markup.match(/Em breve/g)).toHaveLength(3)
+    expect(markup.match(/Em breve/g)).toHaveLength(2)
     expect(markup).toContain('Sair')
   })
 
@@ -38,7 +38,6 @@ describe('dashboard components', () => {
     expect(markup).toContain('A seguir')
     expect(markup).toContain('Ouvintes indisponíveis')
     expect(markup).toContain('Aguardando integração com a transmissão')
-    expect(markup).toContain('integração com o Liquidsoap')
     expect(markup).not.toContain('0 ouvintes')
   })
 

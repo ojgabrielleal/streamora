@@ -77,6 +77,18 @@ class JwtServiceTests {
 	}
 
 	@Test
+	void validatesAccessTokenAndGetsUsername() {
+		AuthTokens tokens = jwtService.generateTokens(USERNAME);
+
+		assertThat(jwtService.validateAccessTokenAndGetUsername(tokens.accessToken()))
+			.contains(USERNAME);
+		assertThat(jwtService.validateAccessTokenAndGetUsername(tokens.refreshToken()))
+			.isEmpty();
+		assertThat(jwtService.validateAccessTokenAndGetUsername("invalid"))
+			.isEmpty();
+	}
+
+	@Test
 	void validatesOnlyRefreshTokenAsRefreshToken() {
 		AuthTokens tokens = jwtService.generateTokens(USERNAME);
 

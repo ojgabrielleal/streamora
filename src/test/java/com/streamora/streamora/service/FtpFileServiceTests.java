@@ -73,6 +73,13 @@ class FtpFileServiceTests {
 	}
 
 	@Test
+	void movesDirectory() {
+		fileService.moveDirectory("archive", "old");
+
+		verify(fileStorage).moveDirectory("archive", "old");
+	}
+
+	@Test
 	void deletesDirectory() {
 		fileService.deleteDirectory("archive");
 

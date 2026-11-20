@@ -12,6 +12,9 @@ public final class FtpFileEntryMapper {
 		return new FtpFileEntryResponseDTO(
 			ftpFileEntry.name(),
 			ftpFileEntry.type(),
+			ftpFileEntry.format(),
+			ftpFileEntry.size(),
+			ftpFileEntry.lastModified(),
 			ftpFileEntry.children().stream()
 				.map(FtpFileEntryMapper::toResponse)
 				.toList()

@@ -18,5 +18,7 @@ public interface FtpFileStorage {
 
 	void renameDirectory(String path, String newName);
 
+	void moveDirectory(String path, String targetDirectory);
+
 	void deleteDirectory(String path);
 }

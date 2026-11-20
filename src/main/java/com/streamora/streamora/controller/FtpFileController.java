@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,13 +17,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.streamora.streamora.dto.ftp.FtpDirectoryCreateRequestDTO;
+import com.streamora.streamora.dto.ftp.FtpConnectionResponseDTO;
 import com.streamora.streamora.dto.ftp.FtpFileEntryResponseDTO;
 import com.streamora.streamora.dto.ftp.FtpMoveRequestDTO;
 import com.streamora.streamora.dto.ftp.FtpRenameRequestDTO;
 import com.streamora.streamora.dto.ftp.FtpStorageErrorDTO;
 import com.streamora.streamora.infrastructure.pureFtpd.storage.exception.FtpFileStorageException;
 import com.streamora.streamora.mapper.FtpFileEntryMapper;
+import com.streamora.streamora.infrastructure.pureFtpd.user.records.PureFtpdProperties;
 import com.streamora.streamora.service.FtpFileService;
+import com.streamora.streamora.service.JwtService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,6 +45,25 @@ import lombok.RequiredArgsConstructor;
 public class FtpFileController {
 
 	private final FtpFileService ftpFileService;
+	private final JwtService jwtService;
+	private final PureFtpdProperties pureFtpdProperties;
+
+	@GetMapping("/connection")
+	@Operation(summary = "Consultar dados públicos de conexão FTP")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "Dados de conexão encontrados"),
+		@ApiResponse(responseCode = "401", description = "Autenticação necessária")
+	})
+	public FtpConnectionResponseDTO connection(Authentication authentication) {
+		String username = jwtService.validateAccessTokenAndGetUsername(authentication.getName())
+			.orElseThrow(() -> new IllegalStateException("Authenticated token has no username"));
+
+		return new FtpConnectionResponseDTO(
+			pureFtpdProperties.publicHost(),
+			pureFtpdProperties.port(),
+			username
+		);
+	}
 
 	@GetMapping
 	@Operation(summary = "Listar árvore do storage FTP")
@@ -165,6 +188,26 @@ public class FtpFileController {
 	)
 	{
 		ftpFileService.renameDirectory(ftpRenameRequest.path(), ftpRenameRequest.newName());
+	}
+
+	@PutMapping("/directories/move")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Operation(summary = "Mover diretório")
+	@ApiResponses({
+		@ApiResponse(responseCode = "204", description = "Diretório movido"),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Falha ao mover o diretório",
+			content = @Content(schema = @Schema(implementation = FtpStorageErrorDTO.class))
+		),
+		@ApiResponse(responseCode = "401", description = "Autenticação necessária")
+	})
+	public void moveDirectory(
+		@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Diretório e destino", required = true)
+		@RequestBody FtpMoveRequestDTO ftpMoveRequest
+	)
+	{
+		ftpFileService.moveDirectory(ftpMoveRequest.path(), ftpMoveRequest.targetDirectory());
 	}
 
 	@DeleteMapping("/directories")

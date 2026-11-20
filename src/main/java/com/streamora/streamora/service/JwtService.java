@@ -46,6 +46,11 @@ public class JwtService {
 		return validateTokens(token, ACCESS_TOKEN_TYPE);
 	}
 
+	public Optional<String> validateAccessTokenAndGetUsername(String token) {
+		return decodeToken(token, ACCESS_TOKEN_TYPE)
+			.map(decodedToken -> decodedToken.getSubject());
+	}
+
 	public boolean validateRefreshToken(String token) {
 		if (token == null || token.isBlank()) {
 			return false;
