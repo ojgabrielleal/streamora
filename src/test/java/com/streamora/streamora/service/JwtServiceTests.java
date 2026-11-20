@@ -99,14 +99,14 @@ class JwtServiceTests {
 	}
 
 	@Test
-	void readsSubjectOnlyFromValidRefreshToken() {
+	void validatesRefreshTokenAndGetsUsernameForSessionRenewal() {
 		AuthTokens tokens = jwtService.generateTokens(USERNAME);
 
-		assertThat(jwtService.getRefreshTokenSubject(tokens.refreshToken()))
+		assertThat(jwtService.validateRefreshTokenAndGetUsernameForSessionRenewal(tokens.refreshToken()))
 			.contains(USERNAME);
-		assertThat(jwtService.getRefreshTokenSubject(tokens.accessToken()))
+		assertThat(jwtService.validateRefreshTokenAndGetUsernameForSessionRenewal(tokens.accessToken()))
 			.isEmpty();
-		assertThat(jwtService.getRefreshTokenSubject("invalid"))
+		assertThat(jwtService.validateRefreshTokenAndGetUsernameForSessionRenewal("invalid"))
 			.isEmpty();
 	}
 

@@ -54,7 +54,7 @@ public class JwtService {
 		return validateTokens(token, REFRESH_TOKEN_TYPE);
 	}
 
-	public Optional<String> getRefreshTokenSubject(String token) {
+	public Optional<String> validateRefreshTokenAndGetUsernameForSessionRenewal(String token) {
 		return decodeToken(token, REFRESH_TOKEN_TYPE)
 			.map(DecodedJWT::getSubject);
 	}

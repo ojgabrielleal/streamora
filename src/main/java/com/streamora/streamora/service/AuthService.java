@@ -42,7 +42,7 @@ public class AuthService {
 	}
 
 	public AuthTokens refresh(String refreshToken) {
-		String username = jwtService.getRefreshTokenSubject(refreshToken)
+		String username = jwtService.validateRefreshTokenAndGetUsernameForSessionRenewal(refreshToken)
 			.orElseThrow(this::invalidRefreshToken);
 
 		return jwtService.generateTokens(username);

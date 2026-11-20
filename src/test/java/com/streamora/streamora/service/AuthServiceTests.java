@@ -63,7 +63,7 @@ class AuthServiceTests {
 	void renewsTokensFromValidRefreshToken() {
 		AuthTokens generatedTokens = new AuthTokens("new-access-token", "new-refresh-token");
 
-		when(jwtService.getRefreshTokenSubject("refresh-token"))
+		when(jwtService.validateRefreshTokenAndGetUsernameForSessionRenewal("refresh-token"))
 			.thenReturn(Optional.of("username1"));
 		when(jwtService.generateTokens("username1"))
 			.thenReturn(generatedTokens);
@@ -74,7 +74,7 @@ class AuthServiceTests {
 
 	@Test
 	void rejectsInvalidRefreshToken() {
-		when(jwtService.getRefreshTokenSubject("invalid"))
+		when(jwtService.validateRefreshTokenAndGetUsernameForSessionRenewal("invalid"))
 			.thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> authService.refresh("invalid"))
