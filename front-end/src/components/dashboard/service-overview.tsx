@@ -42,6 +42,20 @@ function statusLabel(
   return status === 'ONLINE' ? 'Online' : 'Offline'
 }
 
+function statusBadgeClass(
+  status: ServiceAvailabilityStatus | undefined,
+  isPending: boolean,
+  isError: boolean,
+) {
+  if (isPending || isError || !status) {
+    return 'bg-violet-950/35'
+  }
+
+  return status === 'ONLINE'
+    ? 'bg-emerald-600'
+    : 'bg-red-600'
+}
+
 export function ServiceOverview({
   isError,
   isPending,
@@ -78,7 +92,7 @@ export function ServiceOverview({
 
             <span
               aria-label={`${name}: ${statusLabel(statuses?.[id], isPending, isError)}`}
-              className="shrink-0 rounded-full border border-white/25 bg-violet-950/35 px-3 py-1.5 text-xs font-semibold shadow-sm"
+              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold shadow-sm ${statusBadgeClass(statuses?.[id], isPending, isError)}`}
               role="status"
             >
               {statusLabel(statuses?.[id], isPending, isError)}

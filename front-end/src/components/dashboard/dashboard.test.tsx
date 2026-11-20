@@ -65,6 +65,8 @@ describe('dashboard components', () => {
 
     expect(markup).toContain('Online')
     expect(markup).toContain('Offline')
+    expect(markup).toContain('bg-emerald-600')
+    expect(markup).toContain('bg-red-600')
     expect(markup).toContain('role="status"')
   })
 
