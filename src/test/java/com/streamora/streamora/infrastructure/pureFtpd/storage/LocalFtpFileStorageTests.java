@@ -41,13 +41,13 @@ class LocalFtpFileStorageTests {
 		List<FtpFileEntry> fileTree = storage.list();
 
 		assertThat(fileTree)
-			.extracting(FtpFileEntry::name)
+			.extracting(entry -> entry.name())
 			.containsExactly("alpha", "zeta", "alpha.mp3", "zeta.mp3");
 		assertThat(fileTree.getFirst().children())
-			.extracting(FtpFileEntry::name)
+			.extracting(entry -> entry.name())
 			.containsExactly("track.mp3");
 		assertThat(fileTree.get(1).children())
-			.extracting(FtpFileEntry::name)
+			.extracting(entry -> entry.name())
 			.containsExactly("nested");
 	}
 
