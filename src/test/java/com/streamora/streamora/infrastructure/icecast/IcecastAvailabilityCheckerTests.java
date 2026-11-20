@@ -12,6 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 
 import com.streamora.streamora.infrastructure.icecast.records.IcecastProperties;
 
@@ -29,7 +30,10 @@ class IcecastAvailabilityCheckerTests {
 		HttpResponse<String> response = response(200, "{\"icestats\":{}}");
 		doReturn(response)
 			.when(httpClient)
-			.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
+			.send(
+				any(HttpRequest.class),
+				ArgumentMatchers.<HttpResponse.BodyHandler<String>>any()
+			);
 		IcecastAvailabilityChecker checker = new IcecastAvailabilityChecker(httpClient, PROPERTIES);
 
 		boolean available = checker.isAvailable();
@@ -42,7 +46,10 @@ class IcecastAvailabilityCheckerTests {
 		HttpResponse<String> response = response(200, "{}");
 		doReturn(response)
 			.when(httpClient)
-			.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
+			.send(
+				any(HttpRequest.class),
+				ArgumentMatchers.<HttpResponse.BodyHandler<String>>any()
+			);
 		IcecastAvailabilityChecker checker = new IcecastAvailabilityChecker(httpClient, PROPERTIES);
 
 		boolean available = checker.isAvailable();
@@ -55,7 +62,10 @@ class IcecastAvailabilityCheckerTests {
 		HttpResponse<String> response = response(503, "{\"icestats\":{}}");
 		doReturn(response)
 			.when(httpClient)
-			.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
+			.send(
+				any(HttpRequest.class),
+				ArgumentMatchers.<HttpResponse.BodyHandler<String>>any()
+			);
 		IcecastAvailabilityChecker checker = new IcecastAvailabilityChecker(httpClient, PROPERTIES);
 
 		boolean available = checker.isAvailable();
@@ -65,7 +75,10 @@ class IcecastAvailabilityCheckerTests {
 
 	@Test
 	void reportsOfflineForConnectionFailure() throws Exception {
-		when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+		when(httpClient.send(
+			any(HttpRequest.class),
+			ArgumentMatchers.<HttpResponse.BodyHandler<String>>any()
+		))
 			.thenThrow(new IOException("unavailable"));
 		IcecastAvailabilityChecker checker = new IcecastAvailabilityChecker(httpClient, PROPERTIES);
 
@@ -74,9 +87,8 @@ class IcecastAvailabilityCheckerTests {
 		assertThat(available).isFalse();
 	}
 
-	@SuppressWarnings("unchecked")
 	private HttpResponse<String> response(int statusCode, String body) {
-		HttpResponse<String> response = mock(HttpResponse.class);
+		HttpResponse<String> response = mock();
 		when(response.statusCode()).thenReturn(statusCode);
 		when(response.body()).thenReturn(body);
 
