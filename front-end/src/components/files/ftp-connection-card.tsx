@@ -69,7 +69,7 @@ export function FtpConnectionCard({
           </dl>
           <p className="flex items-center gap-2 border-t border-white/10 bg-violet-950 px-5 py-3 text-xs text-violet-200">
             <KeyRound aria-hidden="true" className="size-4 shrink-0" />
-            Para conectar, use a mesma senha de acesso ao painel.
+            Para conectar, use o mesmo usuário e senha de acesso ao painel.
           </p>
         </div>
       )}
