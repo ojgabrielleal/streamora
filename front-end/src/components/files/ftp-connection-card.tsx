@@ -76,7 +76,7 @@ export function FtpConnectionCard({
               <KeyRound aria-hidden="true" className="size-4" /> Senha
             </dt>
             <dd className="mt-2 truncate text-sm font-medium">
-              Mesmo acesso do painel
+              A mesma senha usada no painel
             </dd>
           </div>
         </dl>

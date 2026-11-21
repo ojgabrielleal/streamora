@@ -18,7 +18,7 @@ describe('file components', () => {
 
     expect(markup).toContain('ftp.example.com')
     expect(markup).toContain('radio')
-    expect(markup).toContain('Mesmo acesso do painel')
+    expect(markup).toContain('A mesma senha usada no painel')
     expect(markup).not.toContain('type="password"')
   })
 
