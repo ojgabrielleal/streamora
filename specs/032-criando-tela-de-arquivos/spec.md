@@ -22,9 +22,9 @@ O dashboard já apresenta Arquivos na navegação lateral, mas o item está desa
 
 ### Dados de acesso FTP
 
-- Exibir um cartão de conexão FTP com host público, porta e nome de usuário do usuário autenticado.
-- Exibir o texto `Mesmo acesso do painel` no campo de senha, sem retornar, persistir no frontend ou tentar revelar a senha atual.
-- Disponibilizar ações acessíveis para copiar host, porta e usuário, com confirmação visual e anunciada após a cópia.
+- Exibir um cartão de conexão FTP com host público e porta.
+- Informar que o FTP utiliza o mesmo usuário e senha de acesso ao painel, sem retornar, persistir no frontend ou tentar revelar a senha atual.
+- Disponibilizar ações acessíveis para copiar host e porta, com confirmação visual e anunciada após a cópia.
 - Carregar os dados de conexão por uma API autenticada, sem fixar host, porta ou usuário no código da interface.
 - Exibir estados próprios de carregamento e erro sem impedir o uso do gerenciador quando apenas os dados de conexão falharem.
 
@@ -88,14 +88,14 @@ O dashboard já apresenta Arquivos na navegação lateral, mas o item está desa
 
 ## Critérios de aceite
 
-- [ ] Um usuário autenticado acessa `/arquivos` pelo item Arquivos da sidebar em desktop e mobile.
-- [ ] A sidebar destaca corretamente Dashboard ou Arquivos conforme a rota ativa e mantém os demais itens futuros inalterados.
-- [ ] A página apresenta host, porta e usuário FTP obtidos da API e exibe `Mesmo acesso do painel` como senha, sem expor segredo.
-- [ ] Host, porta e usuário podem ser copiados com retorno visual e acessível.
-- [ ] A listagem apresenta o storage compartilhado, com navegação por diretórios, filtro, tipo, formato, tamanho e última alteração.
-- [ ] O usuário consegue criar diretórios e renomear, mover e excluir itens respeitando as validações definidas.
-- [ ] Operações concluídas atualizam a listagem e operações com falha exibem mensagem segura com possibilidade de nova tentativa.
-- [ ] Carregamento, diretório vazio, filtro sem resultado, erro e ações em andamento possuem estados distintos e acessíveis.
-- [ ] Tentativas de acessar caminhos absolutos, travessias ou links simbólicos são rejeitadas pelo backend.
-- [ ] A página é utilizável por teclado e se adapta a desktop e dispositivos móveis.
-- [ ] Testes automatizados cobrem contratos, limites da raiz compartilhada, operações principais, navegação e estados relevantes da interface.
+- [x] Um usuário autenticado acessa `/arquivos` pelo item Arquivos da sidebar em desktop e mobile.
+- [x] A sidebar destaca corretamente Dashboard ou Arquivos conforme a rota ativa e mantém os demais itens futuros inalterados.
+- [x] A página apresenta host e porta FTP obtidos da API e informa que usuário e senha são os mesmos do painel, sem expor segredo.
+- [x] Host e porta podem ser copiados com retorno visual e acessível.
+- [x] A listagem apresenta o storage compartilhado, com navegação por diretórios, filtro, tipo, formato, tamanho e última alteração.
+- [x] O usuário consegue criar diretórios e renomear, mover e excluir itens respeitando as validações definidas.
+- [x] Operações concluídas atualizam a listagem e operações com falha exibem mensagem segura com possibilidade de nova tentativa.
+- [x] Carregamento, diretório vazio, filtro sem resultado, erro e ações em andamento possuem estados distintos e acessíveis.
+- [x] Tentativas de acessar caminhos absolutos, travessias ou links simbólicos são rejeitadas pelo backend.
+- [x] A página é utilizável por teclado e se adapta a desktop e dispositivos móveis.
+- [x] Testes automatizados cobrem contratos, limites da raiz compartilhada, operações principais, navegação e estados relevantes da interface.

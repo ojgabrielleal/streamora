@@ -8,7 +8,7 @@ Evoluir o backend para expor os dados públicos de conexão e completar os itens
 
 - Obter o username exclusivamente do contexto de segurança para montar os dados de acesso, sem alterar a raiz compartilhada do storage.
 - Representar caminhos da API como caminhos relativos à raiz FTP compartilhada.
-- Manter a senha fora dos contratos; a interface exibirá `Mesmo acesso do painel` no campo correspondente.
+- Manter a senha fora dos contratos; a interface informará que usuário e senha do FTP são os mesmos usados no painel.
 - Preservar a resposta recursiva em árvore da listagem atual.
 - Acrescentar formato, tamanho e última alteração ao DTO de item.
 - Derivar formato da extensão do arquivo no backend e usar valor nulo para diretórios e arquivos sem extensão.
@@ -50,7 +50,7 @@ Evoluir o backend para expor os dados públicos de conexão e completar os itens
 - Testar os endpoints de conexão e storage com usuário autenticado, não autenticado e respostas de erro.
 - Testar tipos, serialização, URLs e query params no cliente frontend.
 - Testar sidebar ativa, proteção da rota, menu móvel e logout no shell compartilhado.
-- Testar cartão FTP, cópia, breadcrumbs, filtro, estados vazio/erro/carregamento e ações do gerenciador.
+- Testar cartão FTP, cópia de host e porta, orientação sobre as credenciais, breadcrumbs, filtro, estados vazio/erro/carregamento e ações do gerenciador.
 - Testar atualização da listagem após mutações e prevenção de submissões duplicadas.
 
 ## Validação

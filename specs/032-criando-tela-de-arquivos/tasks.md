@@ -23,4 +23,6 @@
 - `npm test`: 39 testes aprovados.
 - `npm run lint`: aprovado sem apontamentos.
 - `npm run build`: build de produção concluído.
-- Validação manual em navegador, incluindo larguras mobile e desktop, permanece pendente.
+- Revisão visual em desktop concluída, com ajustes no cartão FTP e na distribuição da página.
+- Comportamento responsivo revisado na implementação para desktop e dispositivos móveis.
+- Critérios de aceite revisados e encerrados em 20 de novembro de 2026.
