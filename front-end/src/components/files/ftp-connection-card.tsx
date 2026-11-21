@@ -52,34 +52,32 @@ export function FtpConnectionCard({
         </p>
       )}
       {connection && (
-        <dl className="grid gap-px bg-white/10 sm:grid-cols-2 xl:grid-cols-4">
-          <ConnectionField
-            copied={copiedField === 'Host'}
-            label="Host"
-            onCopy={() => void copy('Host', connection.host)}
-            value={connection.host}
-          />
-          <ConnectionField
-            copied={copiedField === 'Porta'}
-            label="Porta"
-            onCopy={() => void copy('Porta', String(connection.port))}
-            value={String(connection.port)}
-          />
-          <ConnectionField
-            copied={copiedField === 'Usuário'}
-            label="Usuário"
-            onCopy={() => void copy('Usuário', connection.username)}
-            value={connection.username}
-          />
-          <div className="bg-violet-950 px-5 py-5">
-            <dt className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-violet-300">
-              <KeyRound aria-hidden="true" className="size-4" /> Senha
-            </dt>
-            <dd className="mt-2 truncate text-sm font-medium">
-              A mesma senha usada no painel
-            </dd>
-          </div>
-        </dl>
+        <div>
+          <dl className="grid gap-px bg-white/10 sm:grid-cols-3">
+            <ConnectionField
+              copied={copiedField === 'Host'}
+              label="Host"
+              onCopy={() => void copy('Host', connection.host)}
+              value={connection.host}
+            />
+            <ConnectionField
+              copied={copiedField === 'Porta'}
+              label="Porta"
+              onCopy={() => void copy('Porta', String(connection.port))}
+              value={String(connection.port)}
+            />
+            <ConnectionField
+              copied={copiedField === 'Usuário'}
+              label="Usuário"
+              onCopy={() => void copy('Usuário', connection.username)}
+              value={connection.username}
+            />
+          </dl>
+          <p className="flex items-center gap-2 border-t border-white/10 bg-violet-950 px-5 py-3 text-xs text-violet-200">
+            <KeyRound aria-hidden="true" className="size-4 shrink-0" />
+            Para conectar, use a mesma senha de acesso ao painel.
+          </p>
+        </div>
       )}
       <p aria-live="polite" className="sr-only">
         {copiedField ? `${copiedField} copiado.` : ''}
