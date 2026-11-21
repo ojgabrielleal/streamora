@@ -25,7 +25,8 @@ describe('dashboard components', () => {
     expect(markup).toContain('Playlists')
     expect(markup).toContain('Programação')
     expect(markup).toContain('Arquivos')
-    expect(markup.match(/Em breve/g)).toHaveLength(2)
+    expect(markup.match(/Em breve/g)).toHaveLength(1)
+    expect(markup).toContain('href="/playlists"')
     expect(markup).toContain('Sair')
   })
 

@@ -48,8 +48,11 @@ Recursos ficam em `src/main/resources/`; migrations Flyway, em
 - `front-end/src/app`: providers e configuração global.
 - `front-end/src/components`: componentes por domínio, componentes de layout
   compartilhado e componentes de UI.
+- `front-end/src/components/playlists`: biblioteca, formulários e estúdio de
+  curadoria das playlists e suas faixas.
 - `front-end/src/lib`: cliente HTTP e utilitários compartilhados.
-- `front-end/src/routes`: rotas da aplicação.
+- `front-end/src/routes`: rotas da aplicação, incluindo as áreas autenticadas de
+  dashboard, arquivos e playlists.
 - `liquidsoap`: scripts versionados do auto-DJ e controle do fluxo de áudio.
 
 ## Testes

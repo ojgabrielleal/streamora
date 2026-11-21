@@ -8,16 +8,11 @@ import {
 } from 'lucide-react'
 
 type DashboardSidebarProps = {
-  activeDestination: 'dashboard' | 'files'
+  activeDestination: 'dashboard' | 'files' | 'playlists'
   mobile?: boolean
   onClose?: () => void
   onLogout: () => void
 }
-
-const futureDestinations = [
-  { icon: ListMusic, label: 'Playlists' },
-  { icon: CalendarDays, label: 'Programação' },
-]
 
 export function DashboardSidebar({
   activeDestination,
@@ -55,6 +50,17 @@ export function DashboardSidebar({
         <ul className="mt-3 space-y-1.5">
           <li>
             <a
+              aria-current={activeDestination === 'playlists' ? 'page' : undefined}
+              className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition focus-visible:ring-2 focus-visible:ring-fuchsia-300 ${activeDestination === 'playlists' ? 'bg-linear-to-r from-violet-600 to-fuchsia-600 text-white shadow-lg shadow-violet-950/25' : 'text-violet-200 hover:bg-white/10 hover:text-white'}`}
+              href="/playlists"
+              onClick={onClose}
+            >
+              <ListMusic aria-hidden="true" className="size-5" />
+              Playlists
+            </a>
+          </li>
+          <li>
+            <a
               aria-current={activeDestination === 'dashboard' ? 'page' : undefined}
               className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition focus-visible:ring-2 focus-visible:ring-fuchsia-300 ${activeDestination === 'dashboard' ? 'bg-linear-to-r from-violet-600 to-fuchsia-600 text-white shadow-lg shadow-violet-950/25' : 'text-violet-200 hover:bg-white/10 hover:text-white'}`}
               href="/dashboard"
@@ -75,20 +81,13 @@ export function DashboardSidebar({
               Arquivos
             </a>
           </li>
-          {futureDestinations.map(({ icon: Icon, label }) => (
-            <li key={label}>
-              <span
-                aria-disabled="true"
-                className="flex cursor-not-allowed items-center gap-3 rounded-xl px-3 py-3 text-sm text-violet-300/65"
-              >
-                <Icon aria-hidden="true" className="size-5" />
-                <span className="flex-1">{label}</span>
-                <span className="rounded-full bg-white/8 px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide">
-                  Em breve
-                </span>
-              </span>
-            </li>
-          ))}
+          <li>
+            <span aria-disabled="true" className="flex cursor-not-allowed items-center gap-3 rounded-xl px-3 py-3 text-sm text-violet-300/65">
+              <CalendarDays aria-hidden="true" className="size-5" />
+              <span className="flex-1">Programação</span>
+              <span className="rounded-full bg-white/8 px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide">Em breve</span>
+            </span>
+          </li>
         </ul>
       </nav>
 

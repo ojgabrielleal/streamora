@@ -7,7 +7,7 @@ import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar'
 import { clearAccessToken } from '@/lib/access-token'
 
 type AuthenticatedLayoutProps = {
-  activeDestination: 'dashboard' | 'files'
+  activeDestination: 'dashboard' | 'files' | 'playlists'
   children: ReactNode
   description: string
   title: string

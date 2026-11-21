@@ -146,26 +146,26 @@ da programação musical, sem criar endpoints ou alterar regras de negócio.
 
 ## Critérios de aceite
 
-- [ ] Um usuário autenticado acessa `/playlists` pela sidebar em desktop e mobile.
-- [ ] A sidebar destaca corretamente Playlists e preserva os demais destinos.
-- [ ] A biblioteca exibe dados reais, busca, filtros, ordenação e indicadores
+- [x] Um usuário autenticado acessa `/playlists` pela sidebar em desktop e mobile.
+- [x] A sidebar destaca corretamente Playlists e preserva os demais destinos.
+- [x] A biblioteca exibe dados reais, busca, filtros, ordenação e indicadores
   derivados da API, sem métricas fictícias.
-- [ ] Carregamento, biblioteca vazia, busca sem resultado e falha possuem estados
+- [x] Carregamento, biblioteca vazia, busca sem resultado e falha possuem estados
   distintos e acessíveis.
-- [ ] O usuário cria e edita playlists com validação, feedback e atualização da
+- [x] O usuário cria e edita playlists com validação, feedback e atualização da
   biblioteca sem recarregar a página.
-- [ ] A edição de metadados preserva a associação M3U existente.
-- [ ] O estúdio apresenta as faixas atuais e permite adicionar, remover e reordenar
+- [x] A edição de metadados preserva a associação M3U existente.
+- [x] O estúdio apresenta as faixas atuais e permite adicionar, remover e reordenar
   um rascunho antes de salvar a lista completa.
-- [ ] O seletor de mídias reutiliza a árvore do storage, aceita apenas arquivos na
+- [x] O seletor de mídias reutiliza a árvore do storage, aceita apenas arquivos na
   seleção e impede caminhos duplicados.
-- [ ] Alterações não salvas recebem confirmação antes de serem descartadas.
-- [ ] A exclusão exige confirmação nominal, não remove mídias e atualiza a
+- [x] Alterações não salvas recebem confirmação antes de serem descartadas.
+- [x] A exclusão exige confirmação nominal, não remove mídias e atualiza a
   biblioteca após sucesso.
-- [ ] Formulários, confirmações, menus, seletor e controles de ordenação funcionam
+- [x] Formulários, confirmações, menus, seletor e controles de ordenação funcionam
   por teclado e possuem gerenciamento de foco adequado.
-- [ ] A página se adapta a desktop e dispositivos móveis sem rolagem horizontal
+- [x] A página se adapta a desktop e dispositivos móveis sem rolagem horizontal
   obrigatória.
-- [ ] Nenhuma dependência ou alteração de backend é necessária.
-- [ ] Os testes automatizados, o lint e o build do frontend terminam com sucesso.
-- [ ] A documentação estrutural reflete os novos arquivos relevantes.
+- [x] Nenhuma dependência ou alteração de backend é necessária.
+- [x] Os testes automatizados, o lint e o build do frontend terminam com sucesso.
+- [x] A documentação estrutural reflete os novos arquivos relevantes.
