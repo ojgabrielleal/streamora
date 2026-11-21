@@ -53,7 +53,7 @@ export function FtpConnectionCard({
       )}
       {connection && (
         <div>
-          <dl className="grid gap-px bg-white/10 sm:grid-cols-3">
+          <dl className="grid gap-px bg-white/10 sm:grid-cols-2 xl:grid-cols-1">
             <ConnectionField
               copied={copiedField === 'Host'}
               label="Host"
@@ -65,12 +65,6 @@ export function FtpConnectionCard({
               label="Porta"
               onCopy={() => void copy('Porta', String(connection.port))}
               value={String(connection.port)}
-            />
-            <ConnectionField
-              copied={copiedField === 'Usuário'}
-              label="Usuário"
-              onCopy={() => void copy('Usuário', connection.username)}
-              value={connection.username}
             />
           </dl>
           <p className="flex items-center gap-2 border-t border-white/10 bg-violet-950 px-5 py-3 text-xs text-violet-200">

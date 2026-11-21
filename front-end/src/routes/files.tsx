@@ -18,18 +18,22 @@ export function FilesPage() {
       description="Organize a biblioteca compartilhada da sua rádio."
       title="Arquivos"
     >
-      <div className="mx-auto max-w-[96rem] space-y-8 px-4 py-8 sm:px-8 sm:py-10 lg:px-12 xl:px-14 xl:py-12">
-        <FtpConnectionCard
-          connection={connectionQuery.data}
-          isError={connectionQuery.isError}
-          isPending={connectionQuery.isPending}
-        />
-        <FileManager
-          entries={fileTreeQuery.data}
-          isError={fileTreeQuery.isError}
-          isPending={fileTreeQuery.isPending}
-          onRetry={() => void fileTreeQuery.refetch()}
-        />
+      <div className="mx-auto grid max-w-[96rem] gap-8 px-4 py-8 sm:px-8 sm:py-10 lg:px-12 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start xl:px-14 xl:py-12">
+        <div className="xl:order-2">
+          <FtpConnectionCard
+            connection={connectionQuery.data}
+            isError={connectionQuery.isError}
+            isPending={connectionQuery.isPending}
+          />
+        </div>
+        <div className="min-w-0 xl:order-1">
+          <FileManager
+            entries={fileTreeQuery.data}
+            isError={fileTreeQuery.isError}
+            isPending={fileTreeQuery.isPending}
+            onRetry={() => void fileTreeQuery.refetch()}
+          />
+        </div>
       </div>
     </AuthenticatedLayout>
   )
