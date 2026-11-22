@@ -13,8 +13,13 @@ public class LiquidsoapAuthService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final SettingService settingService;
 
 	public boolean authenticate(String username, String password) {
+		if (!settingService.isLiveBroadcastEnabled()) {
+			return false;
+		}
+
 		return userRepository.findByUsername(username)
 			.filter(user -> passwordEncoder.matches(password, user.getPassword()))
 			.isPresent();

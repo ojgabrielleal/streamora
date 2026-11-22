@@ -77,7 +77,7 @@ describe('dashboard components', () => {
       <ServiceOverview isError isPending={false} />,
     )
 
-    expect(markup.match(/Indisponível/g)).toHaveLength(4)
+    expect(markup.match(/Indisponível/g)).toHaveLength(6)
   })
 
   it('renders the configured Icecast transmission', () => {

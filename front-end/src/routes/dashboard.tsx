@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { playlistsQueryOptions } from '@/api/playlists/playlist-queries'
 import { serviceStatusesQueryOptions } from '@/api/services/service-status-queries'
+import {
+  liveBroadcastQueryOptions,
+  useUpdateLiveBroadcastMutation,
+} from '@/api/settings/live-broadcast-queries'
 import { ScheduleOverview } from '@/components/dashboard/playlist-overview'
 import { RadioOverview } from '@/components/dashboard/radio-overview'
 import { ServiceOverview } from '@/components/dashboard/service-overview'
@@ -10,6 +14,8 @@ import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
 export function DashboardPage() {
   const playlistsQuery = useQuery(playlistsQueryOptions())
   const serviceStatusesQuery = useQuery(serviceStatusesQueryOptions())
+  const liveBroadcastQuery = useQuery(liveBroadcastQueryOptions())
+  const updateLiveBroadcastMutation = useUpdateLiveBroadcastMutation()
 
   return (
     <AuthenticatedLayout
@@ -51,7 +57,14 @@ export function DashboardPage() {
           <aside aria-label="Estado da rádio" className="min-w-0 space-y-8">
             <ServiceOverview
               isError={serviceStatusesQuery.isError}
+              isLiveBroadcastError={liveBroadcastQuery.isError}
+              isLiveBroadcastPending={liveBroadcastQuery.isPending}
               isPending={serviceStatusesQuery.isPending}
+              isUpdatingLiveBroadcast={updateLiveBroadcastMutation.isPending}
+              liveBroadcastEnabled={liveBroadcastQuery.data?.enabled}
+              onToggleLiveBroadcast={(enabled) =>
+                updateLiveBroadcastMutation.mutate(enabled)
+              }
               statuses={serviceStatusesQuery.data}
             />
           </aside>

@@ -22,7 +22,16 @@ vi.mock('@tanstack/react-query', async (importOriginal) => ({
   useQuery: (options: { queryKey: readonly string[] }) =>
     options.queryKey[0] === 'service-statuses'
       ? queryStates.services
-      : queryStates.playlists,
+      : options.queryKey[0] === 'live-broadcast'
+        ? { data: { enabled: true }, isError: false, isPending: false }
+        : queryStates.playlists,
+  useMutation: () => ({
+    isPending: false,
+    mutate: vi.fn(),
+  }),
+  useQueryClient: () => ({
+    setQueryData: vi.fn(),
+  }),
 }))
 
 vi.mock('@tanstack/react-router', () => ({

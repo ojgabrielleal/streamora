@@ -38,6 +38,13 @@ erDiagram
     }
 
     playlists ||--o{ schedules : schedules
+
+    settings {
+        BIGINT id PK
+        CHAR uuid UK
+        VARCHAR setting_key UK
+        VARCHAR setting_value
+    }
 ```
 
 ## Restrições e tipos

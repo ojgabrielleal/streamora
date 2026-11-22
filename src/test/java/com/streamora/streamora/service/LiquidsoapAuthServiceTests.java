@@ -24,6 +24,9 @@ class LiquidsoapAuthServiceTests {
 	@Mock
 	private PasswordEncoder passwordEncoder;
 
+	@Mock
+	private SettingService settingService;
+
 	@InjectMocks
 	private LiquidsoapAuthService liquidsoapAuthService;
 
@@ -33,6 +36,8 @@ class LiquidsoapAuthServiceTests {
 		user.setUsername("locutor");
 		user.setPassword("encoded-password");
 
+		when(settingService.isLiveBroadcastEnabled())
+			.thenReturn(true);
 		when(userRepository.findByUsername("locutor"))
 			.thenReturn(Optional.of(user));
 		when(passwordEncoder.matches("raw-password", "encoded-password"))
@@ -49,6 +54,8 @@ class LiquidsoapAuthServiceTests {
 		user.setUsername("locutor");
 		user.setPassword("encoded-password");
 
+		when(settingService.isLiveBroadcastEnabled())
+			.thenReturn(true);
 		when(userRepository.findByUsername("locutor"))
 			.thenReturn(Optional.of(user));
 		when(passwordEncoder.matches("wrong-password", "encoded-password"))
@@ -61,10 +68,22 @@ class LiquidsoapAuthServiceTests {
 
 	@Test
 	void authenticateReturnsFalseWhenUserDoesNotExist() {
+		when(settingService.isLiveBroadcastEnabled())
+			.thenReturn(true);
 		when(userRepository.findByUsername("unknown"))
 			.thenReturn(Optional.empty());
 
 		boolean authenticated = liquidsoapAuthService.authenticate("unknown", "raw-password");
+
+		assertThat(authenticated).isFalse();
+	}
+
+	@Test
+	void authenticateReturnsFalseWhenLiveBroadcastIsDisabled() {
+		when(settingService.isLiveBroadcastEnabled())
+			.thenReturn(false);
+
+		boolean authenticated = liquidsoapAuthService.authenticate("locutor", "raw-password");
 
 		assertThat(authenticated).isFalse();
 	}
