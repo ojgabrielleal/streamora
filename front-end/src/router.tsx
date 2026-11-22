@@ -9,6 +9,7 @@ import { HomePage } from '@/routes/index'
 import { DashboardPage } from '@/routes/dashboard'
 import { FilesPage } from '@/routes/files'
 import { PlaylistsPage } from '@/routes/playlists'
+import { SchedulesPage } from '@/routes/schedules'
 import { RootRoute } from '@/routes/root'
 import { getAccessToken } from '@/lib/access-token'
 
@@ -56,11 +57,19 @@ const playlistsRoute = createRoute({
   component: PlaylistsPage,
 })
 
+const schedulesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/programacao',
+  beforeLoad: requireAccessToken,
+  component: SchedulesPage,
+})
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   dashboardRoute,
   filesRoute,
   playlistsRoute,
+  schedulesRoute,
 ])
 
 export const router = createRouter({ routeTree })
