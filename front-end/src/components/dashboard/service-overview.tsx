@@ -83,10 +83,10 @@ export function ServiceOverview({
     isLiveBroadcastPending ||
     isLiveBroadcastError ||
     liveBroadcastEnabled === undefined
-      ? 'bg-violet-950/35'
+      ? 'bg-slate-100 text-slate-600'
       : liveBroadcastEnabled
-        ? 'bg-emerald-600'
-        : 'bg-red-600'
+        ? 'bg-emerald-100 text-emerald-800'
+        : 'bg-red-100 text-red-800'
 
   const canToggleLiveBroadcast =
     !isLiveBroadcastPending &&
@@ -96,50 +96,53 @@ export function ServiceOverview({
     Boolean(onToggleLiveBroadcast)
 
   return (
-    <section aria-labelledby="service-overview-title" className="space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold text-violet-950" id="service-overview-title">
-          Serviços da rádio
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Componentes responsáveis pela transmissão e programação.
-        </p>
-      </div>
-
-      <div className="grid gap-4">
-        <article className="flex min-h-28 items-center justify-between gap-4 rounded-2xl bg-linear-to-r from-violet-700 to-fuchsia-600 px-5 py-5 text-white shadow-lg shadow-violet-950/15 sm:px-6">
-          <div className="flex min-w-0 items-center gap-4">
-            <span className="hidden size-11 shrink-0 items-center justify-center rounded-xl bg-white/15 sm:flex">
-              <Mic aria-hidden="true" className="size-5" />
-            </span>
-            <div className="min-w-0">
-              <h3 className="text-base font-semibold sm:text-lg">Locução</h3>
-              <p className="mt-0.5 text-sm text-violet-100 sm:text-base">
-                Transmissão ao vivo
-              </p>
-            </div>
+    <div className="space-y-8">
+      <section
+        aria-label="Controle de locução"
+        className="flex items-center justify-between gap-4 rounded-2xl border border-violet-200/80 bg-white px-5 py-4 shadow-sm"
+      >
+        <div className="flex min-w-0 items-center gap-3.5">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+            <Mic aria-hidden="true" className="size-5" />
+          </span>
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold text-violet-950">Locução</h2>
+            <p className="text-xs text-muted-foreground">Transmissão ao vivo</p>
           </div>
+        </div>
 
-          <div className="flex shrink-0 items-center gap-2">
-            <span
-              aria-label={`Locução: ${liveBroadcastStatusText}`}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold shadow-sm ${liveBroadcastBadgeClass}`}
-              role="status"
+        <div className="flex shrink-0 items-center gap-2">
+          <span
+            aria-label={`Locução: ${liveBroadcastStatusText}`}
+            className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${liveBroadcastBadgeClass}`}
+            role="status"
+          >
+            {liveBroadcastStatusText}
+          </span>
+          {onToggleLiveBroadcast ? (
+            <button
+              className="rounded-full bg-violet-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!canToggleLiveBroadcast}
+              onClick={() => onToggleLiveBroadcast(!liveBroadcastEnabled)}
+              type="button"
             >
-              {liveBroadcastStatusText}
-            </span>
-            {onToggleLiveBroadcast ? (
-              <button
-                className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={!canToggleLiveBroadcast}
-                onClick={() => onToggleLiveBroadcast(!liveBroadcastEnabled)}
-                type="button"
-              >
-                {liveBroadcastEnabled ? 'Desabilitar' : 'Habilitar'}
-              </button>
-            ) : null}
-          </div>
-        </article>
+              {liveBroadcastEnabled ? 'Desabilitar' : 'Habilitar'}
+            </button>
+          ) : null}
+        </div>
+      </section>
+
+      <section aria-labelledby="service-overview-title" className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold text-violet-950" id="service-overview-title">
+            Serviços da rádio
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Componentes responsáveis pela transmissão e programação.
+          </p>
+        </div>
+
+        <div className="grid gap-4">
 
         {services.map(({ description, icon: Icon, id, name }) => (
           <article
@@ -167,7 +170,8 @@ export function ServiceOverview({
             </span>
           </article>
         ))}
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   )
 }
