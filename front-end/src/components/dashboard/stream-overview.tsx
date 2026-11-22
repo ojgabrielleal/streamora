@@ -1,4 +1,4 @@
-import { Headphones, Mic, Play } from 'lucide-react'
+import { Headphones, Play } from 'lucide-react'
 
 function getStreamName(streamUrl: string) {
   try {
