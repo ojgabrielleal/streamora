@@ -1,4 +1,4 @@
-import { Headphones, Play } from 'lucide-react'
+import { Headphones, Mic, Play } from 'lucide-react'
 
 function getStreamName(streamUrl: string) {
   try {
@@ -66,6 +66,24 @@ export function StreamOverview() {
           transmissão.
         </p>
       )}
+
+      <div className="border-t border-white/8 bg-white/5 px-5 py-4 sm:px-6">
+        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+          <Mic aria-hidden="true" className="size-4 text-fuchsia-300" />
+          <span>Transmissão ao vivo (Locutor)</span>
+        </div>
+        <p className="mt-1 text-xs text-violet-200">
+          Host: <code className="text-fuchsia-200">{window.location.hostname}</code> · Porta:{' '}
+          <code className="text-fuchsia-200">
+            {import.meta.env.VITE_LIQUIDSOAP_HARBOR_PORT?.trim() || '8005'}
+          </code>{' '}
+          · Mount:{' '}
+          <code className="text-fuchsia-200">
+            {import.meta.env.VITE_LIQUIDSOAP_HARBOR_MOUNT?.trim() || '/live'}
+          </code>{' '}
+          (use seu usuário e senha do sistema)
+        </p>
+      </div>
     </section>
   )
 }

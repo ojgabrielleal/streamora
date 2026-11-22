@@ -4,13 +4,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.streamora.streamora.dto.liquidsoap.LiquidsoapAuthRequestDTO;
 import com.streamora.streamora.dto.liquidsoap.LiquidsoapErrorDTO;
 import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapApplyInProgressException;
 import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapControlException;
+import com.streamora.streamora.service.LiquidsoapAuthService;
 import com.streamora.streamora.service.LiquidsoapService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,6 +32,21 @@ import lombok.RequiredArgsConstructor;
 public class LiquidsoapController {
 
 	private final LiquidsoapService liquidsoapService;
+	private final LiquidsoapAuthService liquidsoapAuthService;
+
+	@PostMapping("/auth")
+	@Operation(summary = "Autenticar locutor no Liquidsoap")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "Locutor autenticado"),
+		@ApiResponse(responseCode = "401", description = "Credenciais inválidas")
+	})
+	public ResponseEntity<Void> authenticate(@Valid @RequestBody LiquidsoapAuthRequestDTO authRequest) {
+		if (!liquidsoapAuthService.authenticate(authRequest.username(), authRequest.password())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+
+		return ResponseEntity.ok().build();
+	}
 
 	@PostMapping("/apply")
 	@ResponseStatus(HttpStatus.NO_CONTENT)

@@ -101,6 +101,10 @@ services:
     environment:
       ICECAST_SOURCE_PASSWORD: ${ICECAST_SOURCE_PASSWORD}
       ICECAST_MOUNT: ${ICECAST_MOUNT:-/stream.mp3}
+      LIQUIDSOAP_HARBOR_PORT: ${LIQUIDSOAP_HARBOR_PORT:-8005}
+      LIQUIDSOAP_HARBOR_MOUNT: ${LIQUIDSOAP_HARBOR_MOUNT:-/live}
+    ports:
+      - "${LIQUIDSOAP_HARBOR_PORT:-8005}:8005"
     volumes:
       - ./liquidsoap:/etc/liquidsoap:ro
       - liquidsoap_m3u:/liquidsoap/m3u:ro
