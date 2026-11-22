@@ -99,37 +99,59 @@ export function ServiceOverview({
     <div className="space-y-8">
       <section
         aria-label="Controle de locução"
-        className="flex items-center justify-between gap-4 rounded-2xl border border-violet-200/80 bg-white px-5 py-4 shadow-sm"
+        className="overflow-hidden rounded-2xl border border-violet-200/80 bg-white shadow-sm"
       >
-        <div className="flex min-w-0 items-center gap-3.5">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
-            <Mic aria-hidden="true" className="size-5" />
-          </span>
-          <div className="min-w-0">
-            <h2 className="text-base font-semibold text-violet-950">Locução</h2>
-            <p className="text-xs text-muted-foreground">Transmissão ao vivo</p>
+        <div className="flex items-center justify-between gap-4 px-5 py-4">
+          <div className="flex min-w-0 items-center gap-3.5">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+              <Mic aria-hidden="true" className="size-5" />
+            </span>
+            <div className="min-w-0">
+              <h2 className="text-base font-semibold text-violet-950">Locução</h2>
+              <p className="text-xs text-muted-foreground">Transmissão ao vivo</p>
+            </div>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <span
+              aria-label={`Locução: ${liveBroadcastStatusText}`}
+              className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${liveBroadcastBadgeClass}`}
+              role="status"
+            >
+              {liveBroadcastStatusText}
+            </span>
+            {onToggleLiveBroadcast ? (
+              <button
+                className="rounded-full bg-violet-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!canToggleLiveBroadcast}
+                onClick={() => onToggleLiveBroadcast(!liveBroadcastEnabled)}
+                type="button"
+              >
+                {liveBroadcastEnabled ? 'Desabilitar' : 'Habilitar'}
+              </button>
+            ) : null}
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <span
-            aria-label={`Locução: ${liveBroadcastStatusText}`}
-            className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${liveBroadcastBadgeClass}`}
-            role="status"
-          >
-            {liveBroadcastStatusText}
-          </span>
-          {onToggleLiveBroadcast ? (
-            <button
-              className="rounded-full bg-violet-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={!canToggleLiveBroadcast}
-              onClick={() => onToggleLiveBroadcast(!liveBroadcastEnabled)}
-              type="button"
-            >
-              {liveBroadcastEnabled ? 'Desabilitar' : 'Habilitar'}
-            </button>
-          ) : null}
-        </div>
+        {liveBroadcastEnabled ? (
+          <div className="border-t border-violet-100 bg-violet-50/60 px-5 py-3.5">
+            <p className="text-xs text-violet-900">
+              Host:{' '}
+              <code className="font-semibold text-violet-700">
+                {typeof window !== 'undefined' ? window.location.hostname : 'localhost'}
+              </code>{' '}
+              · Porta:{' '}
+              <code className="font-semibold text-violet-700">
+                {import.meta.env.VITE_LIQUIDSOAP_HARBOR_PORT?.trim() || '8005'}
+              </code>{' '}
+              · Mount:{' '}
+              <code className="font-semibold text-violet-700">
+                {import.meta.env.VITE_LIQUIDSOAP_HARBOR_MOUNT?.trim() || '/live'}
+              </code>{' '}
+              (use seu usuário e senha do sistema)
+            </p>
+          </div>
+        ) : null}
       </section>
 
       <section aria-labelledby="service-overview-title" className="space-y-4">
