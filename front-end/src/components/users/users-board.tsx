@@ -336,6 +336,8 @@ export function UsersBoard({
                 />
               </div>
 
+              <hr className="border-slate-200" />
+
               <div>
                 <label
                   className="block text-sm font-medium text-slate-700"
