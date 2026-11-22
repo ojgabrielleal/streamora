@@ -42,8 +42,8 @@ Atualmente o Liquidsoap gerencia apenas a reprodução automática das playlists
 
 ## Critérios de aceite
 
-- [ ] Container do Liquidsoap expõe a porta configurada para o `input.harbor`.
-- [ ] Endpoint do back-end retorna sucesso para credenciais válidas de locutor ativo e falha para credenciais inválidas ou usuário inativo.
-- [ ] Locutor consegue conectar ao Liquidsoap via software de transmissão usando suas credenciais.
-- [ ] Ao conectar, o áudio ao vivo assume a transmissão no Icecast; ao desconectar, o AutoDJ retoma automaticamente.
-- [ ] Front-end exibe as informações de conexão para o locutor.
+- [x] Container do Liquidsoap expõe a porta configurada para o `input.harbor`.
+- [x] Endpoint do back-end retorna sucesso para credenciais válidas de locutor ativo e falha para credenciais inválidas ou usuário inativo.
+- [x] Locutor consegue conectar ao Liquidsoap via software de transmissão usando suas credenciais.
+- [x] Ao conectar, o áudio ao vivo assume a transmissão no Icecast; ao desconectar, o AutoDJ retoma automaticamente.
+- [x] Front-end exibe as informações de conexão para o locutor.
