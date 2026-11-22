@@ -336,7 +336,7 @@ export function UsersBoard({
                 />
               </div>
 
-              <hr className="my-4 border-slate-200" />
+              <hr className="mt-6 mb-4 border-slate-200" />
 
               <div>
                 <label
