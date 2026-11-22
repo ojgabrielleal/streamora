@@ -245,14 +245,14 @@ export function UsersBoard({
             <tbody className="divide-y divide-slate-100">
               {users.map((user) => (
                 <tr key={user.uuid} className="hover:bg-slate-50/70">
-                  <td className="px-4 py-3 font-medium text-slate-900">
+                  <td className="px-4 py-4 font-medium text-slate-900">
                     {user.fullname}
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{user.nickname}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-slate-600">
+                  <td className="px-4 py-4 text-slate-600">{user.nickname}</td>
+                  <td className="px-4 py-4 font-mono text-xs text-slate-600">
                     {user.username}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-4 text-right">
                     <div className="inline-flex items-center gap-2">
                       <button
                         aria-label={`Editar ${user.fullname}`}
