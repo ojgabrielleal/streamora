@@ -10,6 +10,7 @@ import { DashboardPage } from '@/routes/dashboard'
 import { FilesPage } from '@/routes/files'
 import { PlaylistsPage } from '@/routes/playlists'
 import { SchedulesPage } from '@/routes/schedules'
+import { UsersPage } from '@/routes/users'
 import { RootRoute } from '@/routes/root'
 import { getAccessToken } from '@/lib/access-token'
 
@@ -64,12 +65,20 @@ const schedulesRoute = createRoute({
   component: SchedulesPage,
 })
 
+const usersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/usuarios',
+  beforeLoad: requireAccessToken,
+  component: UsersPage,
+})
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   dashboardRoute,
   filesRoute,
   playlistsRoute,
   schedulesRoute,
+  usersRoute,
 ])
 
 export const router = createRouter({ routeTree })
