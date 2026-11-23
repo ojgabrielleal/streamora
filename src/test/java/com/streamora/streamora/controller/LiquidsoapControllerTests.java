@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import com.streamora.streamora.filter.JwtAuthenticationFilter;
 import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapApplyInProgressException;
 import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapControlException;
 import com.streamora.streamora.service.JwtService;
+import com.streamora.streamora.service.LiquidsoapAuthService;
 import com.streamora.streamora.service.LiquidsoapService;
 
 @WebMvcTest(LiquidsoapController.class)
@@ -37,12 +40,15 @@ class LiquidsoapControllerTests {
 	private LiquidsoapService liquidsoapService;
 
 	@MockitoBean
+	private LiquidsoapAuthService liquidsoapAuthService;
+
+	@MockitoBean
 	private JwtService jwtService;
 
 	@BeforeEach
 	void acceptAccessToken() {
-		when(jwtService.validateAccessToken(ACCESS_TOKEN))
-			.thenReturn(true);
+		when(jwtService.validateAccessTokenAndGetUsername(ACCESS_TOKEN))
+			.thenReturn(Optional.of("admin"));
 	}
 
 	@Test

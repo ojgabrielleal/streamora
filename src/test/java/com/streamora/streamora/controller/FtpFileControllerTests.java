@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,8 +53,8 @@ class FtpFileControllerTests {
 
 	@BeforeEach
 	void acceptAccessToken() {
-		when(jwtService.validateAccessToken(ACCESS_TOKEN))
-			.thenReturn(true);
+		when(jwtService.validateAccessTokenAndGetUsername(ACCESS_TOKEN))
+			.thenReturn(Optional.of("admin"));
 	}
 
 	@Test

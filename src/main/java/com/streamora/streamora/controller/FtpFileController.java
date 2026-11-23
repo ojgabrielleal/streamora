@@ -55,8 +55,13 @@ public class FtpFileController {
 		@ApiResponse(responseCode = "401", description = "Autenticação necessária")
 	})
 	public FtpConnectionResponseDTO connection(Authentication authentication) {
-		String username = jwtService.validateAccessTokenAndGetUsername(authentication.getName())
-			.orElseThrow(() -> new IllegalStateException("Authenticated token has no username"));
+		String username = authentication != null && authentication.getName() != null && !authentication.getName().isBlank()
+			? authentication.getName()
+			: null;
+
+		if (username == null) {
+			throw new IllegalStateException("Authenticated token has no username");
+		}
 
 		return new FtpConnectionResponseDTO(
 			pureFtpdProperties.publicHost(),

@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -29,10 +30,12 @@ import com.streamora.streamora.controller.FtpFileController;
 import com.streamora.streamora.controller.LiquidsoapController;
 import com.streamora.streamora.controller.PlaylistController;
 import com.streamora.streamora.controller.UserController;
+import com.streamora.streamora.entity.UserRole;
 import com.streamora.streamora.filter.JwtAuthenticationFilter;
 import com.streamora.streamora.service.AuthService;
 import com.streamora.streamora.service.FtpFileService;
 import com.streamora.streamora.service.JwtService;
+import com.streamora.streamora.service.LiquidsoapAuthService;
 import com.streamora.streamora.service.LiquidsoapService;
 import com.streamora.streamora.service.PlaylistService;
 import com.streamora.streamora.service.UserService;
@@ -69,6 +72,9 @@ class SecurityConfigTests {
 
 	@MockitoBean
 	private LiquidsoapService liquidsoapService;
+
+	@MockitoBean
+	private LiquidsoapAuthService liquidsoapAuthService;
 
 	@MockitoBean
 	private PlaylistService playlistService;
@@ -121,8 +127,10 @@ class SecurityConfigTests {
 	void allowsApplicationEndpointsWithValidAccessToken() throws Exception {
 		when(userService.index())
 			.thenReturn(List.of());
-		when(jwtService.validateAccessToken("valid-access-token"))
-			.thenReturn(true);
+		when(jwtService.validateAccessTokenAndGetUsername("valid-access-token"))
+			.thenReturn(Optional.of("admin"));
+		when(jwtService.validateAccessTokenAndGetRole("valid-access-token"))
+			.thenReturn(Optional.of(UserRole.ADMIN));
 
 		mockMvc.perform(
 			get("/user")

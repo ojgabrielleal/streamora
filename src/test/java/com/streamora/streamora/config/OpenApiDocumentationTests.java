@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.streamora.streamora.StreamoraApplication;
 import com.streamora.streamora.repository.PlaylistRepository;
 import com.streamora.streamora.repository.ScheduleRepository;
+import com.streamora.streamora.repository.SettingRepository;
 import com.streamora.streamora.repository.UserRepository;
 
 @SpringBootTest(
@@ -41,6 +42,9 @@ class OpenApiDocumentationTests {
 
 	@MockitoBean
 	private ScheduleRepository scheduleRepository;
+
+	@MockitoBean
+	private SettingRepository settingRepository;
 
 	@Test
 	void exposesOpenApiMetadataAndDocumentedResourcesAnonymously() throws Exception {

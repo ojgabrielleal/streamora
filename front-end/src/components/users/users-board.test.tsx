@@ -57,6 +57,7 @@ describe('UsersBoard', () => {
           fullname: 'João Silva',
           nickname: 'João',
           username: 'joao.silva',
+          role: 'STANDARD',
         },
       ],
     })

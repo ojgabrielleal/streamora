@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +41,8 @@ class ServiceStatusControllerTests {
 
 	@BeforeEach
 	void acceptAccessToken() {
-		when(jwtService.validateAccessToken(ACCESS_TOKEN))
-			.thenReturn(true);
+		when(jwtService.validateAccessTokenAndGetUsername(ACCESS_TOKEN))
+			.thenReturn(Optional.of("admin"));
 	}
 
 	@Test
