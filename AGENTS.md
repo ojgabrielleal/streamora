@@ -10,5 +10,5 @@
   `docs/database-schema.md`.
 - Ao criar ou alterar specs, leia `docs/spec-standards.md`.
 - Ao mudar a estrutura do projeto, leia e atualize `docs/project-structure.md`.
-- Antes de concluir, execute as validações aplicáveis, informe pendências e crie
-  um commit.
+- Antes de concluir, execute as validações aplicáveis e informe pendências. Não
+  crie commits automaticamente; aguarde a revisão do usuário.

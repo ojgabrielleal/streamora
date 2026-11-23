@@ -322,29 +322,6 @@ export function UsersBoard({
               <div>
                 <label
                   className="block text-sm font-medium text-slate-700"
-                  htmlFor="user-role"
-                >
-                  Nível de permissão
-                </label>
-                <select
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
-                  id="user-role"
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      role: event.target.value as UserRole,
-                    }))
-                  }
-                  value={form.role}
-                >
-                  <option value="STANDARD">Padrão (STANDARD)</option>
-                  <option value="ADMIN">Administrador (ADMIN)</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  className="block text-sm font-medium text-slate-700"
                   htmlFor="user-password"
                 >
                   {editingUser
@@ -364,6 +341,29 @@ export function UsersBoard({
                   type="password"
                   value={form.password}
                 />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium text-slate-700"
+                  htmlFor="user-role"
+                >
+                  Nível de permissão
+                </label>
+                <select
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+                  id="user-role"
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      role: event.target.value as UserRole,
+                    }))
+                  }
+                  value={form.role}
+                >
+                  <option value="STANDARD">Padrão</option>
+                  <option value="ADMIN">Administrador</option>
+                </select>
               </div>
 
               <hr className="mt-6 mb-4 border-slate-200" />

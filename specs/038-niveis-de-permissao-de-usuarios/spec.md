@@ -48,10 +48,10 @@ Atualmente, a entidade `User` não possui nenhum campo de papel ou nível de per
 
 ## Critérios de aceite
 
-- [ ] A entidade `User` e a tabela `users` possuem o campo de nível de permissão persistido via migration.
-- [ ] O token JWT e o `SecurityContext` refletem as authorities/roles do usuário autenticado.
-- [ ] Um usuário não administrador que tentar alterar a senha ou os dados de outro usuário recebe `403 Forbidden`.
-- [ ] Um usuário não administrador que tentar criar ou excluir usuários recebe `403 Forbidden`.
-- [ ] Um usuário não administrador consegue atualizar seus próprios dados (exceto seu nível de permissão).
-- [ ] Um usuário administrador consegue gerenciar usuários e permissões normalmente, sem conseguir remover ou rebaixar o último administrador.
-- [ ] A interface web respeita o nível de permissão do usuário logado ao exibir menus e ações de gerenciamento de usuários.
+- [x] A entidade `User` e a tabela `users` possuem o campo de nível de permissão persistido via migration.
+- [x] O token JWT e o `SecurityContext` refletem as authorities/roles do usuário autenticado.
+- [x] Um usuário não administrador que tentar alterar a senha ou os dados de outro usuário recebe `403 Forbidden`.
+- [x] Um usuário não administrador que tentar criar ou excluir usuários recebe `403 Forbidden`.
+- [x] Um usuário não administrador consegue atualizar seus próprios dados (exceto seu nível de permissão).
+- [x] Um usuário administrador consegue gerenciar usuários e permissões normalmente, sem conseguir remover ou rebaixar o último administrador.
+- [x] A interface web respeita o nível de permissão do usuário logado ao exibir menus e ações de gerenciamento de usuários.
