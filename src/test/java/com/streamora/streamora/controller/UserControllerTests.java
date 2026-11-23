@@ -102,10 +102,16 @@ class UserControllerTests {
 	}
 
 	private UserRequestDTO userRequest() {
-		return new UserRequestDTO("Name", "nickname", "username", "password");
+		return new UserRequestDTO("Name", "nickname", "username", "password", null);
 	}
 
 	private UserResponseDTO userResponse() {
-		return new UserResponseDTO("user-uuid", "Name", "nickname", "username");
+		return new UserResponseDTO(
+			"user-uuid",
+			"Name",
+			"nickname",
+			"username",
+			com.streamora.streamora.entity.UserRole.STANDARD
+		);
 	}
 }

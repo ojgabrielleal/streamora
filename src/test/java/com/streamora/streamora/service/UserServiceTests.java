@@ -98,7 +98,8 @@ class UserServiceTests {
 			"Updated Name",
 			"updated",
 			storedUser.getUsername(),
-			"updated-password"
+			"updated-password",
+			null
 		);
 		Long originalId = storedUser.getId();
 		String hashedPassword = "updated-hashed-password";
@@ -125,7 +126,7 @@ class UserServiceTests {
 	@Test
 	void preservesOptionalCredentialsWhenUpdatingWithoutThem() {
 		User storedUser = UserFactory.toEntity();
-		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, null);
+		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, null, null);
 		String originalUsername = storedUser.getUsername();
 		String originalPassword = storedUser.getPassword();
 
@@ -146,7 +147,7 @@ class UserServiceTests {
 	@Test
 	void updatesFtpPasswordWithoutReplacingUser() {
 		User storedUser = UserFactory.toEntity();
-		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, "new-password");
+		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, "new-password", null);
 
 		when(userRepository.findByUuid(storedUser.getUuid()))
 			.thenReturn(Optional.of(storedUser));
@@ -167,7 +168,8 @@ class UserServiceTests {
 			"Updated Name",
 			"updated",
 			"new-username",
-			"new-password"
+			"new-password",
+			null
 		);
 
 		when(userRepository.findByUuid(storedUser.getUuid()))
@@ -185,7 +187,7 @@ class UserServiceTests {
 	@Test
 	void rejectsBlankPassword() {
 		User storedUser = UserFactory.toEntity();
-		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, " ");
+		UserRequestDTO userUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, " ", null);
 
 		when(userRepository.findByUuid(storedUser.getUuid()))
 			.thenReturn(Optional.of(storedUser));

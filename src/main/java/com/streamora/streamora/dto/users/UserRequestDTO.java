@@ -29,14 +29,4 @@ public record UserRequestDTO(
 		requiredMode = Schema.RequiredMode.NOT_REQUIRED
 	)
 	UserRole role
-) {
-	public UserRequestDTO(
-		String fullname,
-		String nickname,
-		String username,
-		String password
-	)
-	{
-		this(fullname, nickname, username, password, null);
-	}
-}
+) {}

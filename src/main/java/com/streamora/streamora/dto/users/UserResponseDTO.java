@@ -16,14 +16,4 @@ public record UserResponseDTO(
 	String username,
 	@Schema(description = "Nível de permissão do usuário", example = "STANDARD")
 	UserRole role
-) {
-	public UserResponseDTO(
-		String uuid,
-		String fullname,
-		String nickname,
-		String username
-	)
-	{
-		this(uuid, fullname, nickname, username, UserRole.STANDARD);
-	}
-}
+) {}

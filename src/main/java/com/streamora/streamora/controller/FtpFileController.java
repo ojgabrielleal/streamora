@@ -26,7 +26,6 @@ import com.streamora.streamora.infrastructure.pureFtpd.storage.exception.FtpFile
 import com.streamora.streamora.mapper.FtpFileEntryMapper;
 import com.streamora.streamora.infrastructure.pureFtpd.user.records.PureFtpdProperties;
 import com.streamora.streamora.service.FtpFileService;
-import com.streamora.streamora.service.JwtService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,7 +44,6 @@ import lombok.RequiredArgsConstructor;
 public class FtpFileController {
 
 	private final FtpFileService ftpFileService;
-	private final JwtService jwtService;
 	private final PureFtpdProperties pureFtpdProperties;
 
 	@GetMapping("/connection")
