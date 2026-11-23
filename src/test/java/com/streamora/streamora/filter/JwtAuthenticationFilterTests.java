@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.streamora.streamora.entity.UserRole;
 import com.streamora.streamora.service.JwtService;
 
 import jakarta.servlet.FilterChain;
@@ -42,8 +44,8 @@ class JwtAuthenticationFilterTests {
 
 	@Test
 	void rejectsInvalidAccessToken() throws ServletException, IOException {
-		when(jwtService.validateAccessToken("invalid-token"))
-			.thenReturn(false);
+		when(jwtService.validateAccessTokenAndGetUsername("invalid-token"))
+			.thenReturn(Optional.empty());
 
 		MockHttpServletResponse response = performRequest("Bearer invalid-token", "/user");
 
@@ -54,8 +56,10 @@ class JwtAuthenticationFilterTests {
 
 	@Test
 	void authenticatesRequestWithValidAccessToken() throws ServletException, IOException {
-		when(jwtService.validateAccessToken("valid-token"))
-			.thenReturn(true);
+		when(jwtService.validateAccessTokenAndGetUsername("valid-token"))
+			.thenReturn(Optional.of("admin"));
+		when(jwtService.validateAccessTokenAndGetRole("valid-token"))
+			.thenReturn(Optional.of(UserRole.ADMIN));
 
 		MockHttpServletRequest request = request("/user");
 		MockHttpServletResponse response = new MockHttpServletResponse();
@@ -67,7 +71,7 @@ class JwtAuthenticationFilterTests {
 			.isNotNull()
 			.satisfies(authentication -> {
 				assertThat(authentication.isAuthenticated()).isTrue();
-				assertThat(authentication.getPrincipal()).isEqualTo("valid-token");
+				assertThat(authentication.getPrincipal()).isEqualTo("admin");
 			});
 
 		verify(filterChain).doFilter(request, response);

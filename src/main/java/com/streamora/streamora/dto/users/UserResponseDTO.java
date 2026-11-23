@@ -1,5 +1,7 @@
 package com.streamora.streamora.dto.users;
 
+import com.streamora.streamora.entity.UserRole;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Usuário retornado pela API")
@@ -11,5 +13,17 @@ public record UserResponseDTO(
 	@Schema(description = "Nome de exibição", example = "João")
 	String nickname,
 	@Schema(description = "Nome usado para autenticação", example = "joao.silva")
-	String username
-) {}
+	String username,
+	@Schema(description = "Nível de permissão do usuário", example = "STANDARD")
+	UserRole role
+) {
+	public UserResponseDTO(
+		String uuid,
+		String fullname,
+		String nickname,
+		String username
+	)
+	{
+		this(uuid, fullname, nickname, username, UserRole.STANDARD);
+	}
+}

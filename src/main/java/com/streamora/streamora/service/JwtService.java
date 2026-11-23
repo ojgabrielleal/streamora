@@ -13,6 +13,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.streamora.streamora.dto.auth.AuthTokens;
+import com.streamora.streamora.entity.UserRole;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,13 +29,17 @@ public class JwtService {
 	private final Algorithm algorithm;
 
 	public AuthTokens generateTokens(String username) {
+		return generateTokens(username, null);
+	}
+
+	public AuthTokens generateTokens(String username, UserRole role) {
 		if (username == null || username.isBlank()) {
 			throw new IllegalArgumentException("Username must not be blank");
 		}
 
 		return new AuthTokens(
-			generateAccessToken(username),
-			generateRefreshToken(username)
+			generateAccessToken(username, role),
+			generateRefreshToken(username, role)
 		);
 	}
 
@@ -51,6 +56,13 @@ public class JwtService {
 			.map(decodedToken -> decodedToken.getSubject());
 	}
 
+	public Optional<UserRole> validateAccessTokenAndGetRole(String token) {
+		return decodeToken(token, ACCESS_TOKEN_TYPE)
+			.map(decodedToken -> decodedToken.getClaim("role").asString())
+			.filter(role -> role != null && !role.isBlank())
+			.map(UserRole::valueOf);
+	}
+
 	public boolean validateRefreshToken(String token) {
 		if (token == null || token.isBlank()) {
 			return false;
@@ -65,29 +77,50 @@ public class JwtService {
 	}
 
 	private String generateAccessToken(String username) {
+		return generateAccessToken(username, null);
+	}
+
+	private String generateAccessToken(String username, UserRole role) {
 		return generateToken(
 			username,
 			ACCESS_TOKEN_TYPE,
+			role,
 			Instant.now().plus(ACCESS_TOKEN_EXPIRATION_MINUTES, ChronoUnit.MINUTES)
 		);
 	}
 
 	private String generateRefreshToken(String username) {
+		return generateRefreshToken(username, null);
+	}
+
+	private String generateRefreshToken(String username, UserRole role) {
 		return generateToken(
 			username,
 			REFRESH_TOKEN_TYPE,
+			role,
 			Instant.now().plus(REFRESH_TOKEN_EXPIRATION_DAYS, ChronoUnit.DAYS)
 		);
 	}
 
-	private String generateToken(String username, String tokenType, Instant expiresAt) {
-		return JWT.create()
+	private String generateToken(
+		String username,
+		String tokenType,
+		UserRole role,
+		Instant expiresAt
+	)
+	{
+		var builder = JWT.create()
 			.withSubject(username)
 			.withJWTId(UUID.randomUUID().toString())
 			.withIssuedAt(Instant.now())
 			.withExpiresAt(expiresAt)
-			.withClaim("token_type", tokenType)
-			.sign(algorithm);
+			.withClaim("token_type", tokenType);
+
+		if (role != null) {
+			builder.withClaim("role", role.name());
+		}
+
+		return builder.sign(algorithm);
 	}
 
 	private boolean validateTokens(String token, String tokenType) {

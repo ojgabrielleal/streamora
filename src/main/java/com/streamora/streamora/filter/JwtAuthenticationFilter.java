@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.streamora.streamora.entity.UserRole;
 import com.streamora.streamora.service.JwtService;
 
 import jakarta.servlet.FilterChain;
@@ -38,15 +40,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		if (!jwtService.validateAccessToken(token)) {
+		String username = jwtService.validateAccessTokenAndGetUsername(token)
+			.orElse(null);
+
+		if (username == null) {
 			response.sendError(HttpStatus.UNAUTHORIZED.value());
 			return;
 		}
 
+		UserRole role = jwtService.validateAccessTokenAndGetRole(token)
+			.orElse(UserRole.STANDARD);
+
 		PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(
+			username,
 			token,
-			token,
-			List.of()
+			List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
 		);
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);

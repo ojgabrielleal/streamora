@@ -17,6 +17,7 @@ erDiagram
         VARCHAR nickname
         VARCHAR username
         VARCHAR password
+        VARCHAR role
     }
 
     playlists {

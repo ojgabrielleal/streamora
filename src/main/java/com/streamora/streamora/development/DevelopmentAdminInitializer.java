@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.streamora.streamora.dto.users.UserRequestDTO;
+import com.streamora.streamora.entity.UserRole;
 import com.streamora.streamora.repository.UserRepository;
 import com.streamora.streamora.service.UserService;
 
@@ -32,7 +33,8 @@ public class DevelopmentAdminInitializer implements ApplicationRunner {
 			"Streamora Administrator",
 			"Administrator",
 			ADMIN_USERNAME,
-			ADMIN_PASSWORD
+			ADMIN_PASSWORD,
+			UserRole.ADMIN
 		);
 
 		userService.store(adminCreateRequest);

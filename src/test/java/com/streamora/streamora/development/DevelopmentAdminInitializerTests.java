@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
 import com.streamora.streamora.dto.users.UserRequestDTO;
 import com.streamora.streamora.entity.User;
+import com.streamora.streamora.entity.UserRole;
 import com.streamora.streamora.repository.UserRepository;
 import com.streamora.streamora.service.UserService;
 
@@ -50,7 +51,8 @@ class DevelopmentAdminInitializerTests {
 				"Streamora Administrator",
 				"Administrator",
 				"admin",
-				"admin"
+				"admin",
+				UserRole.ADMIN
 			));
 	}
 

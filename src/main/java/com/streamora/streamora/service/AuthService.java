@@ -38,14 +38,17 @@ public class AuthService {
 			throw invalidCredentials();
 		}
 
-		return jwtService.generateTokens(storedUser.getUsername());
+		return jwtService.generateTokens(storedUser.getUsername(), storedUser.getRole());
 	}
 
 	public AuthTokens refresh(String refreshToken) {
 		String username = jwtService.validateRefreshTokenAndGetUsernameForSessionRenewal(refreshToken)
 			.orElseThrow(this::invalidRefreshToken);
 
-		return jwtService.generateTokens(username);
+		User storedUser = userRepository.findByUsername(username)
+			.orElseThrow(this::invalidRefreshToken);
+
+		return jwtService.generateTokens(storedUser.getUsername(), storedUser.getRole());
 	}
 
 	private ResponseStatusException invalidCredentials() {

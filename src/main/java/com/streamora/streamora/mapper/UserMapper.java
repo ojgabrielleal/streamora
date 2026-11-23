@@ -14,7 +14,8 @@ public final class UserMapper {
 			user.getUuid(),
 			user.getFullname(),
 			user.getNickname(),
-			user.getUsername()
+			user.getUsername(),
+			user.getRole()
 		);
 	}
 
@@ -32,6 +33,10 @@ public final class UserMapper {
 
 		if (userRequest.password() != null) {
 			user.setPassword(userRequest.password());
+		}
+
+		if (userRequest.role() != null) {
+			user.setRole(userRequest.role());
 		}
 
 		return user;

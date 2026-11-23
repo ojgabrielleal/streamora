@@ -2,6 +2,7 @@ package com.streamora.streamora.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ public class UserController {
 	private final UserService userService;
 
 	@GetMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Listar usuários")
 	@ApiResponse(
 		responseCode = "200",
@@ -59,6 +61,7 @@ public class UserController {
 	}
 
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Criar usuário")
 	@ApiResponse(responseCode = "200", description = "Usuário criado")
 	public UserResponseDTO store(
@@ -83,6 +86,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{uuid}")
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Excluir usuário")
 	@ApiResponse(responseCode = "200", description = "Usuário excluído")
 	public void delete(

@@ -48,7 +48,7 @@ class AuthServiceTests {
 			.thenReturn(Optional.of(storedUser));
 		when(passwordEncoder.matches(authRequest.password(), storedUser.getPassword()))
 			.thenReturn(true);
-		when(jwtService.generateTokens(storedUser.getUsername()))
+		when(jwtService.generateTokens(storedUser.getUsername(), storedUser.getRole()))
 			.thenReturn(generatedTokens);
 
 		AuthTokens returnedTokens = authService.auth(authRequest);
@@ -56,16 +56,19 @@ class AuthServiceTests {
 		assertThat(returnedTokens)
 			.isSameAs(generatedTokens);
 
-		verify(jwtService).generateTokens(storedUser.getUsername());
+		verify(jwtService).generateTokens(storedUser.getUsername(), storedUser.getRole());
 	}
 
 	@Test
 	void renewsTokensFromValidRefreshToken() {
+		User storedUser = UserFactory.toEntity();
 		AuthTokens generatedTokens = new AuthTokens("new-access-token", "new-refresh-token");
 
 		when(jwtService.validateRefreshTokenAndGetUsernameForSessionRenewal("refresh-token"))
 			.thenReturn(Optional.of("username1"));
-		when(jwtService.generateTokens("username1"))
+		when(userRepository.findByUsername("username1"))
+			.thenReturn(Optional.of(storedUser));
+		when(jwtService.generateTokens(storedUser.getUsername(), storedUser.getRole()))
 			.thenReturn(generatedTokens);
 
 		assertThat(authService.refresh("refresh-token"))

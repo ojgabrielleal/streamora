@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Pencil, Plus, RefreshCw, Trash2, Users } from 'lucide-react'
 
-import type { UserRequest, UserResponse } from '@/api/users/types'
+import type { UserRequest, UserResponse, UserRole } from '@/api/users/types'
 import {
   useCreateUser,
   useDeleteUser,
@@ -20,6 +20,7 @@ type FormState = {
   nickname: string
   username: string
   password: string
+  role: UserRole
 }
 
 const emptyForm: FormState = {
@@ -27,6 +28,7 @@ const emptyForm: FormState = {
   nickname: '',
   username: '',
   password: '',
+  role: 'STANDARD',
 }
 
 export function UsersBoard({
@@ -65,6 +67,7 @@ export function UsersBoard({
       nickname: user.nickname,
       username: user.username,
       password: '',
+      role: user.role ?? 'STANDARD',
     })
     setFeedback(null)
     setIsFormOpen(true)
@@ -106,6 +109,7 @@ export function UsersBoard({
         const payload: UserRequest = {
           fullname,
           nickname,
+          role: form.role,
           ...(password ? { password } : {}),
         }
         await updateUserMutation.mutateAsync({
@@ -122,6 +126,7 @@ export function UsersBoard({
           nickname,
           username,
           password,
+          role: form.role,
         })
         setFeedback({
           type: 'success',
@@ -313,6 +318,28 @@ export function UsersBoard({
                   type="text"
                   value={form.username}
                 />
+              </div>
+              <div>
+                <label
+                  className="block text-sm font-medium text-slate-700"
+                  htmlFor="user-role"
+                >
+                  Nível de permissão
+                </label>
+                <select
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+                  id="user-role"
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      role: event.target.value as UserRole,
+                    }))
+                  }
+                  value={form.role}
+                >
+                  <option value="STANDARD">Padrão (STANDARD)</option>
+                  <option value="ADMIN">Administrador (ADMIN)</option>
+                </select>
               </div>
 
               <div>
