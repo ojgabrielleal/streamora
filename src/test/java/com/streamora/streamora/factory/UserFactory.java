@@ -6,6 +6,7 @@ import java.util.stream.IntStream;
 import com.streamora.streamora.dto.users.UserRequestDTO;
 import com.streamora.streamora.dto.users.UserResponseDTO;
 import com.streamora.streamora.entity.User;
+import com.streamora.streamora.entity.UserRole;
 
 public final class UserFactory {
 
@@ -21,7 +22,8 @@ public final class UserFactory {
 				"User Name " + index,
 				"nickname" + index,
 				"username" + index,
-				"password" + index
+				"password" + index,
+				UserRole.STANDARD
 			))
 			.toList();
 	}
@@ -55,7 +57,8 @@ public final class UserFactory {
 				"user-uuid-" + index,
 				"User Name " + index,
 				"nickname" + index,
-				"username" + index
+				"username" + index,
+				UserRole.STANDARD
 			))
 			.toList();
 	}

@@ -66,7 +66,7 @@ class UserMapperTests {
 		User user = UserFactory.toEntity();
 		String originalUsername = user.getUsername();
 		String originalPassword = user.getPassword();
-		UserRequestDTO partialUserUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, null);
+		UserRequestDTO partialUserUpdateRequest = new UserRequestDTO("Updated Name", "updated", null, null, null);
 
 		UserMapper.toEntity(partialUserUpdateRequest, user);
 

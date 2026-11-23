@@ -76,6 +76,7 @@ public class JwtService {
 			.map(decodedToken -> decodedToken.getSubject());
 	}
 
+	@SuppressWarnings("unused")
 	private String generateAccessToken(String username) {
 		return generateAccessToken(username, null);
 	}
@@ -89,6 +90,7 @@ public class JwtService {
 		);
 	}
 
+	@SuppressWarnings("unused")
 	private String generateRefreshToken(String username) {
 		return generateRefreshToken(username, null);
 	}
