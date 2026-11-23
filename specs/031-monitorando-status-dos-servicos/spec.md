@@ -1,5 +1,7 @@
 # Spec 031 - Monitorando status dos serviços
 
+**Status:** Concluída
+
 ## Objetivo
 
 Monitorar a disponibilidade do Icecast e do Liquidsoap no dashboard, substituindo

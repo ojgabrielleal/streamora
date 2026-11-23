@@ -1,5 +1,7 @@
 # Spec 036 - Autenticação de locutores no Liquidsoap
 
+**Status:** Concluída
+
 ## Objetivo
 
 Permitir que locutores cadastrados no sistema se conectem ao Liquidsoap via `input.harbor` para transmitir ao vivo, com validação de credenciais no back-end e transição automática com o AutoDJ sem interromper os ouvintes no Icecast.

@@ -1,6 +1,6 @@
 # Spec 025 - Setup inicial do front-end
 
-**Status:** Planejada
+**Status:** Concluída
 
 ## Objetivo
 

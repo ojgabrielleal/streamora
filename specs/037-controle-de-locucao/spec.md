@@ -1,5 +1,7 @@
 # Spec 037 - Controle de Locução
 
+**Status:** Concluída
+
 ## Objetivo
 
 Adicionar o bloco **Locução** no topo da seção **Serviços da rádio** no dashboard, permitindo habilitar ou desabilitar a locução ao vivo com integração ao back-end.

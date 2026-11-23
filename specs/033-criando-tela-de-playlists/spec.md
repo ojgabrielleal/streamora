@@ -1,5 +1,7 @@
 # Spec 033 - Criando tela de playlists
 
+**Status:** Concluída
+
 ## Objetivo
 
 Criar uma tela autenticada de Playlists que permita visualizar, buscar, criar,

@@ -1,5 +1,7 @@
 # Spec 034 - Criando tela de programação
 
+**Status:** Concluída
+
 ## Objetivo
 
 Disponibilizar a tela de **Programação** no front-end para visualizar, criar, editar e excluir horários da grade de programação de playlists, consumindo exclusivamente os endpoints já existentes no back-end (`/schedules` e `/playlists`).

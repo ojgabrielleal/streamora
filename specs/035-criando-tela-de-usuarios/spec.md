@@ -1,5 +1,7 @@
 # Spec 035 - Criando tela de usuários
 
+**Status:** Concluída
+
 ## Objetivo
 
 Criar a tela de gerenciamento de usuários do painel web do Streamora, permitindo listar, criar, editar e excluir usuários integrados à API `/user`.

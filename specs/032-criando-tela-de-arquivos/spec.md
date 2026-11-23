@@ -1,5 +1,7 @@
 # Spec 032 - Criando tela de arquivos
 
+**Status:** Concluída
+
 ## Objetivo
 
 Criar uma tela autenticada de Arquivos que apresente os dados de conexão FTP do usuário e permita gerenciar, pelo navegador, os arquivos e diretórios do storage compartilhado da rádio.
