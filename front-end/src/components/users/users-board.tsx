@@ -295,52 +295,6 @@ export function UsersBoard({
               <div>
                 <label
                   className="block text-sm font-medium text-slate-700"
-                  htmlFor="user-fullname"
-                >
-                  Nome completo
-                </label>
-                <input
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
-                  id="user-fullname"
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      fullname: event.target.value,
-                    }))
-                  }
-                  required
-                  type="text"
-                  value={form.fullname}
-                />
-              </div>
-
-              <div>
-                <label
-                  className="block text-sm font-medium text-slate-700"
-                  htmlFor="user-nickname"
-                >
-                  Nome de exibição
-                </label>
-                <input
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
-                  id="user-nickname"
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      nickname: event.target.value,
-                    }))
-                  }
-                  required
-                  type="text"
-                  value={form.nickname}
-                />
-              </div>
-
-              <hr className="mt-6 mb-4 border-slate-200" />
-
-              <div>
-                <label
-                  className="block text-sm font-medium text-slate-700"
                   htmlFor="user-username"
                 >
                   Usuário
@@ -382,6 +336,52 @@ export function UsersBoard({
                   required={!editingUser}
                   type="password"
                   value={form.password}
+                />
+              </div>
+
+              <hr className="mt-6 mb-4 border-slate-200" />
+
+              <div>
+                <label
+                  className="block text-sm font-medium text-slate-700"
+                  htmlFor="user-fullname"
+                >
+                  Nome completo
+                </label>
+                <input
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+                  id="user-fullname"
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      fullname: event.target.value,
+                    }))
+                  }
+                  required
+                  type="text"
+                  value={form.fullname}
+                />
+              </div>
+
+              <div>
+                <label
+                  className="block text-sm font-medium text-slate-700"
+                  htmlFor="user-nickname"
+                >
+                  Nome de exibição
+                </label>
+                <input
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
+                  id="user-nickname"
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      nickname: event.target.value,
+                    }))
+                  }
+                  required
+                  type="text"
+                  value={form.nickname}
                 />
               </div>
 
