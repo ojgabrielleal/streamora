@@ -12,17 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Base64;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,7 +30,6 @@ import com.streamora.streamora.infrastructure.liquidsoap.records.RadioTracksTele
 @Component
 public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessControl {
 
-	private static final Logger log = LoggerFactory.getLogger(UnixSocketLiquidsoapProcessControl.class);
 	private static final String RESTART_COMMAND = "streamora.restart\n";
 	private static final String HEALTH_COMMAND = "version\n";
 	private static final String NOW_PLAYING_COMMAND = "streamora.now_playing\n";

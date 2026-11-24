@@ -1,6 +1,16 @@
 import { useSyncExternalStore } from 'react'
 
-let restartNeeded = false
+const STORAGE_KEY = 'streamora:liquidsoap-restart-needed'
+
+function readInitialState() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  return window.localStorage.getItem(STORAGE_KEY) === 'true'
+}
+
+let restartNeeded = readInitialState()
 const listeners = new Set<() => void>()
 
 function emit() {
@@ -12,6 +22,9 @@ function emit() {
 export function notifyLiquidsoapRestartNeeded() {
   if (!restartNeeded) {
     restartNeeded = true
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(STORAGE_KEY, 'true')
+    }
     emit()
   }
 }
@@ -19,6 +32,9 @@ export function notifyLiquidsoapRestartNeeded() {
 export function clearLiquidsoapRestartPrompt() {
   if (restartNeeded) {
     restartNeeded = false
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(STORAGE_KEY)
+    }
     emit()
   }
 }
