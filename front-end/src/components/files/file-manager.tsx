@@ -4,10 +4,13 @@ import {
   FileAudio,
   FileQuestion,
   Folder,
+  FolderInput,
   FolderPlus,
   MoreHorizontal,
+  Pencil,
   RefreshCw,
   Search,
+  Trash2,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
@@ -229,9 +232,9 @@ export function FileManager({
                   <td className="px-4 py-4 text-muted-foreground">{formatDate(entry.lastModified)}</td>
                   <td className="px-5 py-4 sm:px-6">
                     <div className="flex justify-end gap-1">
-                      <ActionButton disabled={mutation.isPending} label="Renomear" onClick={() => requestRename(entry)} />
-                      <ActionButton disabled={mutation.isPending} label="Mover" onClick={() => requestMove(entry)} />
-                      <ActionButton destructive disabled={mutation.isPending} label="Excluir" onClick={() => requestDelete(entry)} />
+                      <ActionButton disabled={mutation.isPending} icon={<Pencil aria-hidden="true" className="size-3.5" />} label="Renomear" onClick={() => requestRename(entry)} />
+                      <ActionButton disabled={mutation.isPending} icon={<FolderInput aria-hidden="true" className="size-3.5" />} label="Mover" onClick={() => requestMove(entry)} />
+                      <ActionButton destructive disabled={mutation.isPending} icon={<Trash2 aria-hidden="true" className="size-3.5" />} label="Excluir" onClick={() => requestDelete(entry)} />
                     </div>
                   </td>
                 </tr>
@@ -274,18 +277,19 @@ function formatDate(value: string) {
 function FileIcon({ format }: { format: string | null }) {
   const audioFormats = ['aac', 'flac', 'm4a', 'mp3', 'ogg', 'wav']
   return audioFormats.includes(format ?? '')
-    ? <FileAudio aria-hidden="true" className="size-5 text-fuchsia-600" />
-    : <FileQuestion aria-hidden="true" className="size-5 text-violet-500" />
+    ? <FileAudio aria-hidden="true" className="size-5 shrink-0 text-fuchsia-600" />
+    : <FileQuestion aria-hidden="true" className="size-5 shrink-0 text-violet-500" />
 }
 
-function ActionButton({ destructive = false, disabled = false, label, onClick }: { destructive?: boolean; disabled?: boolean; label: string; onClick: () => void }) {
+function ActionButton({ destructive = false, disabled = false, icon, label, onClick }: { destructive?: boolean; disabled?: boolean; icon: React.ReactNode; label: string; onClick: () => void }) {
   return (
     <button
-      className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-violet-300 ${destructive ? 'text-red-700 hover:bg-red-50' : 'text-violet-700 hover:bg-violet-100'}`}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-violet-300 ${destructive ? 'text-red-700 hover:bg-red-50' : 'text-violet-700 hover:bg-violet-100'}`}
       disabled={disabled}
       onClick={onClick}
       type="button"
     >
+      {icon}
       {label}
     </button>
   )

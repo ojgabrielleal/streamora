@@ -17,6 +17,8 @@ server.register(
 %include "sources.liq"
 %include "schedule.liq"
 
+current_locutor = ref("")
+
 def auth_locutor(login) =
   payload = json.stringify({
     username = login.user,
@@ -29,16 +31,45 @@ def auth_locutor(login) =
     data=payload
   )
 
-  response.status_code == 200
+  if response.status_code == 200 then
+    current_locutor := login.user
+    true
+  else
+    false
+  end
 end
 
 live = input.harbor(
   environment.get("LIQUIDSOAP_HARBOR_MOUNT"),
   port=8005,
-  auth=auth_locutor
+  auth=auth_locutor,
+  on_disconnect=fun () -> current_locutor := ""
 )
 
 output_source = fallback(track_sensitive=false, [live, radio])
+
+current_track = ref({title="", artist="", filename=""})
+
+def update_current_track(m) =
+  current_track := {
+    title = m["title"] == "" ? path.basename(m["filename"]) : m["title"],
+    artist = m["artist"],
+    filename = m["filename"]
+  }
+end
+
+output_source.on_metadata(update_current_track)
+
+server.register(
+  namespace="streamora",
+  description="Get currently playing track metadata as JSON",
+  "now_playing",
+  fun (_) -> json.stringify({
+    title = current_track().title,
+    artist = if current_locutor() != "" then current_locutor() else current_track().artist end,
+    filename = current_track().filename
+  })
+)
 
 output.icecast(
   %mp3,

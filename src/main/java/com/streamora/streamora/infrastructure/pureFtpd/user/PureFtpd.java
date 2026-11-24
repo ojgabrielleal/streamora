@@ -31,7 +31,7 @@ public class PureFtpd {
 				"-m",
 				"-u", String.valueOf(properties.uid()),
 				"-g", String.valueOf(properties.gid()),
-				"-d", properties.homeDirectory() + "/" + username
+				"-d", properties.homeDirectory()
 			),
 			passwordInput(password)
 		);

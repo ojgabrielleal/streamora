@@ -55,7 +55,7 @@ class PureFtpdTests {
 				"-m",
 				"-u", "1000",
 				"-g", "1001",
-				"-d", "/home/ftpusers/stream.user"
+				"-d", "/home/ftpusers"
 			),
 			"secret" + System.lineSeparator() + "secret" + System.lineSeparator()
 		);

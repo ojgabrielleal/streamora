@@ -12,20 +12,38 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Base64;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.Mp3File;
+import com.streamora.streamora.dto.services.TrackTelemetryDTO;
 import com.streamora.streamora.infrastructure.liquidsoap.exception.LiquidsoapControlException;
 import com.streamora.streamora.infrastructure.liquidsoap.interfaces.LiquidsoapProcessControl;
 import com.streamora.streamora.infrastructure.liquidsoap.records.LiquidsoapProperties;
+import com.streamora.streamora.infrastructure.liquidsoap.records.RadioTracksTelemetry;
 
 @Component
 public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessControl {
 
+	private static final Logger log = LoggerFactory.getLogger(UnixSocketLiquidsoapProcessControl.class);
 	private static final String RESTART_COMMAND = "streamora.restart\n";
 	private static final String HEALTH_COMMAND = "version\n";
+	private static final String NOW_PLAYING_COMMAND = "streamora.now_playing\n";
 	private static final String RESPONSE_TERMINATOR = "END\n";
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	private final UnixDomainSocketAddress socketAddress;
 	private final Duration connectionTimeout;
@@ -50,6 +68,74 @@ public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessCont
 	@Override
 	public boolean isAvailable() {
 		return isAvailableUntil(Instant.now().plus(connectionTimeout));
+	}
+
+	@Override
+	public RadioTracksTelemetry getTracksTelemetry() {
+		try {
+			String raw = sendCommand(NOW_PLAYING_COMMAND)
+				.replace("END", "")
+				.trim();
+
+			if (raw.isEmpty() || raw.startsWith("ERROR:")) {
+				return RadioTracksTelemetry.EMPTY;
+			}
+
+			JsonNode node = OBJECT_MAPPER.readTree(raw);
+			String title = node.path("title").asText("").trim();
+			String artist = node.path("artist").asText("").trim();
+			String filename = node.path("filename").asText("").trim();
+
+			if (title.isEmpty()) {
+				return RadioTracksTelemetry.EMPTY;
+			}
+
+			String coverUrl = extractCoverDataUrl(filename);
+			TrackTelemetryDTO currentTrack = new TrackTelemetryDTO(
+				title,
+				artist.isEmpty() ? null : artist,
+				coverUrl
+			);
+
+			return new RadioTracksTelemetry(currentTrack, null);
+		} catch (IOException | RuntimeException exception) {
+			return RadioTracksTelemetry.EMPTY;
+		}
+	}
+
+	private String extractCoverDataUrl(String filename) {
+		if (filename.isEmpty()) {
+			return null;
+		}
+
+		try {
+			Mp3File mp3File = new Mp3File(filename);
+
+			if (!mp3File.hasId3v2Tag()) {
+				return null;
+			}
+
+			ID3v2 id3v2Tag = mp3File.getId3v2Tag();
+			byte[] imageData = id3v2Tag.getAlbumImage();
+
+			if (imageData == null || imageData.length == 0) {
+				return null;
+			}
+
+			String mimeType = id3v2Tag.getAlbumImageMimeType();
+			String resolvedMime = (mimeType == null || mimeType.isBlank()) ? "image/jpeg" : mimeType;
+
+			return "data:" + resolvedMime + ";base64," + Base64.getEncoder().encodeToString(imageData);
+		} catch (Exception exception) {
+			return null;
+		}
+	}
+
+	private String sendCommand(String command) throws IOException {
+		try (SocketChannel channel = connect(connectionTimeout)) {
+			write(channel, command, connectionTimeout);
+			return readResponse(channel, connectionTimeout);
+		}
 	}
 
 	private void sendRestartCommand() {
@@ -90,7 +176,7 @@ public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessCont
 			write(channel, HEALTH_COMMAND, attemptTimeout);
 			String response = readResponse(channel, attemptTimeout);
 
-			return response.endsWith(RESPONSE_TERMINATOR);
+			return response.trim().endsWith("END");
 		} catch (IOException exception) {
 			return false;
 		}
@@ -131,7 +217,7 @@ public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessCont
 		ByteBuffer responseBuffer = ByteBuffer.allocate(256);
 		Instant deadline = Instant.now().plus(timeout);
 
-		while (!response.toString(StandardCharsets.UTF_8).endsWith(RESPONSE_TERMINATOR)) {
+		while (!hasResponseTerminator(response.toString(StandardCharsets.UTF_8))) {
 			int bytesRead = channel.read(responseBuffer);
 
 			if (bytesRead < 0) {
@@ -149,6 +235,10 @@ public class UnixSocketLiquidsoapProcessControl implements LiquidsoapProcessCont
 		}
 
 		return response.toString(StandardCharsets.UTF_8);
+	}
+
+	private boolean hasResponseTerminator(String response) {
+		return response.endsWith(RESPONSE_TERMINATOR) || response.endsWith("END\r\n");
 	}
 
 	private void awaitReady(SocketChannel channel, int operation, Duration timeout) throws IOException {

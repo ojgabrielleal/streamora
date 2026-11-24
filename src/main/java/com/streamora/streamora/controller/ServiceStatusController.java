@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.streamora.streamora.dto.services.RadioTelemetryResponseDTO;
 import com.streamora.streamora.dto.services.ServiceStatusResponseDTO;
 import com.streamora.streamora.service.RadioServiceStatusService;
 
@@ -26,5 +27,13 @@ public class ServiceStatusController {
 	@ApiResponse(responseCode = "401", description = "Autenticação necessária")
 	public ServiceStatusResponseDTO show() {
 		return radioServiceStatusService.getStatus();
+	}
+
+	@GetMapping("/telemetry")
+	@Operation(summary = "Consultar ouvintes e faixas em reprodução")
+	@ApiResponse(responseCode = "200", description = "Telemetria consultada")
+	@ApiResponse(responseCode = "401", description = "Autenticação necessária")
+	public RadioTelemetryResponseDTO telemetry() {
+		return radioServiceStatusService.getTelemetry();
 	}
 }

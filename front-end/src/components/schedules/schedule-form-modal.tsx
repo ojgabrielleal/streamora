@@ -8,6 +8,7 @@ import {
   updateSchedule,
 } from '@/api/schedules/schedule-api'
 import { scheduleKeys } from '@/api/schedules/schedule-queries'
+import { notifyLiquidsoapRestartNeeded } from '@/lib/liquidsoap-restart-prompt'
 import type { Schedule, WeekDay } from '@/api/schedules/schedule-types'
 
 export const WEEK_DAYS: Array<{ value: WeekDay; label: string }> = [
@@ -73,6 +74,7 @@ export function ScheduleFormModal({
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: scheduleKeys.all })
+      notifyLiquidsoapRestartNeeded()
       onClose()
     },
     onError: (error) => {

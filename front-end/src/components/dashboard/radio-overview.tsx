@@ -1,13 +1,28 @@
 import {
   ClipboardList,
+  Disc3,
   Headphones,
   Music2,
   Play,
   Radio,
-  SkipForward,
 } from 'lucide-react'
 
-export function RadioOverview() {
+import type { RadioTelemetry } from '@/api/services/service-status-types'
+
+type RadioOverviewProps = {
+  telemetry?: RadioTelemetry
+}
+
+function formatListeners(listeners: number | null | undefined) {
+  if (listeners === null || listeners === undefined) {
+    return 'Ouvintes indisponíveis'
+  }
+
+  return listeners === 1 ? '1 ouvinte' : `${listeners} ouvintes`
+}
+
+export function RadioOverview({ telemetry }: RadioOverviewProps) {
+  const currentTrack = telemetry?.currentTrack
   return (
     <section
       aria-labelledby="radio-overview-title"
@@ -29,7 +44,7 @@ export function RadioOverview() {
         <div className="flex items-center gap-4 text-sm text-violet-50">
           <span className="inline-flex items-center gap-2">
             <Headphones aria-hidden="true" className="size-4" />
-            Ouvintes indisponíveis
+            {formatListeners(telemetry?.listeners)}
           </span>
           <span
             aria-label="Programação automática"
@@ -41,7 +56,7 @@ export function RadioOverview() {
         </div>
       </header>
 
-      <div className="grid gap-px bg-white/10 md:grid-cols-2">
+      <div className="bg-white/10">
         <article className="bg-violet-950 px-5 py-6 sm:px-6">
           <div className="mb-4 flex items-center gap-2 text-violet-100">
             <Music2 aria-hidden="true" className="size-5" />
@@ -49,38 +64,35 @@ export function RadioOverview() {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-violet-500/30 to-fuchsia-500/30 text-violet-200 ring-1 ring-white/10">
-              <Radio aria-hidden="true" className="size-7" />
-            </span>
-            <div className="min-w-0">
-              <p className="font-medium text-white">Informação em tempo real</p>
-              <p className="mt-1 text-sm text-violet-300">
-                Aguardando integração com a transmissão
-              </p>
-              <span className="mt-3 inline-flex rounded-md bg-white/10 px-2 py-1 text-xs font-medium text-violet-100">
-                Auto DJ
+            {currentTrack?.coverUrl ? (
+              <img
+                alt={`Capa de ${currentTrack.title}`}
+                className="size-16 shrink-0 rounded-xl object-cover ring-1 ring-white/15"
+                src={currentTrack.coverUrl}
+              />
+            ) : currentTrack ? (
+              <span
+                aria-label="Capa padrão da faixa"
+                className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-violet-500 to-fuchsia-600 text-white shadow-inner ring-1 ring-white/20"
+              >
+                <Disc3 aria-hidden="true" className="size-8 opacity-90" />
               </span>
-            </div>
-          </div>
-        </article>
-
-        <article className="bg-violet-950 px-5 py-6 sm:px-6">
-          <div className="mb-4 flex items-center gap-2 text-violet-100">
-            <SkipForward aria-hidden="true" className="size-5" />
-            <h3 className="font-semibold">A seguir</h3>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-white/5 text-violet-300 ring-1 ring-white/10">
-              <Music2 aria-hidden="true" className="size-7" />
-            </span>
+            ) : (
+              <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-violet-500/30 to-fuchsia-500/30 text-violet-200 ring-1 ring-white/10">
+                <Radio aria-hidden="true" className="size-7" />
+              </span>
+            )}
             <div className="min-w-0">
-              <p className="font-medium text-white">Próxima faixa</p>
-              <p className="mt-1 text-sm text-violet-300">
-                Aguardando integração com a transmissão
+              <p className="truncate font-medium text-white">
+                {currentTrack?.title ?? 'Informação em tempo real'}
+              </p>
+              <p className="mt-1 truncate text-sm text-violet-300">
+                {currentTrack
+                  ? (currentTrack.artist ?? 'Auto DJ')
+                  : 'Aguardando integração com a transmissão'}
               </p>
               <span className="mt-3 inline-flex rounded-md bg-white/10 px-2 py-1 text-xs font-medium text-violet-100">
-                Em breve
+                {currentTrack ? 'No ar' : 'Auto DJ'}
               </span>
             </div>
           </div>

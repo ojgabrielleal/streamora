@@ -1,10 +1,14 @@
 import { useNavigate } from '@tanstack/react-router'
-import { Menu } from 'lucide-react'
+import { Menu, RefreshCw, X } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 
 import { logout as requestLogout } from '@/api/auth/auth-api'
 import { DashboardSidebar } from '@/components/dashboard/dashboard-sidebar'
 import { clearAccessToken } from '@/lib/access-token'
+import {
+  clearLiquidsoapRestartPrompt,
+  useLiquidsoapRestartPrompt,
+} from '@/lib/liquidsoap-restart-prompt'
 
 type AuthenticatedLayoutProps = {
   activeDestination: 'dashboard' | 'files' | 'playlists' | 'schedules' | 'users'
@@ -21,6 +25,7 @@ export function AuthenticatedLayout({
 }: AuthenticatedLayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const needsLiquidsoapRestart = useLiquidsoapRestartPrompt()
 
   async function logout() {
     try {
@@ -82,6 +87,30 @@ export function AuthenticatedLayout({
             </div>
           </div>
         </header>
+
+        {needsLiquidsoapRestart && (
+          <div
+            className="mx-auto mt-6 max-w-[96rem] px-4 sm:px-8 lg:px-12 xl:px-14"
+            role="status"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <RefreshCw aria-hidden="true" className="size-4 shrink-0 text-amber-700" />
+                <span>
+                  Alterações salvas. Reinicie o <strong>Liquidsoap</strong> na visão geral para aplicar na transmissão.
+                </span>
+              </div>
+              <button
+                aria-label="Fechar notificação"
+                className="rounded-lg p-1 text-amber-800 transition hover:bg-amber-100"
+                onClick={() => clearLiquidsoapRestartPrompt()}
+                type="button"
+              >
+                <X aria-hidden="true" className="size-4" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {children}
       </main>

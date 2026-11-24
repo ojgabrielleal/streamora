@@ -9,7 +9,19 @@ function getStreamName(streamUrl: string) {
   }
 }
 
-export function StreamOverview() {
+type StreamOverviewProps = {
+  listeners?: number | null
+}
+
+function formatListeners(listeners: number | null | undefined) {
+  if (listeners === null || listeners === undefined) {
+    return 'Não disponível'
+  }
+
+  return listeners === 1 ? '1 ouvinte' : `${listeners} ouvintes`
+}
+
+export function StreamOverview({ listeners }: StreamOverviewProps) {
   const streamUrl = import.meta.env.VITE_STREAM_URL?.trim()
 
   return (
@@ -57,7 +69,7 @@ export function StreamOverview() {
 
           <span className="inline-flex shrink-0 items-center gap-2 self-end text-sm text-violet-200 sm:self-auto">
             <Headphones aria-hidden="true" className="size-4" />
-            Não disponível
+            {formatListeners(listeners)}
           </span>
         </div>
       ) : (

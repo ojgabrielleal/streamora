@@ -143,9 +143,22 @@ services:
     volumes:
       - pureftpd_uploads:/pure-ftpd/uploads
       - pureftpd_passwords:/etc/pure-ftpd/passwd
+    depends_on:
+      pureftpd-uploads-init:
+        condition: service_completed_successfully
     restart: unless-stopped
     networks:
       - streamora
+
+  pureftpd-uploads-init:
+    image: stilliard/pure-ftpd:trixie-latest
+    user: root
+    entrypoint: ["sh", "-c"]
+    command: ["chown ${PUREFTPD_UID:-1000}:${PUREFTPD_GID:-1000} /pure-ftpd/uploads"]
+    volumes:
+      - pureftpd_uploads:/pure-ftpd/uploads
+    restart: "no"
+    network_mode: none
 
   node:
     image: node:26-bookworm-slim

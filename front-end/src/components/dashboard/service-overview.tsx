@@ -1,5 +1,7 @@
 import { Mic, RadioTower, ServerCog } from 'lucide-react'
 
+import { useLiquidsoapRestartPrompt } from '@/lib/liquidsoap-restart-prompt'
+
 import type {
   ServiceAvailabilityStatus,
   ServiceStatuses,
@@ -27,7 +29,9 @@ type ServiceOverviewProps = {
   liveBroadcastEnabled?: boolean
   isLiveBroadcastPending?: boolean
   isLiveBroadcastError?: boolean
+  isRestartingLiquidsoap?: boolean
   isUpdatingLiveBroadcast?: boolean
+  onRestartLiquidsoap?: () => void
   onToggleLiveBroadcast?: (enabled: boolean) => void
 }
 
@@ -68,9 +72,12 @@ export function ServiceOverview({
   liveBroadcastEnabled,
   isLiveBroadcastPending = false,
   isLiveBroadcastError = false,
+  isRestartingLiquidsoap = false,
   isUpdatingLiveBroadcast = false,
+  onRestartLiquidsoap,
   onToggleLiveBroadcast,
 }: ServiceOverviewProps) {
+  const liquidsoapNeedsRestart = useLiquidsoapRestartPrompt()
   const liveBroadcastStatusText = isLiveBroadcastPending
     ? 'Verificando'
     : isLiveBroadcastError || liveBroadcastEnabled === undefined
@@ -183,13 +190,28 @@ export function ServiceOverview({
               </div>
             </div>
 
-            <span
-              aria-label={`${name}: ${statusLabel(statuses?.[id], isPending, isError)}`}
-              className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold shadow-sm ${statusBadgeClass(statuses?.[id], isPending, isError)}`}
-              role="status"
-            >
-              {statusLabel(statuses?.[id], isPending, isError)}
-            </span>
+            <div className="flex shrink-0 items-center gap-2">
+              {id === 'liquidsoap' &&
+              onRestartLiquidsoap &&
+              (liquidsoapNeedsRestart || isRestartingLiquidsoap) ? (
+                <button
+                  className="rounded-full bg-amber-400 px-3.5 py-1.5 text-xs font-bold text-violet-950 shadow-md ring-2 ring-amber-200 transition hover:bg-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={isRestartingLiquidsoap}
+                  onClick={onRestartLiquidsoap}
+                  type="button"
+                >
+                  {isRestartingLiquidsoap ? 'Reiniciando...' : 'Reiniciar'}
+                </button>
+              ) : null}
+
+              <span
+                aria-label={`${name}: ${statusLabel(statuses?.[id], isPending, isError)}`}
+                className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold shadow-sm ${statusBadgeClass(statuses?.[id], isPending, isError)}`}
+                role="status"
+              >
+                {statusLabel(statuses?.[id], isPending, isError)}
+              </span>
+            </div>
           </article>
         ))}
         </div>

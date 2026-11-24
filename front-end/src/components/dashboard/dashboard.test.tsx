@@ -38,7 +38,6 @@ describe('dashboard components', () => {
     expect(markup).toContain('Auto DJ')
     expect(markup).toContain('Streamora')
     expect(markup).toContain('Tocando')
-    expect(markup).toContain('A seguir')
     expect(markup).toContain('Ouvintes indisponíveis')
     expect(markup).toContain('Aguardando integração com a transmissão')
     expect(markup).not.toContain('0 ouvintes')

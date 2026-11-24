@@ -4,10 +4,12 @@ import java.util.function.BooleanSupplier;
 
 import org.springframework.stereotype.Service;
 
+import com.streamora.streamora.dto.services.RadioTelemetryResponseDTO;
 import com.streamora.streamora.dto.services.ServiceAvailabilityStatus;
 import com.streamora.streamora.dto.services.ServiceStatusResponseDTO;
 import com.streamora.streamora.infrastructure.icecast.IcecastAvailabilityChecker;
 import com.streamora.streamora.infrastructure.liquidsoap.interfaces.LiquidsoapProcessControl;
+import com.streamora.streamora.infrastructure.liquidsoap.records.RadioTracksTelemetry;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +25,17 @@ public class RadioServiceStatusService {
 		ServiceAvailabilityStatus liquidsoapStatus = status(liquidsoapProcessControl::isAvailable);
 
 		return new ServiceStatusResponseDTO(icecastStatus, liquidsoapStatus);
+	}
+
+	public RadioTelemetryResponseDTO getTelemetry() {
+		Integer listeners = icecastAvailabilityChecker.getListenersCount().orElse(null);
+		RadioTracksTelemetry tracks = liquidsoapProcessControl.getTracksTelemetry();
+
+		return new RadioTelemetryResponseDTO(
+			listeners,
+			tracks.currentTrack(),
+			tracks.nextTrack()
+		);
 	}
 
 	private ServiceAvailabilityStatus status(BooleanSupplier availabilityChecker) {

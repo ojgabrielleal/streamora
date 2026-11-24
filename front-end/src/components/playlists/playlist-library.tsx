@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { notifyLiquidsoapRestartNeeded } from '@/lib/liquidsoap-restart-prompt'
 import {
   ArrowDown,
   ArrowLeft,
@@ -199,6 +200,7 @@ function PlaylistForm({ onClose, playlist }: { onClose: () => void; playlist: Pl
     mutationFn: (payload: PlaylistPayload) => playlist ? updatePlaylist(playlist.uuid, payload) : createPlaylist(payload),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: playlistKeys.all })
+      notifyLiquidsoapRestartNeeded()
       onClose()
     },
   })
@@ -257,6 +259,7 @@ function PlaylistStudio({ onClose, playlist }: { onClose: () => void; playlist: 
       queryClient.setQueryData(playlistKeys.detail(playlist.uuid), details)
       setTracks(null)
       await queryClient.invalidateQueries({ queryKey: playlistKeys.all })
+      notifyLiquidsoapRestartNeeded()
     },
   })
   const currentFiles = findDirectory(filesQuery.data ?? [], directory)

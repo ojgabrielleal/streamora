@@ -1,6 +1,11 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { applyLiquidsoapConfig } from '@/api/liquidsoap/liquidsoap-api'
 import { playlistsQueryOptions } from '@/api/playlists/playlist-queries'
-import { serviceStatusesQueryOptions } from '@/api/services/service-status-queries'
+import {
+  radioTelemetryQueryOptions,
+  serviceStatusKeys,
+  serviceStatusesQueryOptions,
+} from '@/api/services/service-status-queries'
 import {
   liveBroadcastQueryOptions,
   useUpdateLiveBroadcastMutation,
@@ -10,12 +15,22 @@ import { RadioOverview } from '@/components/dashboard/radio-overview'
 import { ServiceOverview } from '@/components/dashboard/service-overview'
 import { StreamOverview } from '@/components/dashboard/stream-overview'
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
+import { clearLiquidsoapRestartPrompt } from '@/lib/liquidsoap-restart-prompt'
 
 export function DashboardPage() {
+  const queryClient = useQueryClient()
   const playlistsQuery = useQuery(playlistsQueryOptions())
   const serviceStatusesQuery = useQuery(serviceStatusesQueryOptions())
+  const radioTelemetryQuery = useQuery(radioTelemetryQueryOptions())
   const liveBroadcastQuery = useQuery(liveBroadcastQueryOptions())
   const updateLiveBroadcastMutation = useUpdateLiveBroadcastMutation()
+  const restartLiquidsoapMutation = useMutation({
+    mutationFn: applyLiquidsoapConfig,
+    onSuccess: async () => {
+      clearLiquidsoapRestartPrompt()
+      await queryClient.invalidateQueries({ queryKey: serviceStatusKeys.all })
+    },
+  })
 
   return (
     <AuthenticatedLayout
@@ -25,7 +40,7 @@ export function DashboardPage() {
     >
         <div className="mx-auto grid max-w-[96rem] items-start gap-8 px-4 py-8 sm:px-8 sm:py-10 lg:px-12 xl:grid-cols-[minmax(0,3fr)_minmax(22rem,2fr)] xl:px-14 xl:py-12">
           <div className="min-w-0 space-y-8">
-            <RadioOverview />
+            <RadioOverview telemetry={radioTelemetryQuery.data} />
 
             {playlistsQuery.isPending && (
               <div
@@ -51,7 +66,7 @@ export function DashboardPage() {
               <ScheduleOverview playlists={playlistsQuery.data} />
             )}
 
-            <StreamOverview />
+            <StreamOverview listeners={radioTelemetryQuery.data?.listeners} />
           </div>
 
           <aside aria-label="Estado da rádio" className="min-w-0 space-y-8">
@@ -60,8 +75,10 @@ export function DashboardPage() {
               isLiveBroadcastError={liveBroadcastQuery.isError}
               isLiveBroadcastPending={liveBroadcastQuery.isPending}
               isPending={serviceStatusesQuery.isPending}
+              isRestartingLiquidsoap={restartLiquidsoapMutation.isPending}
               isUpdatingLiveBroadcast={updateLiveBroadcastMutation.isPending}
               liveBroadcastEnabled={liveBroadcastQuery.data?.enabled}
+              onRestartLiquidsoap={() => restartLiquidsoapMutation.mutate()}
               onToggleLiveBroadcast={(enabled) =>
                 updateLiveBroadcastMutation.mutate(enabled)
               }

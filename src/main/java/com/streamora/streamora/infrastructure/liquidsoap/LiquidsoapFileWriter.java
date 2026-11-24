@@ -6,6 +6,7 @@ import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermissions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,14 @@ public class LiquidsoapFileWriter {
 		write(configDirectory, fileName, content);
 	}
 
+	private void makeWorldReadable(Path file) throws IOException {
+		try {
+			Files.setPosixFilePermissions(file, PosixFilePermissions.fromString("rw-r--r--"));
+		} catch (UnsupportedOperationException ignored) {
+			// Non-POSIX filesystems do not support POSIX permissions.
+		}
+	}
+
 	private void validateFileName(String fileName, String extension) {
 		if (fileName == null || fileName.isBlank()
 			|| !fileName.endsWith(extension)
@@ -57,6 +66,7 @@ public class LiquidsoapFileWriter {
 			Files.createDirectories(directory);
 			temporaryFile = Files.createTempFile(directory, fileName, ".tmp");
 			Files.writeString(temporaryFile, content, StandardCharsets.UTF_8);
+			makeWorldReadable(temporaryFile);
 			move(temporaryFile, directory.resolve(fileName));
 		} catch (IOException exception) {
 			throw new LiquidsoapFileException("Could not write Liquidsoap file", exception);
